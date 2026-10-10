@@ -119,7 +119,7 @@ it('does not allow VOS through the follow-up dialog', function () {
     Livewire::test(TicketView::class, ['ticket' => $this->tickets['my group']])
         ->set('pendingStatus', 'on_site')
         ->set('followUpDate', today()->toDateString())
-        ->call('confirmFollowUp')
+        ->call('confirmStatus')
         ->assertStatus(422);
 });
 
@@ -135,7 +135,7 @@ it('logs every change of a ticket into its history', function () {
     Livewire::test(Composer::class, ['ticket' => $ticket])->set('body', '<p>Antwort</p>')->call('send');
     Livewire::test(Composer::class, ['ticket' => $ticket])->call('setMode', 'note')->set('body', '<p>Notiz</p>')->call('send');
     $view()->call('planAppointment')->call('saveAppointment');
-    $view()->call('setStatus', 'waiting_external')->call('confirmFollowUp');
+    $view()->call('setStatus', 'waiting_external')->call('confirmStatus');
     Livewire::test(TicketView::class, ['ticket' => $this->tickets['pool without group']])->call('merge', $ticket->id);
 
     $entries = Activity::forHistoryOf($ticket->refresh())->where('causer_id', $user->id)->orderBy('id')->get()

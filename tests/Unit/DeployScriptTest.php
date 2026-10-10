@@ -54,6 +54,7 @@ it('runs all deployment steps in the right order', function () {
             'npm run build',
             'php artisan migrate --force',
             'php artisan db:seed --class=RolesAndPermissionsSeeder --force',
+            'php artisan db:seed --class=MailTemplateSeeder --force',
             'php artisan config:cache',
             'php artisan route:cache',
             'php artisan view:cache',

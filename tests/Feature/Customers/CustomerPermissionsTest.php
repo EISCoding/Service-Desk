@@ -15,6 +15,7 @@ use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\User;
+use Database\Seeders\MailTemplateSeeder;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
@@ -88,6 +89,7 @@ it('rejects tampering with locked properties from the browser', function (string
 ])->throws(CannotUpdateLockedPropertyException::class);
 
 it('logs every change to customers, contacts and notes', function () {
+    $this->seed(MailTemplateSeeder::class);
     $staff = User::factory()->staff()->create();
     $this->actingAs($staff);
 

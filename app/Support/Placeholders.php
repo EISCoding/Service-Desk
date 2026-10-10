@@ -29,7 +29,7 @@ final class Placeholders
         'termin.datum' => 'Datum des VOS-Termins, z. B. „Donnerstag, 15. Oktober 2026“',
         'termin.zeit' => 'Uhrzeit des VOS-Termins, z. B. „09:00–10:30 Uhr“',
         'mitarbeiter.name' => 'Name des Mitarbeiters (sonst des Bearbeiters)',
-        'portal.link' => 'Adresse des Kundenportals',
+        'portal.link' => 'Link zum Kundenportal (in der Portal-Einladung: Link zum Festlegen des Passworts)',
     ];
 
     private ?Contact $contact;
@@ -44,6 +44,7 @@ final class Placeholders
         ?Customer $customer = null,
         private ?Appointment $appointment = null,
         ?User $staff = null,
+        private ?string $portalLink = null,
     ) {
         $this->contact = $contact ?? $ticket?->contact;
         $this->customer = $customer ?? $this->contact?->customer ?? $ticket?->customer;
@@ -69,16 +70,18 @@ final class Placeholders
                 ? $this->appointment->starts_at->format('H:i').'–'.$this->appointment->ends_at->format('H:i').' Uhr'
                 : '',
             'mitarbeiter.name' => $this->staff?->name ?? '',
-            'portal.link' => url('/portal'),
+            'portal.link' => $this->portalLink ?? url('/portal'),
         ];
     }
 
     /**
-     * Fill an HTML body; values are escaped.
+     * Fill an HTML body; values are escaped, links become clickable.
      */
     public function html(?string $html): string
     {
-        return $this->replace((string) $html, fn (string $value) => e($value));
+        return $this->replace((string) $html, fn (string $value, string $key) => $key === 'portal.link'
+            ? '<a href="'.e($value).'">'.e($value).'</a>'
+            : e($value));
     }
 
     /**
@@ -96,7 +99,7 @@ final class Placeholders
         return preg_replace_callback(
             '/\{\s*([a-z]+\.[a-z]+)\s*\}/i',
             fn (array $match) => array_key_exists($key = strtolower($match[1]), $values)
-                ? $format($values[$key])
+                ? $format($values[$key], $key)
                 : $match[0],
             $subject,
         );

@@ -14,7 +14,7 @@
                         <li wire:key="system-{{ $template->id }}" class="flex flex-wrap items-center justify-between gap-3 px-5 py-3.5">
                             <div class="min-w-0">
                                 <p class="text-sm font-medium">{{ $template->name }}</p>
-                                <p class="truncate text-[13px] text-ink-muted">{{ $template->subject }}</p>
+                                <p class="text-[13px] text-ink-muted">{{ \App\Enums\SystemTemplate::tryFrom((string) $template->key)?->description() ?? $template->subject }}</p>
                             </div>
                             <div class="flex items-center gap-2">
                                 @if ($canManage)
@@ -67,7 +67,7 @@
         <form wire:submit="save" id="template-form" class="space-y-4">
             <x-ui.input label="Name" wire:model="name" required />
             @if ($this->editing?->isSystem())
-                <x-ui.input label="Betreff" wire:model="subject" required hint="Die Ticketnummer [#JJJJ-NNNNN] wird automatisch angehängt." />
+                <x-ui.input label="Betreff" wire:model="subject" required :hint="$this->editing->key === \App\Enums\SystemTemplate::PortalInvitation->value ? null : 'Die Ticketnummer [#JJJJ-NNNNN] wird automatisch angehängt.'" />
             @endif
             <x-ui.rich-editor label="Text" wire:model="body" />
             @include('livewire.intern.templates.placeholders')

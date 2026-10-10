@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\MessageType;
+use App\Enums\SystemTemplate;
 use App\Enums\TicketSource;
 use App\Enums\TicketStatus;
 use App\Mail\Inbound\InboundMail;
@@ -23,6 +24,7 @@ class InboundMailProcessor
         private AttachmentStorage $attachments,
         private TicketStatusService $statuses,
         private LoopDetector $loops,
+        private TemplateMailer $templates,
     ) {}
 
     /**
@@ -70,6 +72,11 @@ class InboundMailProcessor
 
             if ($previous) {
                 $this->linkFollowUpTicket($previous, $ticket);
+            }
+
+            // Confirmation only for known contacts, never in reply to automatic mails.
+            if (! $isReply && $contact && ! $automatic) {
+                $this->templates->send($ticket, SystemTemplate::TicketOpened);
             }
 
             return $message;

@@ -2,7 +2,11 @@
 
 namespace App\Notifications\Portal;
 
+use App\Enums\SystemTemplate;
 use App\Models\Contact;
+use App\Models\MailTemplate;
+use App\Support\Html;
+use App\Support\Placeholders;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,7 +14,7 @@ use Illuminate\Notifications\Notification;
 
 /**
  * Invitation to the customer portal with a link to set a password (valid 7 days).
- * Replaced by the editable system template "Portal-Einladung" in Phase 4.
+ * Text from the system template "Portal-Einladung", {portal.link} is the invitation link.
  */
 class ContactInvitation extends Notification implements ShouldQueue
 {
@@ -33,13 +37,14 @@ class ContactInvitation extends Notification implements ShouldQueue
 
     public function toMail(Contact $contact): MailMessage
     {
+        // Sending checks that the template is active; the defaults only cover
+        // a template switched off while the mail was waiting in the queue.
+        $template = MailTemplate::system(SystemTemplate::PortalInvitation);
+        $placeholders = new Placeholders(contact: $contact, portalLink: $this->url($contact));
+        $body = $placeholders->html($template->body ?? SystemTemplate::PortalInvitation->defaultBody());
+
         return (new MailMessage)
-            ->subject('Ihr Zugang zum Kundenportal von '.config('app.name'))
-            ->greeting($contact->formalGreeting().',')
-            ->line('für Sie wurde ein Zugang zu unserem Kundenportal eingerichtet. Dort können Sie Ihre Anfragen einsehen, neue Tickets erstellen und auf unsere Antworten reagieren.')
-            ->line('Bitte legen Sie über den folgenden Link Ihr Passwort fest:')
-            ->action('Passwort festlegen', $this->url($contact))
-            ->line('Der Link ist 7 Tage gültig. Ihr Benutzername ist Ihre E-Mail-Adresse '.$contact->email.'.')
-            ->salutation("Mit freundlichen Grüßen\n".config('app.name'));
+            ->subject($placeholders->text($template->subject ?? SystemTemplate::PortalInvitation->defaultSubject()))
+            ->view(['mail.template', 'mail.template-text'], ['body' => $body, 'text' => Html::toText($body)]);
     }
 }

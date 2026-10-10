@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Intern\Tickets;
 
+use App\Enums\SystemTemplate;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
 use App\Livewire\Concerns\InteractsWithToasts;
@@ -14,10 +15,12 @@ use App\Models\TicketMessage;
 use App\Models\User;
 use App\Services\AppointmentService;
 use App\Services\OutgoingMailService;
+use App\Services\TemplateMailer;
 use App\Services\TicketMerger;
 use App\Services\TicketStatusService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use Livewire\Attributes\Computed;
@@ -40,10 +43,15 @@ class TicketView extends Component
 
     public string $mergeSearch = '';
 
-    /** Status waiting for a follow-up date (dialog). */
+    /** Status waiting for confirmation (follow-up date and/or customer mail). */
     public ?string $pendingStatus = null;
 
+    /** The dialog was opened by "Übernehmen". */
+    public bool $taking = false;
+
     public string $followUpDate = '';
+
+    public bool $notifyCustomer = false;
 
     /** Changes when a status change is cancelled, so the select shows the current status again. */
     public int $statusVersion = 0;
@@ -62,6 +70,8 @@ class TicketView extends Component
     public string $appointmentLocation = '';
 
     public string $appointmentNote = '';
+
+    public bool $appointmentNotify = false;
 
     public function mount(Ticket $ticket): void
     {
@@ -143,10 +153,8 @@ class TicketView extends Component
             return;
         }
 
-        if ($status->requiresFollowUp()) {
-            $this->pendingStatus = $status->value;
-            $this->followUpDate = TicketStatusService::defaultFollowUp()->toDateString();
-            $this->resetValidation();
+        if ($status->requiresFollowUp() || $this->notification($status)) {
+            $this->openStatusDialog($status);
 
             return;
         }
@@ -155,24 +163,72 @@ class TicketView extends Component
         $this->afterSave("Status: {$status->label()}");
     }
 
-    public function confirmFollowUp(TicketStatusService $statuses): void
+    /**
+     * Confirm the status dialog: follow-up date and optional mail to the customer.
+     */
+    public function confirmStatus(TicketStatusService $statuses, TemplateMailer $templates): void
     {
         $this->authorize('update', $this->ticket);
 
         $status = TicketStatus::tryFrom((string) $this->pendingStatus);
-        abort_unless($status?->requiresFollowUp(), 422);
+        abort_if(! $status || $status === TicketStatus::OnSite || ($this->taking && $status !== TicketStatus::InProgress), 422);
 
-        $this->validate(['followUpDate' => ['required', 'date', 'after_or_equal:today']], attributes: ['followUpDate' => 'Wiedervorlage']);
+        $followUp = null;
+        if ($status->requiresFollowUp()) {
+            $this->validate(['followUpDate' => ['required', 'date', 'after_or_equal:today']], attributes: ['followUpDate' => 'Wiedervorlage']);
+            $followUp = Carbon::parse($this->followUpDate);
+        }
 
-        $statuses->change($this->ticket, $status, Carbon::parse($this->followUpDate));
+        $template = $this->notifyCustomer ? $this->notification($status) : null;
+
+        DB::transaction(function () use ($statuses, $templates, $status, $followUp, $template) {
+            $this->taking
+                ? $statuses->take($this->ticket, auth()->user())
+                : $statuses->change($this->ticket, $status, $followUp);
+
+            if ($template) {
+                $templates->send($this->ticket, $template, auth()->user());
+            }
+        });
+
+        $message = $this->taking ? 'Ticket übernommen' : "Status: {$status->label()}";
+        if ($followUp) {
+            $message .= ', Wiedervorlage am '.$followUp->isoFormat('D. MMM');
+        }
 
         $this->pendingStatus = null;
-        $this->afterSave("Status: {$status->label()}, Wiedervorlage am ".Carbon::parse($this->followUpDate)->isoFormat('D. MMM'));
+        $this->taking = false;
+        $this->afterSave($template ? "{$message}. Der Kunde wird per E-Mail informiert." : $message);
+    }
+
+    /**
+     * Template for informing the customer about the status, if one can be sent.
+     */
+    public function notification(?TicketStatus $status = null): ?SystemTemplate
+    {
+        $status ??= TicketStatus::tryFrom((string) $this->pendingStatus);
+        if (! $status || ! auth()->user()->can('reply', $this->ticket)) {
+            return null;
+        }
+
+        $template = $status === TicketStatus::Closed ? SystemTemplate::TicketClosed : SystemTemplate::StatusChanged;
+
+        return app(TemplateMailer::class)->canSend($this->ticket, $template) ? $template : null;
+    }
+
+    private function openStatusDialog(TicketStatus $status, bool $taking = false): void
+    {
+        $this->pendingStatus = $status->value;
+        $this->taking = $taking;
+        $this->followUpDate = TicketStatusService::defaultFollowUp()->toDateString();
+        $this->notifyCustomer = in_array($status, [TicketStatus::InProgress, TicketStatus::WaitingCustomer, TicketStatus::Closed], true);
+        $this->resetValidation();
     }
 
     public function cancelStatusChange(): void
     {
         $this->pendingStatus = null;
+        $this->taking = false;
         $this->planningAppointment = false;
         $this->statusVersion++;
     }
@@ -190,11 +246,18 @@ class TicketView extends Component
         $this->appointmentTechnician = (string) ($this->ticket->assignee_id ?? auth()->id());
         $this->appointmentLocation = AppointmentService::defaultLocation($this->ticket);
         $this->appointmentNote = '';
+        $this->appointmentNotify = $this->canConfirmAppointment();
         $this->resetValidation();
         $this->planningAppointment = true;
     }
 
-    public function saveAppointment(AppointmentService $appointments): void
+    public function canConfirmAppointment(): bool
+    {
+        return auth()->user()->can('reply', $this->ticket)
+            && app(TemplateMailer::class)->canSend($this->ticket, SystemTemplate::AppointmentConfirmed);
+    }
+
+    public function saveAppointment(AppointmentService $appointments, TemplateMailer $templates): void
     {
         $this->authorize('update', $this->ticket);
 
@@ -210,19 +273,29 @@ class TicketView extends Component
             'appointmentTechnician' => 'Techniker', 'appointmentLocation' => 'Einsatzort', 'appointmentNote' => 'Notiz',
         ]);
 
-        $appointment = $appointments->schedule(
-            $this->ticket,
-            Carbon::parse("{$this->appointmentDate} {$this->appointmentFrom}"),
-            Carbon::parse("{$this->appointmentDate} {$this->appointmentTo}"),
-            User::find((int) $this->appointmentTechnician),
-            $this->appointmentLocation,
-            $this->appointmentNote,
-            auth()->user(),
-        );
+        $notify = $this->appointmentNotify && $this->canConfirmAppointment();
+
+        $appointment = DB::transaction(function () use ($appointments, $templates, $notify) {
+            $appointment = $appointments->schedule(
+                $this->ticket,
+                Carbon::parse("{$this->appointmentDate} {$this->appointmentFrom}"),
+                Carbon::parse("{$this->appointmentDate} {$this->appointmentTo}"),
+                User::find((int) $this->appointmentTechnician),
+                $this->appointmentLocation,
+                $this->appointmentNote,
+                auth()->user(),
+            );
+
+            if ($notify) {
+                $templates->send($this->ticket, SystemTemplate::AppointmentConfirmed, auth()->user(), $appointment, $appointment->technician);
+            }
+
+            return $appointment;
+        });
 
         $this->planningAppointment = false;
         unset($this->appointments);
-        $this->afterSave("Termin geplant: {$appointment->timeRange()}");
+        $this->afterSave("Termin geplant: {$appointment->timeRange()}".($notify ? '. Die Terminbestätigung wird verschickt.' : ''));
     }
 
     public function deleteAppointment(int $appointmentId): void
@@ -251,6 +324,12 @@ class TicketView extends Component
     public function take(TicketStatusService $statuses): void
     {
         $this->authorize('update', $this->ticket);
+
+        if ($this->notification(TicketStatus::InProgress)) {
+            $this->openStatusDialog(TicketStatus::InProgress, taking: true);
+
+            return;
+        }
 
         $statuses->take($this->ticket, auth()->user());
         $this->afterSave('Ticket übernommen.');

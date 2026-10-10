@@ -67,6 +67,10 @@ log "Database migrations"
 log "Roles and permissions"
 "$PHP" artisan db:seed --class=RolesAndPermissionsSeeder --force
 
+# Creates missing system templates, never overwrites edited ones.
+log "System templates"
+"$PHP" artisan db:seed --class=MailTemplateSeeder --force
+
 log "Caches"
 "$PHP" artisan config:cache
 "$PHP" artisan route:cache

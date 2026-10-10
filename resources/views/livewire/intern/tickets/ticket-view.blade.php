@@ -191,6 +191,9 @@
                                 @if ($message->is_automatic)
                                     <x-ui.badge color="gray"><x-heroicon-m-cpu-chip class="size-3" aria-hidden="true" /> Automatisch</x-ui.badge>
                                 @endif
+                                @if ($template = \App\Enums\SystemTemplate::tryFrom((string) $message->template_key))
+                                    <x-ui.badge color="gray"><x-heroicon-m-document-text class="size-3" aria-hidden="true" /> {{ $template->label() }}</x-ui.badge>
+                                @endif
                                 <x-ui.badge><x-heroicon-m-envelope class="size-3" aria-hidden="true" /> {{ $message->type->label() }}</x-ui.badge>
                             </div>
                         @endif
@@ -292,6 +295,10 @@
             <x-ui.select label="Techniker" wire:model="appointmentTechnician" :options="$this->assigneeOptions" required />
             <x-ui.textarea label="Einsatzort" wire:model="appointmentLocation" rows="3" required />
             <x-ui.textarea label="Notiz" wire:model="appointmentNote" rows="2" placeholder="z. B. Zugang über Hintereingang" />
+            @if ($planningAppointment && $this->canConfirmAppointment())
+                <x-ui.checkbox label="Terminbestätigung an den Kunden senden" wire:model="appointmentNotify"
+                    :description="'Vorlage „Termin bestätigt“ an '.$ticket->recipient()['email']" />
+            @endif
         </form>
         <x-slot:footer>
             <x-ui.button variant="secondary" wire:click="cancelStatusChange">Abbrechen</x-ui.button>
@@ -299,21 +306,32 @@
         </x-slot:footer>
     </x-ui.modal>
 
-    {{-- Follow-up date for "Warte auf Intern/Extern" --}}
-    <x-ui.modal name="follow-up" :title="$pendingStatus ? \App\Enums\TicketStatus::from($pendingStatus)->label() : 'Wiedervorlage'" description="Wann soll das Ticket wieder vorgelegt werden?" max-width="sm"
+    {{-- Status change: follow-up date ("Warte auf Intern/Extern") and/or mail to the customer --}}
+    @php($pending = $pendingStatus ? \App\Enums\TicketStatus::tryFrom($pendingStatus) : null)
+    @php($notification = $pending ? $this->notification($pending) : null)
+    <x-ui.modal name="status" :title="$taking ? 'Ticket übernehmen' : ($pending ? 'Status: '.$pending->label() : 'Status ändern')" max-width="sm"
         x-init="$watch('show', value => { if (! value && $wire.pendingStatus) $wire.cancelStatusChange() })"
         x-effect="show = $wire.pendingStatus !== null">
-        <form wire:submit="confirmFollowUp" id="follow-up-form" class="space-y-3">
-            <x-ui.input label="Wiedervorlage am" type="date" wire:model="followUpDate" :min="today()->toDateString()" required />
-            <div class="flex flex-wrap gap-1.5">
-                @foreach (['Morgen' => today()->addWeekday(), 'In 2 Werktagen' => today()->addWeekdays(2), 'Nächste Woche' => today()->next('Monday')] as $label => $date)
-                    <button type="button" wire:click="$set('followUpDate', '{{ $date->toDateString() }}')" class="rounded-full bg-ink/[0.05] px-2.5 py-1 text-[12px] font-medium text-ink-muted hover:text-ink">{{ $label }}</button>
-                @endforeach
-            </div>
+        <form wire:submit="confirmStatus" id="status-form" class="space-y-4">
+            @if ($pending?->requiresFollowUp())
+                <div class="space-y-3">
+                    <p class="text-sm text-ink-muted">Wann soll das Ticket wieder vorgelegt werden?</p>
+                    <x-ui.input label="Wiedervorlage am" type="date" wire:model="followUpDate" :min="today()->toDateString()" required />
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach (['Morgen' => today()->addWeekday(), 'In 2 Werktagen' => today()->addWeekdays(2), 'Nächste Woche' => today()->next('Monday')] as $label => $date)
+                            <button type="button" wire:click="$set('followUpDate', '{{ $date->toDateString() }}')" class="rounded-full bg-ink/[0.05] px-2.5 py-1 text-[12px] font-medium text-ink-muted hover:text-ink">{{ $label }}</button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+            @if ($notification)
+                <x-ui.checkbox label="Kunden per E-Mail informieren" wire:model="notifyCustomer"
+                    :description="'Vorlage „'.$notification->label().'“ an '.$ticket->recipient()['email']" />
+            @endif
         </form>
         <x-slot:footer>
             <x-ui.button variant="secondary" wire:click="cancelStatusChange">Abbrechen</x-ui.button>
-            <x-ui.button type="submit" form="follow-up-form">Status setzen</x-ui.button>
+            <x-ui.button type="submit" form="status-form">{{ $taking ? 'Übernehmen' : 'Status setzen' }}</x-ui.button>
         </x-slot:footer>
     </x-ui.modal>
 </div>

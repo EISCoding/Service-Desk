@@ -60,7 +60,7 @@ describe('follow-up', function () {
         statusView()
             ->call('setStatus', 'waiting_external')
             ->set('followUpDate', today()->addDays(5)->toDateString())
-            ->call('confirmFollowUp')
+            ->call('confirmStatus')
             ->assertHasNoErrors()
             ->assertSet('pendingStatus', null);
 
@@ -72,8 +72,8 @@ describe('follow-up', function () {
     });
 
     it('requires a date that is not in the past', function () {
-        statusView()->call('setStatus', 'waiting_internal')->set('followUpDate', '')->call('confirmFollowUp')->assertHasErrors('followUpDate');
-        statusView()->call('setStatus', 'waiting_internal')->set('followUpDate', today()->subDay()->toDateString())->call('confirmFollowUp')->assertHasErrors('followUpDate');
+        statusView()->call('setStatus', 'waiting_internal')->set('followUpDate', '')->call('confirmStatus')->assertHasErrors('followUpDate');
+        statusView()->call('setStatus', 'waiting_internal')->set('followUpDate', today()->subDay()->toDateString())->call('confirmStatus')->assertHasErrors('followUpDate');
     });
 
     it('can be cancelled', function () {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SystemTemplate;
 use App\Enums\TemplateType;
 use App\Models\Concerns\LogsActivity;
 use App\Support\Html;
@@ -54,8 +55,10 @@ class MailTemplate extends Model
     /**
      * Active system template by key (null when missing or switched off).
      */
-    public static function system(string $key): ?self
+    public static function system(SystemTemplate|string $key): ?self
     {
+        $key = $key instanceof SystemTemplate ? $key->value : $key;
+
         return static::where('type', TemplateType::System->value)->where('key', $key)->where('is_active', true)->first();
     }
 }

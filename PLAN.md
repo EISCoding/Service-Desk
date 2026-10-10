@@ -85,7 +85,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue
 - [x] Migration + Model `mail_templates`: Typ (System/Textbaustein), Name, Betreff, Text
 - [x] Platzhalter-Engine: `{ticket.nummer}`, `{ticket.betreff}`, `{ticket.status}`, `{kontakt.anrede}`, `{kontakt.name}`, `{kunde.firma}`, `{termin.datum}`, `{termin.zeit}`, `{mitarbeiter.name}`, `{portal.link}`
-- [ ] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)
+- [x] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)
 - [ ] Textbausteine im Antwort-Editor einfügbar
 - [ ] Signatur pro Mitarbeiter automatisch anhängen
 
