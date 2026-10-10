@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\User;
@@ -29,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'group' => Group::class,
             'customer' => Customer::class,
+            'contact' => Contact::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.

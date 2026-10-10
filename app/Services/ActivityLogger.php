@@ -18,7 +18,7 @@ class ActivityLogger
     /**
      * @param  array<string, array{old: mixed, new: mixed}>  $changes
      */
-    public function log(?Model $subject, string $action, array $changes = [], ?Model $causer = null): ?Activity
+    public function log(?Model $subject, string $action, array $changes = [], ?Model $causer = null, ?Model $parent = null): ?Activity
     {
         if (! self::$enabled) {
             return null;
@@ -31,6 +31,8 @@ class ActivityLogger
             'causer_id' => $causer?->getKey(),
             'subject_type' => $subject?->getMorphClass(),
             'subject_id' => $subject?->getKey(),
+            'parent_type' => $parent?->getMorphClass(),
+            'parent_id' => $parent?->getKey(),
             'action' => $action,
             'changes' => $changes ?: null,
         ]);

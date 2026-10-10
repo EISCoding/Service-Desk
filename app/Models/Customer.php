@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Model
 {
@@ -50,6 +51,14 @@ class Customer extends Model
     protected function archived(Builder $query): void
     {
         $query->whereNotNull('archived_at');
+    }
+
+    /**
+     * Contacts, primary contacts first.
+     */
+    public function contacts(): HasMany
+    {
+        return $this->hasMany(Contact::class)->orderByDesc('is_primary')->orderBy('last_name')->orderBy('first_name');
     }
 
     public function isArchived(): bool

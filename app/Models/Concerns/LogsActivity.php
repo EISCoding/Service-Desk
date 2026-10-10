@@ -54,7 +54,15 @@ trait LogsActivity
      */
     public function logActivity(string $action, array $changes = []): ?Activity
     {
-        return app(ActivityLogger::class)->log($this, $action, $changes);
+        return app(ActivityLogger::class)->log($this, $action, $changes, parent: $this->activityParent());
+    }
+
+    /**
+     * The model whose history this model's entries also belong to (e.g. the customer of a contact).
+     */
+    public function activityParent(): ?Model
+    {
+        return null;
     }
 
     public function activities(): MorphMany
