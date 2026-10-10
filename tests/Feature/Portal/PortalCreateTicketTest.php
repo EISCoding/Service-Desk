@@ -39,7 +39,7 @@ it('creates a ticket with attachments in the group of the default mailbox', func
         ->set('files', [UploadedFile::fake()->image('fehler.png')])
         ->call('save')
         ->assertHasNoErrors()
-        ->assertRedirect('/portal');
+        ->assertRedirect('/portal/tickets/'.Ticket::sole()->id);
 
     $ticket = Ticket::sole();
     expect($ticket)

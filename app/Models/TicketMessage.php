@@ -83,13 +83,13 @@ class TicketMessage extends Model
     /**
      * Body for display: inline images (cid:) point to the attachment controller.
      */
-    public function displayBody(): string
+    public function displayBody(bool $portal = false): string
     {
         $html = $this->body;
 
         foreach ($this->attachments as $attachment) {
             if ($attachment->content_id) {
-                $html = str_replace('cid:'.$attachment->content_id, e($attachment->url(inline: true)), $html);
+                $html = str_replace('cid:'.$attachment->content_id, e($attachment->url(inline: true, portal: $portal)), $html);
             }
         }
 
@@ -101,9 +101,9 @@ class TicketMessage extends Model
      *
      * @return array{0: string, 1: ?string}
      */
-    public function displayParts(): array
+    public function displayParts(bool $portal = false): array
     {
-        $html = $this->displayBody();
+        $html = $this->displayBody($portal);
 
         return in_array($this->type, [MessageType::MailIn, MessageType::MailOut], true)
             ? QuotedText::split($html)

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
+use App\Http\Controllers\Portal\AttachmentController as PortalAttachmentController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Http\Controllers\Portal\LoginController;
 use App\Http\Controllers\Portal\PasswordResetController;
@@ -17,6 +18,7 @@ use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
 use App\Livewire\Portal\Tickets\Create as PortalCreateTicket;
 use App\Livewire\Portal\Tickets\Index as PortalTickets;
+use App\Livewire\Portal\Tickets\Show as PortalTicket;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Mailbox;
@@ -101,6 +103,8 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
         Route::livewire('/', PortalTickets::class)->name('home');
         Route::livewire('tickets/neu', PortalCreateTicket::class)->name('tickets.create');
+        Route::livewire('tickets/{ticket}', PortalTicket::class)->name('tickets.show');
+        Route::get('anhaenge/{attachment}', [PortalAttachmentController::class, 'show'])->name('attachments.show');
     });
 });
 

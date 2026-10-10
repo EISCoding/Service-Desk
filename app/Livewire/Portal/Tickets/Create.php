@@ -100,7 +100,7 @@ class Create extends Component
         });
 
         $this->flashToast("{$ticket->reference()} wurde angelegt. Wir melden uns bei Ihnen.");
-        $this->redirectRoute('portal.home', navigate: true);
+        $this->redirectRoute('portal.tickets.show', $ticket, navigate: true);
     }
 
     public function render()
