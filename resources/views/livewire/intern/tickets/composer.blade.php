@@ -19,6 +19,30 @@
     @endif
 
     <form wire:submit="send" class="space-y-3">
+        @unless ($isNote)
+            @if ($canMail)
+                <div class="space-y-1.5 text-[13px]">
+                    <p><span class="text-ink-muted">An:</span> <span class="font-medium">{{ $recipient['name'] ?? '' }}</span> &lt;{{ $recipient['email'] }}&gt;</p>
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        <span class="text-ink-muted">CC:</span>
+                        @foreach ($cc as $index => $address)
+                            <span wire:key="cc-{{ $address['email'] }}" class="inline-flex items-center gap-1 rounded-full bg-ink/[0.06] py-0.5 pr-1 pl-2.5">
+                                {{ $address['email'] }}
+                                <button type="button" wire:click="removeCc({{ $index }})" class="rounded-full text-ink-faint hover:text-ink">
+                                    <x-heroicon-m-x-mark class="size-3.5" aria-hidden="true" /><span class="sr-only">{{ $address['email'] }} entfernen</span>
+                                </button>
+                            </span>
+                        @endforeach
+                        <input type="email" wire:model="newCc" wire:keydown.enter.prevent="addCc" placeholder="Adresse hinzufügen …" aria-label="CC-Adresse hinzufügen"
+                            class="h-7 w-48 rounded-full bg-transparent px-2.5 text-[13px] ring-1 ring-separator ring-inset placeholder:text-ink-faint focus:ring-2 focus:ring-accent focus:outline-none">
+                    </div>
+                    @error('newCc') <p class="text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+                </div>
+            @else
+                <p class="text-[13px] text-ink-muted">Keine E-Mail-Adresse oder kein Postfach vorhanden – die Antwort wird nur gespeichert (sichtbar im Kundenportal).</p>
+            @endif
+        @endunless
+
         <x-ui.rich-editor wire:model="body" placeholder="Nachricht schreiben …" />
         @if ($isNote)
             <p class="-mt-1 text-[12px] text-ink-muted">Interne Notizen sind für Kunden nie sichtbar.</p>

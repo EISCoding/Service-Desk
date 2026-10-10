@@ -22,7 +22,7 @@ class TicketMessage extends Model
     /** @use HasFactory<TicketMessageFactory> */
     use HasFactory;
 
-    protected $fillable = ['type', 'is_automatic', 'body', 'message_id', 'in_reply_to', 'from_email', 'from_name', 'to', 'cc', 'template_key'];
+    protected $fillable = ['type', 'is_automatic', 'body', 'subject', 'message_id', 'in_reply_to', 'from_email', 'from_name', 'to', 'cc', 'template_key'];
 
     protected function casts(): array
     {
@@ -59,6 +59,11 @@ class TicketMessage extends Model
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
+    }
+
+    public function mailFailed(): bool
+    {
+        return $this->mail_status === 'failed';
     }
 
     public function isInternal(): bool

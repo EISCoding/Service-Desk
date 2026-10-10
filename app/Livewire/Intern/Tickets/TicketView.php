@@ -13,6 +13,7 @@ use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
 use App\Services\AppointmentService;
+use App\Services\OutgoingMailService;
 use App\Services\TicketMerger;
 use App\Services\TicketStatusService;
 use Illuminate\Database\Eloquent\Collection;
@@ -347,6 +348,21 @@ class TicketView extends Component
 
         $this->flashToast("{$this->ticket->reference()} wurde in {$target->reference()} zusammengeführt.");
         $this->redirectRoute('intern.tickets.show', $target, navigate: true);
+    }
+
+    /**
+     * Send a failed outgoing mail again.
+     */
+    public function retryMail(int $messageId, OutgoingMailService $mail): void
+    {
+        $this->authorize('reply', $this->ticket);
+
+        $message = $this->ticket->messages()->where('mail_status', 'failed')->findOrFail($messageId);
+        $message->forceFill(['mail_status' => 'queued', 'mail_error' => null])->save();
+        $mail->dispatch($message);
+
+        unset($this->messages);
+        $this->toast('E-Mail wird erneut gesendet.');
     }
 
     public function delete(): void

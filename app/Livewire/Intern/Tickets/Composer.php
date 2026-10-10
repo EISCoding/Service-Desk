@@ -8,9 +8,11 @@ use App\Livewire\Concerns\InteractsWithToasts;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Services\AttachmentStorage;
+use App\Services\OutgoingMailService;
 use App\Services\TicketStatusService;
 use App\Support\Html;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -40,13 +42,38 @@ class Composer extends Component
 
     public string $statusAfter = '';
 
-    public function mount(): void
+    /** @var list<array{email: string, name: ?string}> */
+    public array $cc = [];
+
+    public string $newCc = '';
+
+    public function mount(OutgoingMailService $mail): void
     {
         $this->authorize('view', $this->ticket);
 
         if (! auth()->user()->can('reply', $this->ticket)) {
             $this->mode = 'note';
         }
+
+        $this->cc = $mail->suggestedCc($this->ticket);
+    }
+
+    public function addCc(): void
+    {
+        $this->validate(['newCc' => ['required', 'email', 'max:255']], attributes: ['newCc' => 'CC-Adresse']);
+
+        $email = Str::lower(trim($this->newCc));
+        if (! collect($this->cc)->contains(fn (array $r) => $r['email'] === $email)) {
+            $this->cc[] = ['email' => $email, 'name' => null];
+        }
+
+        $this->reset('newCc');
+    }
+
+    public function removeCc(int $index): void
+    {
+        unset($this->cc[$index]);
+        $this->cc = array_values($this->cc);
     }
 
     public function setMode(string $mode): void
@@ -61,7 +88,7 @@ class Composer extends Component
         $this->files = array_values($this->files);
     }
 
-    public function send(AttachmentStorage $storage, TicketStatusService $statuses): void
+    public function send(AttachmentStorage $storage, TicketStatusService $statuses, OutgoingMailService $mail): void
     {
         $internal = $this->mode === 'note';
         $this->authorize($internal ? 'addNote' : 'reply', $this->ticket);
@@ -81,14 +108,21 @@ class Composer extends Component
             'files.*.max' => 'Eine Datei darf höchstens '.round($maxKb / 1024).' MB groß sein.',
         ], ['body' => $internal ? 'Notiz' : 'Antwort', 'files' => 'Anhänge']);
 
-        DB::transaction(function () use ($internal, $storage, $statuses) {
-            $message = new TicketMessage([
-                'type' => $internal ? MessageType::Internal : MessageType::Public,
-                'body' => $this->body,
-            ]);
-            $message->ticket()->associate($this->ticket);
-            $message->author()->associate(auth()->user());
-            $message->save();
+        $byMail = ! $internal && $mail->canMail($this->ticket);
+
+        $message = DB::transaction(function () use ($internal, $storage, $statuses, $mail, $byMail) {
+            if ($byMail) {
+                // Public reply as e-mail through the ticket's mailbox.
+                $message = $mail->queue($this->ticket, $this->body, auth()->user(), $this->cc);
+            } else {
+                $message = new TicketMessage([
+                    'type' => $internal ? MessageType::Internal : MessageType::Public,
+                    'body' => $this->body,
+                ]);
+                $message->ticket()->associate($this->ticket);
+                $message->author()->associate(auth()->user());
+                $message->save();
+            }
 
             foreach ($this->files as $file) {
                 $storage->storeUpload($file, $message);
@@ -103,17 +137,29 @@ class Composer extends Component
             }
 
             $this->ticket->touchActivity();
+
+            return $message;
         });
+
+        if ($byMail) {
+            $mail->dispatch($message);
+        }
 
         $this->reset('body', 'files', 'statusAfter');
         $this->dispatch('ticket-changed');
         $this->dispatch('ticket-updated');
-        $this->toast($internal ? 'Interne Notiz gespeichert.' : 'Antwort gespeichert.');
+        $this->toast(match (true) {
+            $internal => 'Interne Notiz gespeichert.',
+            $byMail => 'Antwort wird per E-Mail gesendet.',
+            default => 'Antwort gespeichert.',
+        });
     }
 
     public function render()
     {
         return view('livewire.intern.tickets.composer', [
+            'recipient' => $this->ticket->recipient(),
+            'canMail' => app(OutgoingMailService::class)->canMail($this->ticket),
             'statusOptions' => collect(self::STATUS_AFTER)->mapWithKeys(fn ($s) => [$s->value => $s->label()])->all(),
         ]);
     }

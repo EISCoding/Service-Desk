@@ -196,6 +196,24 @@
                         @endif
                     </header>
 
+                    @if ($message->type === \App\Enums\MessageType::MailOut)
+                        <p class="-mt-1 mb-3 text-[12px] text-ink-muted">
+                            An {{ collect($message->to)->pluck('email')->join(', ') }}@if ($message->cc) · CC {{ collect($message->cc)->pluck('email')->join(', ') }}@endif
+                            @switch($message->mail_status)
+                                @case('queued') · <span class="text-yellow-700 dark:text-yellow-300">wird gesendet …</span> @break
+                                @case('sent') · gesendet {{ $message->sent_at?->isoFormat('D. MMM, HH:mm') }} @break
+                            @endswitch
+                        </p>
+                        @if ($message->mailFailed())
+                            <x-ui.alert type="error" class="mb-3">
+                                Versand fehlgeschlagen: {{ $message->mail_error }}
+                                @can('reply', $ticket)
+                                    <button type="button" wire:click="retryMail({{ $message->id }})" class="ml-1 font-medium underline">Erneut senden</button>
+                                @endcan
+                            </x-ui.alert>
+                        @endif
+                    @endif
+
                     @php([$mainText, $quotedText] = $message->displayParts())
                     <div class="message-body">{!! $mainText !!}</div>
                     @if ($quotedText)

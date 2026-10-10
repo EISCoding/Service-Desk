@@ -82,7 +82,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar
 - [x] Loop-Schutz: `Auto-Submitted`, `X-Auto-Response-Suppress`, Abwesenheitsnotizen → keine automatische Antwort
 - [x] Verarbeitete Mails als gelesen markieren oder in Ordner verschieben (pro Postfach einstellbar)
-- [ ] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue
+- [x] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue
 - [ ] Migration + Model `mail_templates`: Typ (System/Textbaustein), Name, Betreff, Text
 - [ ] Platzhalter-Engine: `{ticket.nummer}`, `{ticket.betreff}`, `{ticket.status}`, `{kontakt.anrede}`, `{kontakt.name}`, `{kunde.firma}`, `{termin.datum}`, `{termin.zeit}`, `{mitarbeiter.name}`, `{portal.link}`
 - [ ] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)

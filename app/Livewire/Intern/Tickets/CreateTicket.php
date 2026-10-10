@@ -10,6 +10,7 @@ use App\Livewire\Concerns\InteractsWithToasts;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\Group;
+use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Support\Html;
@@ -148,6 +149,7 @@ class CreateTicket extends Component
             $ticket->contact()->associate($this->contactId ?: null);
             $ticket->group()->associate($this->groupId ?: null);
             $ticket->assignee()->associate($this->assignToMe ? auth()->user() : null);
+            $ticket->mailbox()->associate(Mailbox::default());
             $ticket->save();
 
             $message = new TicketMessage(['type' => MessageType::Public, 'body' => $this->body]);
