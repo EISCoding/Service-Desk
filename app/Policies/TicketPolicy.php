@@ -25,6 +25,11 @@ class TicketPolicy
             && ($contact->is_primary || $ticket->contact_id === $contact->id);
     }
 
+    public function createInPortal(Contact $contact): bool
+    {
+        return $contact->canUsePortal();
+    }
+
     public function viewAny(User $user): bool
     {
         return $user->hasAnyPermission([
