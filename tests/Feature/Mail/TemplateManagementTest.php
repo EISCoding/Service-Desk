@@ -77,3 +77,11 @@ describe('with templates.manage', function () {
         Livewire::test(Index::class)->call('create')->set('body', '<div><br></div>')->call('save')->assertHasErrors(['name', 'body']);
     });
 });
+
+it('explains the placeholders in the editor', function () {
+    $this->actingAs(User::factory()->admin()->create());
+
+    Livewire::test(Index::class)->call('create')
+        ->assertSee('{ticket.nummer}')
+        ->assertSee('Briefanrede, z. B. „Sehr geehrte Frau Berg“');
+});
