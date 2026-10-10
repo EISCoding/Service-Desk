@@ -5,7 +5,7 @@ ohne Supervisor und ohne dauerhafte Hintergrundprozesse.
 
 - `/intern` – Mitarbeiterbereich (Login unter `/intern/login`)
 - `/intern/admin` – Verwaltung (Benutzer, Gruppen, …)
-- `/portal` – Kundenportal (ab Phase 5)
+- `/portal` – Kundenportal für Ansprechpartner der Kunden (Login unter `/portal/login`)
 
 Arbeitsplan: siehe [`PLAN.md`](PLAN.md), Projektkontext: [`CLAUDE.md`](CLAUDE.md).
 
@@ -68,6 +68,20 @@ Nach dem Login:
   „Support (Demo)“
 - **Vorlagen**: `/intern/vorlagen` – Systemvorlagen (an/aus, Text bearbeiten) und Textbausteine mit Platzhaltern
 - **Signatur**: Benutzermenü → Signatur, wird unter Antworten an Kunden gesetzt
+
+### Kundenportal lokal
+
+`db:seed` macht lokal den Hauptansprechpartner des ersten Demo-Kunden zum Portal-Nutzer:
+
+| Feld     | Wert                      |
+|----------|---------------------------|
+| E-Mail   | `kunde@servicedesk.test`  |
+| Passwort | `password`                |
+
+Anmeldung unter <http://localhost:8000/portal/login> (am besten in einem privaten Fenster, wenn
+parallel ein Mitarbeiter angemeldet ist). Ansprechpartner sehen ihre eigenen Tickets,
+Hauptansprechpartner alle Tickets ihrer Firma. Weitere Zugänge: beim Kunden einen Ansprechpartner mit
+Portal-Zugang anlegen und einladen; der Einladungslink steht im Log.
 - **Design-System**: <http://localhost:8000/intern/styleguide> (nur bei `APP_ENV=local`)
 
 Mails (Passwort-Reset usw.) landen lokal in `storage/logs/laravel-*.log` (`MAIL_MAILER=log`).
