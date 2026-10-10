@@ -28,7 +28,7 @@
                 <x-ui.empty-state icon="inbox" title="Keine offenen Tickets" description="Wenn Sie ein Anliegen haben, legen Sie einfach ein neues Ticket an." />
             @endif
         @else
-            <ul class="divide-y divide-separator">
+            <ul class="divide-y divide-separator transition-opacity" wire:loading.delay.class="opacity-50">
                 @foreach ($this->tickets as $ticket)
                     <li wire:key="ticket-{{ $ticket->id }}" class="relative flex items-center gap-4 px-5 py-3.5 hover:bg-surface-muted/60">
                         <div class="min-w-0 flex-1">

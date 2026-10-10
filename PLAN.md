@@ -111,15 +111,15 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 6 – Feinschliff
 
-- [ ] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
-- [ ] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
-- [ ] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
-- [ ] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
-- [ ] Activity-Log im Ticket und beim Kunden als Tab anzeigen
-- [ ] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
-- [ ] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
-- [ ] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
-- [ ] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
-- [ ] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
+- [x] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
+- [x] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
+- [x] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
+- [x] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
+- [x] Activity-Log im Ticket und beim Kunden als Tab anzeigen
+- [x] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
+- [x] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
+- [x] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
+- [x] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
+- [x] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
 
 **Fertig wenn:** Alle Tests grün, Deployment auf Plesk nach README in einem Durchgang möglich.

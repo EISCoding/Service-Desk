@@ -11,6 +11,7 @@ use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Services\AttachmentStorage;
+use App\Services\StaffNotifier;
 use App\Services\TicketStatusService;
 use App\Support\Html;
 use Illuminate\Support\Facades\DB;
@@ -70,7 +71,7 @@ class Create extends Component
         $this->files = array_values($this->files);
     }
 
-    public function save(AttachmentStorage $storage, TicketStatusService $statuses): void
+    public function save(AttachmentStorage $storage, TicketStatusService $statuses, StaffNotifier $notifier): void
     {
         $this->authorize('createInPortal', Ticket::class);
 
@@ -92,7 +93,7 @@ class Create extends Component
 
         $contact = auth('contact')->user();
 
-        $ticket = DB::transaction(function () use ($contact, $storage, $statuses) {
+        $ticket = DB::transaction(function () use ($contact, $storage, $statuses, $notifier) {
             $mailbox = Mailbox::default();
 
             $ticket = new Ticket([
@@ -119,6 +120,8 @@ class Create extends Component
             if ($previous = $this->previous()) {
                 $statuses->linkFollowUp($previous, $ticket, 'vom Kunden im Portal angelegt.');
             }
+
+            $notifier->newTicket($ticket);
 
             return $ticket;
         });

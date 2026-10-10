@@ -56,7 +56,7 @@
         <aside class="2xl:order-last" aria-label="Ticketdaten">
             <x-ui.card :padding="false" class="2xl:sticky 2xl:top-6">
                 <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 sm:grid-cols-3 2xl:grid-cols-1">
-                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" :disabled="! $canUpdate" />
+                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" data-shortcut="status" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" :disabled="! $canUpdate" />
                     <x-ui.select label="Priorität" :options="$priorityOptions" :selected="$ticket->priority->value" wire:change="setPriority($event.target.value)" :disabled="! $canUpdate" />
                     <x-ui.select label="Gruppe" placeholder="Ohne Gruppe" :options="$this->groupOptions" :selected="$ticket->group_id" wire:change="setGroup($event.target.value)" :disabled="! $canUpdate" />
                     <x-ui.select label="Bearbeiter" placeholder="Nicht zugeordnet" :options="$this->assigneeOptions" :selected="$ticket->assignee_id" wire:change="setAssignee($event.target.value)" :disabled="! $canUpdate" />
@@ -163,8 +163,18 @@
             </x-ui.card>
         </aside>
 
-        {{-- Conversation --}}
+        {{-- Conversation / activity log --}}
         <div class="min-w-0 space-y-4">
+            <div role="tablist" aria-label="Ansicht" class="inline-grid grid-cols-2 gap-0.5 rounded-[10px] bg-ink/[0.05] p-0.5">
+                @foreach (['messages' => 'Nachrichten', 'activity' => 'Aktivität'] as $value => $label)
+                    <button type="button" role="tab" aria-selected="{{ $tab === $value ? 'true' : 'false' }}" wire:click="$set('tab', '{{ $value }}')"
+                        @class(['rounded-lg px-3 py-1 text-[13px] font-medium', 'bg-surface shadow-xs' => $tab === $value, 'text-ink-muted hover:text-ink' => $tab !== $value])>{{ $label }}</button>
+                @endforeach
+            </div>
+
+            @if ($tab === 'activity')
+                <livewire:intern.tickets.history :ticket="$ticket" :key="'history-'.$ticket->id" />
+            @else
             @forelse ($this->messages as $message)
                 <article wire:key="message-{{ $message->id }}" @class([
                     'rounded-card p-4 ring-1 sm:p-5',
@@ -258,6 +268,7 @@
 
             @if (auth()->user()->can('reply', $ticket) || auth()->user()->can('addNote', $ticket))
                 <livewire:intern.tickets.composer :ticket="$ticket" :key="'composer-'.$ticket->id" />
+            @endif
             @endif
         </div>
     </div>

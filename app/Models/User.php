@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationEvent;
 use App\Enums\Theme;
 use App\Models\Concerns\LogsActivity;
 use App\Support\Html;
@@ -18,7 +19,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'is_active', 'password', 'theme', 'signature'])]
+#[Fillable(['name', 'email', 'is_active', 'password', 'theme', 'signature', 'ticket_view', 'notification_settings'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
@@ -30,7 +31,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected array $activityIgnored = ['theme', 'signature', 'two_factor_secret', 'two_factor_recovery_codes'];
+    protected array $activityIgnored = ['theme', 'signature', 'ticket_view', 'notification_settings', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     /**
      * @var array<string, mixed>
@@ -52,6 +53,14 @@ class User extends Authenticatable
 
             return Html::toText($html) === '' ? null : $html;
         });
+    }
+
+    /**
+     * Whether the user wants to be notified about the event on the channel (database | mail).
+     */
+    public function wantsNotification(NotificationEvent $event, string $channel): bool
+    {
+        return (bool) ($this->notification_settings[$event->value][$channel] ?? $event->defaultFor($channel));
     }
 
     /**
@@ -98,6 +107,7 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'password' => 'hashed',
             'theme' => Theme::class,
+            'notification_settings' => 'array',
             'two_factor_confirmed_at' => 'datetime',
         ];
     }

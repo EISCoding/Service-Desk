@@ -20,9 +20,7 @@
         <header class="sticky top-0 z-20 border-b border-separator bg-canvas/80 backdrop-blur-xl backdrop-saturate-150">
             <div class="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4 sm:px-6">
                 <a href="{{ route('portal.home') }}" wire:navigate class="flex items-center gap-2.5">
-                    <span class="grid size-7 place-items-center rounded-lg bg-gradient-to-b from-accent to-accent-hover text-white shadow-sm">
-                        <x-heroicon-o-lifebuoy class="size-4.5" aria-hidden="true" />
-                    </span>
+                    <x-brand-mark size="sm" />
                     <span class="text-[15px] font-semibold tracking-tight">{{ config('app.name') }}</span>
                     <span class="hidden text-[13px] text-ink-muted sm:inline">Kundenportal</span>
                 </a>

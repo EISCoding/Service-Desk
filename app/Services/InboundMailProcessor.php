@@ -24,6 +24,7 @@ class InboundMailProcessor
         private TicketStatusService $statuses,
         private LoopDetector $loops,
         private TemplateMailer $templates,
+        private StaffNotifier $notifier,
     ) {}
 
     /**
@@ -77,6 +78,12 @@ class InboundMailProcessor
             // Confirmation only for known contacts, never in reply to automatic mails.
             if (! $isReply && $contact && ! $automatic) {
                 $this->templates->send($ticket, SystemTemplate::TicketOpened);
+            }
+
+            if (! $isReply) {
+                $this->notifier->newTicket($ticket);
+            } elseif (! $automatic) {
+                $this->notifier->customerReply($ticket, $message);
             }
 
             return $message;

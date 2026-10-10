@@ -31,8 +31,8 @@ it('edits the own signature under /intern/einstellungen/signatur', function () {
     expect($this->staff->refresh()->signature)->toBeNull();
 });
 
-it('is linked in the user menu', function () {
-    $this->get('/intern/tickets')->assertSee(route('intern.settings.signature'));
+it('is linked in the settings navigation', function () {
+    $this->get('/intern/einstellungen')->assertSee(route('intern.settings.signature'));
 });
 
 it('appends the signature to public replies but not to notes', function () {
