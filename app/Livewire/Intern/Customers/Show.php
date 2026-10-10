@@ -56,6 +56,33 @@ class Show extends Component
         ];
     }
 
+    public function archive(): void
+    {
+        $this->authorize('archive', $this->customer);
+
+        $this->customer->update(['archived_at' => now()]);
+        $this->toast('Kunde archiviert.');
+    }
+
+    public function restore(): void
+    {
+        $this->authorize('archive', $this->customer);
+
+        $this->customer->update(['archived_at' => null]);
+        $this->toast('Kunde wiederhergestellt.');
+    }
+
+    public function delete(): void
+    {
+        $this->authorize('delete', $this->customer);
+
+        $number = $this->customer->number;
+        $this->customer->delete();
+
+        $this->flashToast("Kunde {$number} gelöscht.");
+        $this->redirectRoute('intern.customers.index', navigate: true);
+    }
+
     #[On('contacts-changed')]
     #[On('notes-changed')]
     #[On('customer-saved')]

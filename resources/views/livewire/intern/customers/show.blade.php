@@ -19,7 +19,35 @@
             </p>
         </div>
         <div class="flex shrink-0 items-center gap-2">
-            {{ $actions ?? '' }}
+            @can('update', $customer)
+                <x-ui.button variant="secondary" icon="pencil" x-on:click="$dispatch('edit-customer', { id: {{ $customer->id }} })">Bearbeiten</x-ui.button>
+            @endcan
+            @canany(['archive', 'delete'], $customer)
+                <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
+                    <x-ui.button variant="secondary" x-on:click="open = ! open" x-bind:aria-expanded="open">
+                        <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
+                        <span class="sr-only">Weitere Aktionen</span>
+                    </x-ui.button>
+                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+                        @can('archive', $customer)
+                            @if ($customer->isArchived())
+                                <button type="button" x-on:click="open = false" wire:click="restore" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
+                                    <x-heroicon-o-arrow-uturn-left class="size-4 text-ink-muted" aria-hidden="true" /> Wiederherstellen
+                                </button>
+                            @else
+                                <button type="button" x-on:click="open = false" wire:click="archive" wire:confirm="Kunde archivieren? Er erscheint dann nicht mehr in der Kundenliste, bleibt aber mit Verlauf erhalten." class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
+                                    <x-heroicon-o-archive-box class="size-4 text-ink-muted" aria-hidden="true" /> Archivieren
+                                </button>
+                            @endif
+                        @endcan
+                        @can('delete', $customer)
+                            <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="Kunde {{ $customer->number }} mit allen Ansprechpartnern und Notizen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
+                                <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Löschen
+                            </button>
+                        @endcan
+                    </div>
+                </div>
+            @endcanany
         </div>
     </div>
 
@@ -161,4 +189,6 @@
                 </div>
         @endswitch
     </div>
+
+    <livewire:intern.customers.customer-form />
 </div>

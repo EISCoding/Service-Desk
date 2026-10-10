@@ -39,7 +39,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Migration + Model `customer_notes`: Kunde, Autor, Text, angeheftet ja/nein
 - [x] Kundenliste mit Suche, Filter (aktiv/archiviert), Sortierung, Pagination
 - [x] Kundenansicht mit Tabs: Übersicht, Ansprechpartner, Tickets, Notizen, Verlauf
-- [ ] Kunden anlegen, bearbeiten, archivieren (nicht löschen, wenn Tickets existieren)
+- [x] Kunden anlegen, bearbeiten, archivieren (nicht löschen, wenn Tickets existieren)
 - [ ] Ansprechpartner anlegen/bearbeiten, Portal-Einladung per Mail (Link zum Passwort setzen)
 - [ ] Policies für alle Aktionen, Activity-Log-Einträge
 

@@ -1,5 +1,11 @@
 <div>
-    <x-ui.page-header title="Kunden" description="Firmen, Ansprechpartner und Notizen." />
+    <x-ui.page-header title="Kunden" description="Firmen, Ansprechpartner und Notizen.">
+        <x-slot:actions>
+            @can('create', \App\Models\Customer::class)
+                <x-ui.button icon="plus" x-on:click="$dispatch('create-customer')">Neuer Kunde</x-ui.button>
+            @endcan
+        </x-slot:actions>
+    </x-ui.page-header>
 
     <div class="mb-4 flex flex-wrap items-center gap-3">
         <x-ui.input wire:model.live.debounce.300ms="search" type="search" placeholder="Firma, Nummer, Ort, Ansprechpartner …" aria-label="Kunden durchsuchen" class="w-full sm:w-80" />
@@ -11,7 +17,9 @@
             @if ($search !== '' || $status !== 'active')
                 <x-ui.empty-state icon="magnifying-glass" title="Keine Treffer" description="Kein Kunde passt zu Suche und Filter." />
             @else
-                <x-ui.empty-state icon="building-office-2" title="Noch keine Kunden" description="Lege den ersten Kunden an." />
+                <x-ui.empty-state icon="building-office-2" title="Noch keine Kunden" description="Lege den ersten Kunden an.">
+                    <x-ui.button variant="secondary" size="sm" icon="plus" x-on:click="$dispatch('create-customer')">Neuer Kunde</x-ui.button>
+                </x-ui.empty-state>
             @endif
         @else
             <x-ui.table>
@@ -50,4 +58,6 @@
             @endif
         @endif
     </x-ui.card>
+
+    <livewire:intern.customers.customer-form />
 </div>
