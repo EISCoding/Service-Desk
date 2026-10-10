@@ -26,10 +26,35 @@ class InboundMailProcessor
         }
 
         return DB::transaction(function () use ($mailbox, $mail) {
-            $ticket = $this->newTicket($mailbox, $mail);
+            $ticket = $this->findTicket($mail) ?? $this->newTicket($mailbox, $mail);
 
             return $this->addMessage($ticket, $mail);
         });
+    }
+
+    /**
+     * 1) [#JJJJ-NNNNN] (or Ticket#JJJJ-NNNNN) in the subject,
+     * 2) In-Reply-To / References pointing to a message of a ticket,
+     * otherwise null (new ticket). Merged tickets lead to their target.
+     */
+    public function findTicket(InboundMail $mail): ?Ticket
+    {
+        $ticket = null;
+
+        if (preg_match('/\[#(\d{4}-\d{5})\]|Ticket#(\d{4}-\d{5})/i', $mail->subject, $match)) {
+            $ticket = Ticket::where('number', $match[1] ?: $match[2])->first();
+        }
+
+        if (! $ticket && $ids = $mail->referencedIds()) {
+            $ticket = TicketMessage::whereIn('message_id', $ids)->latest('id')->first()?->ticket;
+        }
+
+        // Follow merges to the ticket that is still in use.
+        for ($i = 0; $ticket?->merged_into_id && $i < 10; $i++) {
+            $ticket = $ticket->mergedInto;
+        }
+
+        return $ticket;
     }
 
     private function newTicket(Mailbox $mailbox, InboundMail $mail): Ticket

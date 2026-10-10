@@ -29,6 +29,25 @@ class FakeMailboxConnector implements MailboxConnector
         return $this;
     }
 
+    /**
+     * A plain text mail (fixture reply.eml) with the given headers.
+     */
+    public function reply(string $subject, string $from = 'Anna Becker <anna.becker@kunde.test>', ?string $inReplyTo = null, array $headers = [], string $body = 'Danke, das hat geholfen.', ?string $messageId = null): self
+    {
+        if ($inReplyTo) {
+            $headers['In-Reply-To'] = "<{$inReplyTo}>";
+            $headers['References'] = "<{$inReplyTo}>";
+        }
+
+        return $this->add('reply', [
+            '{{MESSAGE_ID}}' => $messageId ?? uniqid('reply-', true).'@mail.kunde.test',
+            '{{FROM}}' => $from,
+            '{{SUBJECT}}' => $subject,
+            '{{HEADERS}}' => collect($headers)->map(fn ($value, $name) => "{$name}: {$value}")->implode("\r\n") ?: 'X-Fixture: 1',
+            '{{BODY}}' => $body,
+        ]);
+    }
+
     public function fetch(Mailbox $mailbox, int $limit): iterable
     {
         if ($this->failWith) {

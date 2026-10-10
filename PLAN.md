@@ -75,7 +75,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Migration + Model `mailboxes`: Name, Adresse, IMAP (Host, Port, Verschlüsselung, Benutzer, Passwort verschlüsselt, Ordner), SMTP (dito), Standardgruppe, aktiv
 - [x] Admin-Oberfläche für Postfächer mit Button „Verbindung testen“ (IMAP und SMTP)
 - [x] Job `FetchMailbox` pro Postfach, jede Minute per Scheduler, `withoutOverlapping`
-- [ ] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
+- [x] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
 - [ ] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
 - [ ] Antwort auf geschlossenes Ticket: Frist prüfen (Annahmen oben)
 - [ ] Antwort auf „Warte auf Kunden“ → „In Arbeit“
