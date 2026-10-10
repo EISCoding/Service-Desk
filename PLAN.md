@@ -79,7 +79,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
 - [x] Antwort auf geschlossenes Ticket: Frist prüfen (Annahmen oben)
 - [x] Antwort auf „Warte auf Kunden“ → „In Arbeit“
-- [ ] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar
+- [x] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar
 - [ ] Loop-Schutz: `Auto-Submitted`, `X-Auto-Response-Suppress`, Abwesenheitsnotizen → keine automatische Antwort
 - [ ] Verarbeitete Mails als gelesen markieren oder in Ordner verschieben (pro Postfach einstellbar)
 - [ ] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue

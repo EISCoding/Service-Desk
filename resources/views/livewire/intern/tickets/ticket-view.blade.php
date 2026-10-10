@@ -191,11 +191,22 @@
                         @endif
                     </header>
 
-                    <div class="message-body">{!! $message->body !!}</div>
+                    @php([$mainText, $quotedText] = $message->displayParts())
+                    <div class="message-body">{!! $mainText !!}</div>
+                    @if ($quotedText)
+                        <details class="group mt-3">
+                            <summary class="inline-flex cursor-pointer list-none items-center gap-1 rounded-full bg-ink/[0.05] px-2.5 py-0.5 text-[12px] font-medium text-ink-muted hover:text-ink">
+                                <x-heroicon-m-ellipsis-horizontal class="size-4" aria-hidden="true" />
+                                <span class="group-open:hidden">Zitierten Verlauf anzeigen</span>
+                                <span class="hidden group-open:inline">Zitierten Verlauf ausblenden</span>
+                            </summary>
+                            <div class="message-body mt-3 border-l-2 border-separator pl-3 text-ink-muted">{!! $quotedText !!}</div>
+                        </details>
+                    @endif
 
-                    @if ($message->attachments->isNotEmpty())
+                    @if ($message->listedAttachments()->isNotEmpty())
                         <ul class="mt-4 flex flex-wrap gap-2" aria-label="Anhänge">
-                            @foreach ($message->attachments as $attachment)
+                            @foreach ($message->listedAttachments() as $attachment)
                                 <li>
                                     <a href="{{ $attachment->url(inline: $attachment->canBeShownInline()) }}" target="_blank" class="flex max-w-60 items-center gap-2 rounded-xl bg-surface-muted px-3 py-2 text-[13px] ring-1 ring-separator hover:ring-accent">
                                         @if ($attachment->isImage())
