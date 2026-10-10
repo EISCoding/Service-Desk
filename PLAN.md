@@ -34,7 +34,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 2 – Kunden
 
-- [ ] Migration + Model `customers`: Kundennummer (automatisch, überschreibbar, eindeutig), Firma, Straße, PLZ, Ort, Land, E-Mail, Telefon, Website, aktiv/archiviert
+- [x] Migration + Model `customers`: Kundennummer (automatisch, überschreibbar, eindeutig), Firma, Straße, PLZ, Ort, Land, E-Mail, Telefon, Website, aktiv/archiviert
 - [ ] Migration + Model `contacts`: Kunde, Anrede, Vorname, Nachname, E-Mail (eindeutig), Telefon, Position, Portal-Zugang ja/nein, Hauptansprechpartner ja/nein
 - [ ] Migration + Model `customer_notes`: Kunde, Autor, Text, angeheftet ja/nein
 - [ ] Kundenliste mit Suche, Filter (aktiv/archiviert), Sortierung, Pagination

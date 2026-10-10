@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\Customer;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
         Relation::enforceMorphMap([
             'user' => User::class,
             'group' => Group::class,
+            'customer' => Customer::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.
