@@ -11,11 +11,13 @@ use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Services\AttachmentStorage;
+use App\Services\TicketStatusService;
 use App\Support\Html;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -39,9 +41,27 @@ class Create extends Component
     /** @var list<TemporaryUploadedFile> */
     public array $files = [];
 
+    /** Closed ticket this one follows up ("Neues Ticket dazu"). */
+    #[Url(as: 'bezug')]
+    public ?int $previousId = null;
+
     public function mount(): void
     {
         $this->priority = TicketPriority::Normal->value;
+
+        if ($previous = $this->previous()) {
+            $this->subject = $previous->subject;
+        }
+    }
+
+    /**
+     * The referenced ticket, if the contact may see it.
+     */
+    public function previous(): ?Ticket
+    {
+        $previous = $this->previousId ? Ticket::find($this->previousId) : null;
+
+        return $previous && auth('contact')->user()->can('viewInPortal', $previous) ? $previous : null;
     }
 
     public function removeFile(int $index): void
@@ -50,7 +70,7 @@ class Create extends Component
         $this->files = array_values($this->files);
     }
 
-    public function save(AttachmentStorage $storage): void
+    public function save(AttachmentStorage $storage, TicketStatusService $statuses): void
     {
         $this->authorize('createInPortal', Ticket::class);
 
@@ -72,7 +92,7 @@ class Create extends Component
 
         $contact = auth('contact')->user();
 
-        $ticket = DB::transaction(function () use ($contact, $storage) {
+        $ticket = DB::transaction(function () use ($contact, $storage, $statuses) {
             $mailbox = Mailbox::default();
 
             $ticket = new Ticket([
@@ -94,6 +114,10 @@ class Create extends Component
 
             foreach ($this->files as $file) {
                 $storage->storeUpload($file, $message);
+            }
+
+            if ($previous = $this->previous()) {
+                $statuses->linkFollowUp($previous, $ticket, 'vom Kunden im Portal angelegt.');
             }
 
             return $ticket;

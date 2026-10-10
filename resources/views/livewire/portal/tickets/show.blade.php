@@ -91,6 +91,28 @@
                     @endif
                 </article>
             @endforeach
+
+            @if ($contact->can('replyInPortal', $ticket))
+                <section aria-label="Antworten" class="rounded-card bg-surface p-4 ring-1 ring-separator/80 sm:p-5">
+                    @if ($ticket->isClosed())
+                        <x-ui.alert class="mb-3">Dieses Ticket ist geschlossen. Mit Ihrer Antwort wird es wieder geöffnet.</x-ui.alert>
+                    @endif
+                    <form wire:submit="reply" class="space-y-3">
+                        <x-ui.rich-editor wire:model="body" placeholder="Ihre Nachricht …" label="Ihre Antwort" />
+                        <div class="flex flex-wrap items-end justify-between gap-3">
+                            @include('livewire.portal.partials.files')
+                            <x-ui.button type="submit" icon="paper-airplane" wire:loading.attr="disabled" wire:target="files,reply">Antwort senden</x-ui.button>
+                        </div>
+                    </form>
+                </section>
+            @else
+                <x-ui.card>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <p class="text-sm text-ink-muted">Dieses Ticket ist seit {{ $ticket->closed_at?->isoFormat('D. MMMM YYYY') }} geschlossen. Für ein neues Anliegen legen Sie bitte ein neues Ticket an.</p>
+                        <x-ui.button variant="secondary" icon="plus" :href="route('portal.tickets.create', ['bezug' => $ticket->id])" wire:navigate>Neues Ticket dazu</x-ui.button>
+                    </div>
+                </x-ui.card>
+            @endif
         </div>
     </div>
 </div>

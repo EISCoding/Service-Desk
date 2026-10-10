@@ -232,6 +232,15 @@ class Ticket extends Model
     }
 
     /**
+     * A customer reply may reopen the ticket: not closed, or closed within the reopen period.
+     */
+    public function canBeReopened(): bool
+    {
+        return $this->closed_at === null
+            || $this->closed_at->gte(now()->subDays((int) config('servicedesk.mail.reopen_days')));
+    }
+
+    /**
      * Record that something happened (sorting by latest activity).
      */
     public function touchActivity(): void

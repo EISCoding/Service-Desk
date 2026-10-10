@@ -25,6 +25,14 @@ class TicketPolicy
             && ($contact->is_primary || $ticket->contact_id === $contact->id);
     }
 
+    /**
+     * Closed tickets can be answered within the reopen period, afterwards a new ticket is needed.
+     */
+    public function replyInPortal(Contact $contact, Ticket $ticket): bool
+    {
+        return $this->viewInPortal($contact, $ticket) && $ticket->canBeReopened();
+    }
+
     public function createInPortal(Contact $contact): bool
     {
         return $contact->canUsePortal();

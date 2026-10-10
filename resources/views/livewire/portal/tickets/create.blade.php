@@ -1,6 +1,10 @@
 <div class="max-w-3xl">
     <x-ui.page-header title="Neues Ticket" description="Beschreiben Sie Ihr Anliegen möglichst genau. Screenshots oder Dokumente können Sie anhängen." />
 
+    @if ($previous = $this->previous())
+        <x-ui.alert class="mb-4">Neues Ticket zu {{ $previous->reference() }} „{{ $previous->subject }}“.</x-ui.alert>
+    @endif
+
     <x-ui.card>
         <form wire:submit="save" id="ticket-form" class="space-y-4">
             <div class="grid gap-4 sm:grid-cols-[1fr_12rem]">

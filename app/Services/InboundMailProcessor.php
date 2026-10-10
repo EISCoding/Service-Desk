@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\MessageType;
 use App\Enums\SystemTemplate;
 use App\Enums\TicketSource;
-use App\Enums\TicketStatus;
 use App\Mail\Inbound\InboundMail;
 use App\Mail\Inbound\LoopDetector;
 use App\Models\Contact;
@@ -67,11 +66,12 @@ class InboundMailProcessor
             $message = $this->addMessage($ticket, $mail, $contact, $automatic);
 
             if ($isReply && ! $automatic) {
-                $this->statusAfterCustomerReply($ticket);
+                $this->statuses->afterCustomerReply($ticket);
             }
 
             if ($previous) {
-                $this->linkFollowUpTicket($previous, $ticket);
+                $days = (int) config('servicedesk.mail.reopen_days');
+                $this->statuses->linkFollowUp($previous, $ticket, "Die Antwort kam mehr als {$days} Tage nach dem Schließen.");
             }
 
             // Confirmation only for known contacts, never in reply to automatic mails.
@@ -117,39 +117,9 @@ class InboundMailProcessor
         return $mail->fromEmail !== '' ? Contact::where('email', $mail->fromEmail)->first() : null;
     }
 
-    /**
-     * Closed tickets can be reopened by the customer within the reopen period.
-     */
     public function canReopen(Ticket $ticket): bool
     {
-        return $ticket->closed_at === null
-            || $ticket->closed_at->gte(now()->subDays((int) config('servicedesk.mail.reopen_days')));
-    }
-
-    /**
-     * A customer reply puts closed (within the period) and "Warte auf Kunden"
-     * tickets back to "In Arbeit"; other statuses stay.
-     */
-    private function statusAfterCustomerReply(Ticket $ticket): void
-    {
-        if (in_array($ticket->status, [TicketStatus::Closed, TicketStatus::WaitingCustomer], true)) {
-            $this->statuses->change($ticket, TicketStatus::InProgress);
-        }
-    }
-
-    private function linkFollowUpTicket(Ticket $previous, Ticket $ticket): void
-    {
-        $days = (int) config('servicedesk.mail.reopen_days');
-
-        $this->note($ticket, "Folgeticket zu {$previous->reference()}: Die Antwort kam mehr als {$days} Tage nach dem Schließen.");
-        $this->note($previous, "Neue Antwort nach Ablauf der Frist – weiter in {$ticket->reference()}.");
-    }
-
-    private function note(Ticket $ticket, string $text): void
-    {
-        $note = new TicketMessage(['type' => MessageType::Internal, 'body' => '<p>'.e($text).'</p>']);
-        $note->ticket()->associate($ticket);
-        $note->save();
+        return $ticket->canBeReopened();
     }
 
     private function newTicket(Mailbox $mailbox, InboundMail $mail, ?Contact $contact, ?Ticket $previous = null): Ticket

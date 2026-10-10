@@ -99,7 +99,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Ticketliste: Ansprechpartner sieht eigene Tickets, Hauptansprechpartner alle Tickets seiner Firma
 - [x] Ticket erstellen: Betreff, Beschreibung, Priorität (optional), Anhänge
 - [x] Ticketansicht: nur öffentliche Nachrichten und Mails, niemals interne Notizen oder Kundennotizen
-- [ ] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
+- [x] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
 - [ ] VOS-Termin im Portal anzeigen
 - [ ] Profil: Name, Telefon, Passwort, Darkmode
 - [ ] Gleiches Design-System, reduzierte Navigation
