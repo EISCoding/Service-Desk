@@ -5,6 +5,7 @@ use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
+use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
@@ -12,6 +13,7 @@ use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
 use App\Models\Customer;
 use App\Models\Group;
+use App\Models\Mailbox;
 use App\Models\User;
 use App\Support\Navigation;
 use Illuminate\Support\Facades\Route;
@@ -59,6 +61,10 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         Route::livewire('benutzer', UserIndex::class)
             ->middleware('can:viewAny,'.User::class)
             ->name('users.index');
+
+        Route::livewire('postfaecher', MailboxIndex::class)
+            ->middleware('can:viewAny,'.Mailbox::class)
+            ->name('mailboxes.index');
 
         Route::livewire('gruppen', GroupIndex::class)
             ->middleware('can:viewAny,'.Group::class)
