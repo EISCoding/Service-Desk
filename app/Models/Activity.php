@@ -20,7 +20,7 @@ class Activity extends Model
 
     protected $table = 'activity_log';
 
-    protected $fillable = ['causer_type', 'causer_id', 'subject_type', 'subject_id', 'action', 'changes'];
+    protected $fillable = ['causer_type', 'causer_id', 'subject_type', 'subject_id', 'parent_type', 'parent_id', 'action', 'changes'];
 
     protected function casts(): array
     {
@@ -38,5 +38,21 @@ class Activity extends Model
     public function subject(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function parent(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * Entries of a model's history: its own entries and those of its children
+     * (e.g. a customer's contacts and notes).
+     */
+    public function scopeForHistoryOf($query, Model $model): void
+    {
+        $query->where(fn ($query) => $query
+            ->where(fn ($query) => $query->where('subject_type', $model->getMorphClass())->where('subject_id', $model->getKey()))
+            ->orWhere(fn ($query) => $query->where('parent_type', $model->getMorphClass())->where('parent_id', $model->getKey())));
     }
 }

@@ -4,11 +4,15 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\Contact;
+use App\Models\Customer;
+use App\Models\CustomerNote;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -23,10 +27,16 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // German dates ("vor 5 Minuten", "3. Okt. 2026").
+        Carbon::setLocale(config('app.locale'));
+
         // Short, stable type names in polymorphic columns (activity log, roles).
         Relation::enforceMorphMap([
             'user' => User::class,
             'group' => Group::class,
+            'customer' => Customer::class,
+            'contact' => Contact::class,
+            'customer_note' => CustomerNote::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.

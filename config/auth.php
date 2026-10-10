@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Contact;
 use App\Models\User;
 
 return [
@@ -42,6 +43,12 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Customer portal (/portal)
+        'contact' => [
+            'driver' => 'session',
+            'provider' => 'contacts',
+        ],
     ],
 
     /*
@@ -65,6 +72,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', User::class),
+        ],
+
+        'contacts' => [
+            'driver' => 'eloquent',
+            'model' => Contact::class,
         ],
 
         // 'users' => [
@@ -98,6 +110,22 @@ return [
             'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
             'expire' => 60,
             'throttle' => 60,
+        ],
+
+        // Portal "Passwort vergessen" (Phase 5)
+        'contacts' => [
+            'provider' => 'contacts',
+            'table' => 'contact_password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        // Portal invitation link ("Passwort festlegen"), valid for 7 days
+        'contact_invitations' => [
+            'provider' => 'contacts',
+            'table' => 'contact_password_reset_tokens',
+            'expire' => 60 * 24 * 7,
+            'throttle' => 0,
         ],
     ],
 

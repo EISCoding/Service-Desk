@@ -4,6 +4,42 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Customer numbers
+    |--------------------------------------------------------------------------
+    |
+    | New customers get "<prefix><next number>" (e.g. K-10001) unless a number
+    | is entered manually. The next number is the highest existing one + 1.
+    |
+    */
+
+    'customer_number' => [
+        'prefix' => 'K-',
+        'start' => 10001,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Countries for addresses (ISO 3166-1 alpha-2 => German name)
+    |--------------------------------------------------------------------------
+    */
+
+    'countries' => [
+        'DE' => 'Deutschland',
+        'AT' => 'Österreich',
+        'CH' => 'Schweiz',
+        'LI' => 'Liechtenstein',
+        'LU' => 'Luxemburg',
+        'NL' => 'Niederlande',
+        'BE' => 'Belgien',
+        'FR' => 'Frankreich',
+        'IT' => 'Italien',
+        'PL' => 'Polen',
+        'CZ' => 'Tschechien',
+        'DK' => 'Dänemark',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Local admin account
     |--------------------------------------------------------------------------
     |

@@ -34,14 +34,14 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 2 – Kunden
 
-- [ ] Migration + Model `customers`: Kundennummer (automatisch, überschreibbar, eindeutig), Firma, Straße, PLZ, Ort, Land, E-Mail, Telefon, Website, aktiv/archiviert
-- [ ] Migration + Model `contacts`: Kunde, Anrede, Vorname, Nachname, E-Mail (eindeutig), Telefon, Position, Portal-Zugang ja/nein, Hauptansprechpartner ja/nein
-- [ ] Migration + Model `customer_notes`: Kunde, Autor, Text, angeheftet ja/nein
-- [ ] Kundenliste mit Suche, Filter (aktiv/archiviert), Sortierung, Pagination
-- [ ] Kundenansicht mit Tabs: Übersicht, Ansprechpartner, Tickets, Notizen, Verlauf
-- [ ] Kunden anlegen, bearbeiten, archivieren (nicht löschen, wenn Tickets existieren)
-- [ ] Ansprechpartner anlegen/bearbeiten, Portal-Einladung per Mail (Link zum Passwort setzen)
-- [ ] Policies für alle Aktionen, Activity-Log-Einträge
+- [x] Migration + Model `customers`: Kundennummer (automatisch, überschreibbar, eindeutig), Firma, Straße, PLZ, Ort, Land, E-Mail, Telefon, Website, aktiv/archiviert
+- [x] Migration + Model `contacts`: Kunde, Anrede, Vorname, Nachname, E-Mail (eindeutig), Telefon, Position, Portal-Zugang ja/nein, Hauptansprechpartner ja/nein
+- [x] Migration + Model `customer_notes`: Kunde, Autor, Text, angeheftet ja/nein
+- [x] Kundenliste mit Suche, Filter (aktiv/archiviert), Sortierung, Pagination
+- [x] Kundenansicht mit Tabs: Übersicht, Ansprechpartner, Tickets, Notizen, Verlauf
+- [x] Kunden anlegen, bearbeiten, archivieren (nicht löschen, wenn Tickets existieren)
+- [x] Ansprechpartner anlegen/bearbeiten, Portal-Einladung per Mail (Link zum Passwort setzen)
+- [x] Policies für alle Aktionen, Activity-Log-Einträge
 
 **Fertig wenn:** Kunden und Ansprechpartner sind vollständig pflegbar, Rechte greifen, Tests grün.
 

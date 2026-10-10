@@ -2,6 +2,8 @@
 
 use App\Enums\Permission;
 use App\Enums\Role;
+use App\Models\Contact;
+use App\Models\Customer;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -92,4 +94,14 @@ it('creates the local admin only in the local environment', function () {
     $admin = User::where('email', config('servicedesk.seed_admin.email'))->first();
     expect($admin)->not->toBeNull()
         ->and($admin->hasRole(Role::Admin->value))->toBeTrue();
+});
+
+it('seeds demo customers only in the local environment', function () {
+    $this->seed(DatabaseSeeder::class);
+    expect(Customer::count())->toBe(0);
+
+    app()->detectEnvironment(fn () => 'local');
+    $this->seed(DatabaseSeeder::class);
+    expect(Customer::count())->toBe(13)
+        ->and(Contact::count())->toBeGreaterThanOrEqual(12);
 });
