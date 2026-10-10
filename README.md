@@ -62,6 +62,8 @@ Nach dem Login:
 - **2FA einrichten / Passwort ändern**: Benutzermenü oben rechts → Sicherheit
 - **Darkmode**: Benutzermenü → Darstellung (System / Hell / Dunkel)
 - **Kunden**: `/intern/kunden` – `db:seed` legt lokal 12 Demo-Kunden mit Ansprechpartnern an
+- **Tickets**: `/intern/tickets` (Liste | Ticket), **Termine**: `/intern/termine` – lokal mit Demo-Tickets,
+  Gruppen „Support“/„Technik“, einem VOS-Termin und fälligen Wiedervorlagen
 - **Design-System**: <http://localhost:8000/intern/styleguide> (nur bei `APP_ENV=local`)
 
 Mails (Passwort-Reset usw.) landen lokal in `storage/logs/laravel-*.log` (`MAIL_MAILER=log`).
@@ -99,6 +101,14 @@ Es gibt keinen dauerhaft laufenden Queue-Worker. Stattdessen:
    Der Worker arbeitet die anstehenden Jobs ab und beendet sich spätestens nach 50 Sekunden.
 
 Queue, Cache und Sessions nutzen den Treiber `database`.
+
+Täglich um 06:00 markiert der Scheduler Tickets mit fälliger Wiedervorlage.
+
+## Anhänge
+
+Anhänge liegen in `storage/app/private/attachments` und werden nur über `/intern/anhaenge/{id}` mit
+Rechteprüfung ausgeliefert. Maximale Größe pro Datei: `ATTACHMENT_MAX_KB` (Standard 20 MB). In Plesk
+müssen `upload_max_filesize` und `post_max_size` (PHP-Einstellungen) mindestens so groß sein.
 
 ## Deployment (Plesk)
 

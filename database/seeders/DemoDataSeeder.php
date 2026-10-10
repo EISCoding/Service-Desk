@@ -2,18 +2,30 @@
 
 namespace Database\Seeders;
 
+use App\Enums\TicketPriority;
+use App\Enums\TicketStatus;
+use App\Models\Appointment;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
+use App\Models\Group;
+use App\Models\Ticket;
+use App\Models\TicketMessage;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * Sample customers with contacts and notes for local development.
+ * Sample customers, contacts, notes, groups and tickets for local development.
  */
 class DemoDataSeeder extends Seeder
 {
     public function run(): void
+    {
+        $this->customers();
+        $this->tickets();
+    }
+
+    private function customers(): void
     {
         if (Customer::exists()) {
             return;
@@ -31,5 +43,50 @@ class DemoDataSeeder extends Seeder
         });
 
         Customer::factory()->archived()->create(['company' => 'Altkunde GmbH']);
+    }
+
+    private function tickets(): void
+    {
+        if (Ticket::exists()) {
+            return;
+        }
+
+        $admin = User::first();
+        $support = Group::firstOrCreate(['name' => 'Support'], ['description' => 'Erste Anlaufstelle']);
+        $technik = Group::firstOrCreate(['name' => 'Technik'], ['description' => 'Vor-Ort-Einsätze und Server']);
+        $admin?->groups()->syncWithoutDetaching([$support->id]);
+
+        $statuses = [TicketStatus::New, TicketStatus::New, TicketStatus::InProgress, TicketStatus::WaitingCustomer,
+            TicketStatus::WaitingInternal, TicketStatus::OnSite, TicketStatus::Closed];
+
+        Customer::active()->with('contacts')->get()->each(function (Customer $customer, int $index) use ($admin, $support, $technik, $statuses) {
+            foreach (range(0, $index % 3) as $n) {
+                $status = $statuses[($index + $n) % count($statuses)];
+                $ticket = Ticket::factory()->status($status)->create([
+                    'customer_id' => $customer->id,
+                    'contact_id' => $customer->contacts->random()?->id,
+                    'group_id' => ($index + $n) % 2 ? $technik->id : $support->id,
+                    'assignee_id' => $status === TicketStatus::New ? null : $admin?->id,
+                    'priority' => fake()->randomElement(TicketPriority::cases()),
+                    'follow_up_at' => $status->requiresFollowUp() ? today()->subDay() : null,
+                    'follow_up_due' => $status->requiresFollowUp(),
+                    'last_activity_at' => now()->subMinutes(fake()->numberBetween(5, 60 * 24 * 10)),
+                ]);
+
+                TicketMessage::factory()->for($ticket)->create([
+                    'author_type' => 'contact', 'author_id' => $ticket->contact_id,
+                    'body' => '<p>Guten Tag,</p><p>'.fake()->paragraph().'</p><p>Viele Grüße</p>',
+                    'created_at' => $ticket->created_at,
+                ]);
+
+                if ($status !== TicketStatus::New) {
+                    TicketMessage::factory()->for($ticket)->internal()->create(['author_id' => $admin?->id, 'body' => '<p>Rückruf vereinbart, Fernwartung vorbereitet.</p>']);
+                }
+
+                if ($status === TicketStatus::OnSite) {
+                    Appointment::factory()->for($ticket)->create(['technician_id' => $admin?->id, 'location' => implode("\n", [$customer->company, ...$customer->addressLines()])]);
+                }
+            }
+        });
     }
 }
