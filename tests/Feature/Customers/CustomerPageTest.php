@@ -4,6 +4,7 @@ use App\Livewire\Intern\Customers\Contacts;
 use App\Livewire\Intern\Customers\History;
 use App\Livewire\Intern\Customers\Notes;
 use App\Livewire\Intern\Customers\Show;
+use App\Livewire\Intern\Customers\Tickets;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
@@ -60,7 +61,7 @@ describe('page', function () {
             ->call('showTab', 'verlauf')
             ->assertSeeLivewire(History::class)
             ->call('showTab', 'tickets')
-            ->assertSee('Noch keine Tickets')
+            ->assertSeeLivewire(Tickets::class)
             ->call('showTab', 'unsinn')
             ->assertSet('tab', 'uebersicht');
 

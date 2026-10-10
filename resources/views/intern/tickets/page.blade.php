@@ -21,4 +21,6 @@
             @endif
         </section>
     </div>
+
+    <livewire:intern.tickets.create-ticket />
 </x-layouts::intern>

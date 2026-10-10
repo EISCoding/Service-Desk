@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
+@import 'trix/dist/trix.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -106,5 +107,49 @@
 
     .message-body :where(table) {
         @apply block max-w-full overflow-x-auto;
+    }
+}
+
+/* Trix editor in the design system */
+@layer components {
+    trix-toolbar .trix-button-group--file-tools,
+    trix-toolbar .trix-button--icon-heading-1 {
+        display: none;
+    }
+
+    trix-toolbar .trix-button-row {
+        @apply gap-1;
+    }
+
+    trix-toolbar .trix-button-group {
+        @apply mb-2 rounded-lg border-separator;
+    }
+
+    trix-toolbar .trix-button {
+        @apply border-separator bg-surface;
+    }
+
+    trix-toolbar .trix-button.trix-active {
+        @apply bg-accent/15;
+    }
+
+    .dark trix-toolbar .trix-button--icon::before {
+        filter: invert(1);
+    }
+
+    trix-toolbar .trix-dialog {
+        @apply rounded-xl border-separator bg-surface text-ink shadow-lg;
+    }
+
+    trix-toolbar .trix-input {
+        @apply rounded-lg border-separator bg-surface text-ink;
+    }
+
+    trix-editor {
+        @apply min-h-32 rounded-[10px] border-0 bg-surface px-3 py-2 text-sm text-ink shadow-xs ring-1 ring-separator ring-inset focus:ring-2 focus:ring-accent focus:outline-none;
+    }
+
+    trix-editor:empty:not(:focus)::before {
+        @apply text-ink-faint;
     }
 }

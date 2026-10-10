@@ -57,7 +57,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Ticketliste: Ansichten „Meine“, „Meine Gruppen“, „Alle“, „Nicht zugeordnet“; Filter nach Status, Priorität, Gruppe, Bearbeiter, Kunde; Volltextsuche in Betreff und Nummer
 - [x] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
 - [x] Ticketansicht: Verlauf chronologisch, interne Notizen farblich abgesetzt, Seitenleiste mit Status, Priorität, Gruppe, Bearbeiter, Kunde, Ansprechpartner
-- [ ] Ticket intern anlegen (für Kunde + Ansprechpartner)
+- [x] Ticket intern anlegen (für Kunde + Ansprechpartner)
 - [ ] Antworten (öffentlich) und interne Notiz schreiben, mit Anhängen
 - [ ] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
 - [ ] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`

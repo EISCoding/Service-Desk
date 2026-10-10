@@ -1,6 +1,31 @@
+// Rich text editor for replies and notes (<trix-editor>).
+import 'trix';
+
 // Alpine.js ships with Livewire; register Alpine extensions in the `alpine:init` hook.
 
+// Uploads in the editor are not used (attachments have their own field).
+document.addEventListener('trix-file-accept', (event) => event.preventDefault());
+
 document.addEventListener('alpine:init', () => {
+    // Trix bound to a Livewire property, see resources/views/components/ui/rich-editor.blade.php
+    window.Alpine.data('richEditor', (model) => ({
+        value: model,
+
+        init() {
+            const element = this.$refs.editor;
+            const load = () => {
+                if (element.editor && (this.value || '') !== element.value) {
+                    element.editor.loadHTML(this.value || '');
+                }
+            };
+
+            element.addEventListener('trix-initialize', load);
+            element.addEventListener('trix-change', () => (this.value = element.value));
+            this.$watch('value', load);
+            load();
+        },
+    }));
+
     // Appearance switch (System/Hell/Dunkel), see resources/views/components/theme-switcher.blade.php
     window.Alpine.data('themeSwitcher', (updateUrl = null) => ({
         current: document.documentElement.dataset.theme || 'system',
