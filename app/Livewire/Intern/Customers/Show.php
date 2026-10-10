@@ -6,6 +6,7 @@ use App\Livewire\Concerns\InteractsWithToasts;
 use App\Models\Customer;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -23,6 +24,7 @@ class Show extends Component
         'verlauf' => 'Verlauf',
     ];
 
+    #[Locked]
     public Customer $customer;
 
     #[Url(except: 'uebersicht')]

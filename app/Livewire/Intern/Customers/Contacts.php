@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
@@ -23,10 +24,17 @@ class Contacts extends Component
 {
     use InteractsWithToasts;
 
+    #[Locked]
     public Customer $customer;
+
+    public function mount(): void
+    {
+        $this->authorize('view', $this->customer);
+    }
 
     public bool $showForm = false;
 
+    #[Locked]
     public ?int $editingId = null;
 
     public string $salutation = '';
@@ -100,6 +108,8 @@ class Contacts extends Component
 
         $canManagePortal = auth()->user()->can('managePortal', $contact);
         $portalAccess = $canManagePortal ? $this->portal_access : $contact->portal_access;
+        // Invite automatically only when portal access is granted with this save.
+        $inviteNow = $canManagePortal && $portalAccess && ! $contact->portal_access && $this->sendInvitation;
 
         $this->email = Str::lower(trim($this->email));
 
@@ -127,7 +137,7 @@ class Contacts extends Component
 
         $this->showForm = false;
 
-        if ($canManagePortal && $portalAccess && $this->sendInvitation && $contact->portalStatus() !== 'active' && ! $contact->invited_at) {
+        if ($inviteNow && $contact->portalStatus() !== 'active') {
             $this->sendInvitationTo($contact);
             $this->changed($creating ? 'Ansprechpartner angelegt und eingeladen.' : 'Ansprechpartner gespeichert und eingeladen.');
 

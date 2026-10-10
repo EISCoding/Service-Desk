@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\CustomerNote;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 /**
@@ -16,10 +17,17 @@ class Notes extends Component
 {
     use InteractsWithToasts;
 
+    #[Locked]
     public Customer $customer;
+
+    public function mount(): void
+    {
+        $this->authorize('view', $this->customer);
+    }
 
     public string $body = '';
 
+    #[Locked]
     public ?int $editingId = null;
 
     public string $editBody = '';

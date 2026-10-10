@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Services\CustomerNumberGenerator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -20,6 +21,7 @@ class CustomerForm extends Component
 
     public bool $show = false;
 
+    #[Locked]
     public ?int $customerId = null;
 
     public string $number = '';

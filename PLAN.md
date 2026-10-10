@@ -41,7 +41,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Kundenansicht mit Tabs: Übersicht, Ansprechpartner, Tickets, Notizen, Verlauf
 - [x] Kunden anlegen, bearbeiten, archivieren (nicht löschen, wenn Tickets existieren)
 - [x] Ansprechpartner anlegen/bearbeiten, Portal-Einladung per Mail (Link zum Passwort setzen)
-- [ ] Policies für alle Aktionen, Activity-Log-Einträge
+- [x] Policies für alle Aktionen, Activity-Log-Einträge
 
 **Fertig wenn:** Kunden und Ansprechpartner sind vollständig pflegbar, Rechte greifen, Tests grün.
 

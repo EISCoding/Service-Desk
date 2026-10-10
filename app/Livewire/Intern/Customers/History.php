@@ -6,6 +6,7 @@ use App\Models\Activity;
 use App\Models\Customer;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,7 +17,13 @@ class History extends Component
 {
     use WithPagination;
 
+    #[Locked]
     public Customer $customer;
+
+    public function mount(): void
+    {
+        $this->authorize('view', $this->customer);
+    }
 
     #[Computed]
     public function activities(): LengthAwarePaginator

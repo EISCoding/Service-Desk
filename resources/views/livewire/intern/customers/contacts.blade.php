@@ -101,7 +101,7 @@
                 @if (auth()->user()->can('managePortal', $this->editing ?? new \App\Models\Contact))
                     <x-ui.checkbox label="Portal-Zugang" description="Kann sich im Kundenportal anmelden. Erfordert eine E-Mail-Adresse." wire:model="portal_access" />
 
-                    @if (! $this->editing || ($this->editing->portalStatus() !== 'active' && ! $this->editing->invited_at))
+                    @if (! $this->editing?->portal_access)
                         <div x-show="$wire.portal_access" x-cloak class="pl-7">
                             <x-ui.checkbox label="Einladung jetzt per E-Mail senden" description="Mit Link zum Festlegen des Passworts (7 Tage gültig)." wire:model="sendInvitation" />
                         </div>

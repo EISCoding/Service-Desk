@@ -152,6 +152,17 @@ describe('portal invitation', function () {
         Notification::assertSentToTimes($contact, ContactInvitation::class, 2);
     });
 
+    it('invites only when portal access is newly granted', function () {
+        $contact = Contact::factory()->for($this->customer)->withPortalAccess()->create();
+
+        contactsTab()->call('edit', $contact->id)->set('position', 'CEO')->call('save');
+        Notification::assertNothingSent();
+
+        $other = Contact::factory()->for($this->customer)->create();
+        contactsTab()->call('edit', $other->id)->set('portal_access', true)->call('save');
+        Notification::assertSentTo($other, ContactInvitation::class);
+    });
+
     it('does not invite contacts without portal access', function () {
         $contact = Contact::factory()->for($this->customer)->create();
 
@@ -193,6 +204,6 @@ describe('permissions', function () {
         $user->givePermissionTo('contacts.portal');
         $this->actingAs($user);
 
-        contactsTab()->call('create')->assertForbidden();
+        contactsTab()->assertForbidden();
     });
 });

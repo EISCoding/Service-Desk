@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -25,6 +26,7 @@ class Index extends Component
 
     public bool $showForm = false;
 
+    #[Locked]
     public ?int $editingId = null;
 
     public string $name = '';
