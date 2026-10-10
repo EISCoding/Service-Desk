@@ -102,7 +102,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
 - [x] VOS-Termin im Portal anzeigen
 - [x] Profil: Name, Telefon, Passwort, Darkmode
-- [ ] Gleiches Design-System, reduzierte Navigation
+- [x] Gleiches Design-System, reduzierte Navigation
 - [ ] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte
 
 **Fertig wenn:** Kunden können Tickets anlegen, einsehen und beantworten; Isolationstests grün.
