@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
@@ -47,6 +48,8 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         ->name('settings.security');
 
     Route::put('darstellung', UpdateThemeController::class)->name('theme.update');
+
+    Route::get('anhaenge/{attachment}', [AttachmentController::class, 'show'])->name('attachments.show');
 
     // Admin area: requires at least one admin.* permission; each page checks its own permission.
     Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function () {

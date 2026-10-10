@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\Attachment;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
@@ -41,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
             'customer_note' => CustomerNote::class,
             'ticket' => Ticket::class,
             'ticket_message' => TicketMessage::class,
+            'attachment' => Attachment::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.

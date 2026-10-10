@@ -55,6 +55,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Ids of the user's groups (memoized per instance).
+     *
+     * @return list<int>
+     */
+    public function groupIds(): array
+    {
+        return once(fn () => $this->groups()->pluck('groups.id')->map(fn ($id) => (int) $id)->all());
+    }
+
+    /**
      * Whether the user has finished setting up two-factor authentication.
      */
     public function hasTwoFactorEnabled(): bool

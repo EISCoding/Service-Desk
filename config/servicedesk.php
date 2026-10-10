@@ -19,6 +19,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Attachments
+    |--------------------------------------------------------------------------
+    |
+    | Maximum size per file in kilobytes. PHP's upload_max_filesize and
+    | post_max_size (Plesk → PHP settings) must be at least as large.
+    |
+    */
+
+    'attachments' => [
+        'max_kb' => (int) env('ATTACHMENT_MAX_KB', 20480),
+        'max_files' => 10,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Countries for addresses (ISO 3166-1 alpha-2 => German name)
     |--------------------------------------------------------------------------
     */

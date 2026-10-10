@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Permission;
 use App\Enums\TicketPriority;
 use App\Enums\TicketSource;
 use App\Enums\TicketStatus;
@@ -53,6 +54,15 @@ class Ticket extends Model
 
     protected static function booted(): void
     {
+        // Messages are removed by the database (cascade); their files need Eloquent.
+        static::deleting(function (Ticket $ticket) {
+            Attachment::query()
+                ->where('attachable_type', 'ticket_message')
+                ->whereIn('attachable_id', $ticket->messages()->select('id'))
+                ->get()
+                ->each->delete();
+        });
+
         static::creating(function (Ticket $ticket) {
             $ticket->number ??= app(TicketNumberGenerator::class)->next();
             $ticket->last_activity_at ??= now();
@@ -96,6 +106,32 @@ class Ticket extends Model
     protected function open(Builder $query): void
     {
         $query->where('status', '!=', TicketStatus::Closed->value);
+    }
+
+    /**
+     * Tickets the user may see (same rules as TicketPolicy::view).
+     */
+    #[Scope]
+    protected function visibleTo(Builder $query, User $user): void
+    {
+        if ($user->can(Permission::TicketsViewAll->value)) {
+            return;
+        }
+
+        $own = $user->can(Permission::TicketsViewOwn->value);
+        $group = $user->can(Permission::TicketsViewGroup->value);
+
+        $query->where(function (Builder $query) use ($user, $own, $group) {
+            $query->whereRaw('1 = 0');
+
+            if ($own) {
+                $query->orWhere('assignee_id', $user->id);
+            }
+
+            if ($group) {
+                $query->orWhereNull('group_id')->orWhereIn('group_id', $user->groupIds());
+            }
+        });
     }
 
     public function isClosed(): bool
