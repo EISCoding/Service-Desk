@@ -9,6 +9,7 @@ use App\Models\Contact;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Services\AttachmentStorage;
+use App\Services\StaffNotifier;
 use App\Services\TicketStatusService;
 use App\Support\Html;
 use Illuminate\Database\Eloquent\Collection;
@@ -87,7 +88,7 @@ class Show extends Component
     /**
      * Reply of the contact; "Warte auf Kunden" and closed tickets go back to "In Arbeit".
      */
-    public function reply(AttachmentStorage $storage, TicketStatusService $statuses): void
+    public function reply(AttachmentStorage $storage, TicketStatusService $statuses, StaffNotifier $notifier): void
     {
         abort_unless($this->contact->can('replyInPortal', $this->ticket), 403);
 
@@ -105,7 +106,7 @@ class Show extends Component
             'files.*.max' => 'Eine Datei darf höchstens '.round($maxKb / 1024).' MB groß sein.',
         ], ['body' => 'Nachricht', 'files' => 'Anhänge']);
 
-        DB::transaction(function () use ($storage, $statuses) {
+        DB::transaction(function () use ($storage, $statuses, $notifier) {
             $message = new TicketMessage(['type' => MessageType::Public, 'body' => $this->body]);
             $message->ticket()->associate($this->ticket);
             $message->author()->associate($this->contact);
@@ -117,6 +118,7 @@ class Show extends Component
 
             $this->ticket->logActivity('reply_added', count($this->files) ? ['attachments' => ['old' => null, 'new' => count($this->files)]] : []);
             $statuses->afterCustomerReply($this->ticket);
+            $notifier->customerReply($this->ticket, $message);
         });
 
         $this->reset('body', 'files');

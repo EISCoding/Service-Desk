@@ -104,7 +104,8 @@
                     <kbd class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-separator px-1.5 font-sans text-[11px] text-ink-faint sm:block">⌘K</kbd>
                 </form>
 
-                <div class="ml-auto">
+                <div class="ml-auto flex items-center gap-1">
+                    <livewire:intern.notification-bell />
                     <x-user-menu />
                 </div>
             </header>

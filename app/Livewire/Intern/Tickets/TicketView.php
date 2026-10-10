@@ -15,6 +15,7 @@ use App\Models\TicketMessage;
 use App\Models\User;
 use App\Services\AppointmentService;
 use App\Services\OutgoingMailService;
+use App\Services\StaffNotifier;
 use App\Services\TemplateMailer;
 use App\Services\TicketMerger;
 use App\Services\TicketStatusService;
@@ -355,8 +356,15 @@ class TicketView extends Component
     {
         $this->authorize('update', $this->ticket);
 
-        $this->ticket->assignee()->associate($value === '' ? null : User::active()->findOrFail((int) $value));
-        $this->saveTicket($this->ticket->assignee ? "Bearbeiter: {$this->ticket->assignee->name}" : 'Bearbeiter entfernt');
+        $assignee = $value === '' ? null : User::active()->findOrFail((int) $value);
+        $changed = $assignee && $assignee->id !== $this->ticket->assignee_id;
+
+        $this->ticket->assignee()->associate($assignee);
+        $this->saveTicket($assignee ? "Bearbeiter: {$assignee->name}" : 'Bearbeiter entfernt');
+
+        if ($changed) {
+            app(StaffNotifier::class)->assigned($this->ticket, $assignee, auth()->user());
+        }
     }
 
     public function setCustomer(?int $customerId): void
