@@ -13,7 +13,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 1 – Grundgerüst
 
-- [ ] Laravel-Projekt anlegen, Pest, Tailwind, Livewire, Alpine einrichten
+- [x] Laravel-Projekt anlegen, Pest, Tailwind, Livewire, Alpine einrichten
 - [ ] `.env.example` mit allen benötigten Variablen, README mit lokalem Setup
 - [ ] Plesk-Deploy-Skript `deploy.sh`: `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force`, `config:cache`, `route:cache`, `view:cache`
 - [ ] Scheduler-Eintrag für die Queue (`queue:work --stop-when-empty --max-time=50`, jede Minute, `withoutOverlapping`)
