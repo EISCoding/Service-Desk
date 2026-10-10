@@ -35,25 +35,6 @@ class ImapMailboxConnector implements MailboxConnector
 
     private function wrap(Mailbox $mailbox, Message $message): FetchedMail
     {
-        $mail = $this->parser->fromMessage($message);
-
-        return new class($mailbox, $message, $mail) implements FetchedMail
-        {
-            public function __construct(private Mailbox $mailbox, private Message $message, private InboundMail $mail) {}
-
-            public function mail(): InboundMail
-            {
-                return $this->mail;
-            }
-
-            public function markProcessed(): void
-            {
-                if ($this->mailbox->processed_action === 'move' && $this->mailbox->processed_folder) {
-                    $this->message->move($this->mailbox->processed_folder);
-                } else {
-                    $this->message->setFlag('Seen');
-                }
-            }
-        };
+        return new ImapFetchedMail($mailbox, $message, $this->parser->fromMessage($message));
     }
 }
