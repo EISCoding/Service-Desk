@@ -4,7 +4,10 @@
     $isNote = $mode === 'note';
 @endphp
 
-<section aria-label="Antworten" @class([
+<section aria-label="Antworten" data-composer
+    x-data
+    x-on:composer-focus.window="$wire.setMode($event.detail.mode).then(() => { $el.scrollIntoView({ block: 'center' }); $el.querySelector('trix-editor')?.focus() })"
+    @class([
     'rounded-card p-4 ring-1 sm:p-5',
     'bg-yellow-500/10 ring-yellow-500/30' => $isNote,
     'bg-surface ring-separator/80' => ! $isNote,
@@ -105,4 +108,11 @@
             </div>
         </div>
     </form>
+
+    <p class="mt-3 hidden text-[12px] text-ink-faint lg:block" aria-hidden="true">
+        Tastenkürzel: <kbd class="rounded border border-separator px-1 font-sans">R</kbd> antworten ·
+        <kbd class="rounded border border-separator px-1 font-sans">N</kbd> interne Notiz ·
+        <kbd class="rounded border border-separator px-1 font-sans">E</kbd> Status ·
+        <kbd class="rounded border border-separator px-1 font-sans">J</kbd> / <kbd class="rounded border border-separator px-1 font-sans">K</kbd> nächstes / vorheriges Ticket
+    </p>
 </section>

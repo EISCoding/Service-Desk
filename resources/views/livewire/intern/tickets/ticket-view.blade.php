@@ -56,7 +56,7 @@
         <aside class="2xl:order-last" aria-label="Ticketdaten">
             <x-ui.card :padding="false" class="2xl:sticky 2xl:top-6">
                 <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 sm:grid-cols-3 2xl:grid-cols-1">
-                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" :disabled="! $canUpdate" />
+                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" data-shortcut="status" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" :disabled="! $canUpdate" />
                     <x-ui.select label="Priorität" :options="$priorityOptions" :selected="$ticket->priority->value" wire:change="setPriority($event.target.value)" :disabled="! $canUpdate" />
                     <x-ui.select label="Gruppe" placeholder="Ohne Gruppe" :options="$this->groupOptions" :selected="$ticket->group_id" wire:change="setGroup($event.target.value)" :disabled="! $canUpdate" />
                     <x-ui.select label="Bearbeiter" placeholder="Nicht zugeordnet" :options="$this->assigneeOptions" :selected="$ticket->assignee_id" wire:change="setAssignee($event.target.value)" :disabled="! $canUpdate" />

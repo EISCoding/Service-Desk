@@ -114,7 +114,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
 - [x] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
 - [x] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
-- [ ] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
+- [x] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
 - [ ] Activity-Log im Ticket und beim Kunden als Tab anzeigen
 - [ ] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
 - [ ] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
