@@ -17,7 +17,6 @@ class TicketFactory extends Factory
     public function definition(): array
     {
         return [
-            'number' => sprintf('%d-%05d', now()->year, fake()->unique()->numberBetween(1, 99999)),
             'subject' => fake()->randomElement([
                 'Drucker im 2. OG druckt nicht', 'VPN-Verbindung bricht ab', 'Neuer Arbeitsplatz für Azubi',
                 'Outlook startet nicht', 'Server-Wartung planen', 'Lizenz verlängern', 'WLAN im Lager langsam',

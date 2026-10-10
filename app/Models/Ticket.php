@@ -6,6 +6,7 @@ use App\Enums\TicketPriority;
 use App\Enums\TicketSource;
 use App\Enums\TicketStatus;
 use App\Models\Concerns\LogsActivity;
+use App\Services\TicketNumberGenerator;
 use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,6 +53,7 @@ class Ticket extends Model
     protected static function booted(): void
     {
         static::creating(function (Ticket $ticket) {
+            $ticket->number ??= app(TicketNumberGenerator::class)->next();
             $ticket->last_activity_at ??= now();
         });
     }
