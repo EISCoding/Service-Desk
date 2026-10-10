@@ -82,9 +82,7 @@
                 @break
 
             @case('tickets')
-                <x-ui.card :padding="false">
-                    <x-ui.empty-state icon="inbox-stack" title="Noch keine Tickets" description="Die Tickets dieses Kunden erscheinen hier, sobald die Ticketverwaltung da ist (Phase 3)." />
-                </x-ui.card>
+                <livewire:intern.customers.tickets :customer="$customer" :key="'tickets-'.$customer->id" />
                 @break
 
             @case('notizen')
@@ -191,4 +189,5 @@
     </div>
 
     <livewire:intern.customers.customer-form />
+    <livewire:intern.tickets.create-ticket />
 </div>

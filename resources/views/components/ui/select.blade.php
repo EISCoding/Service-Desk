@@ -5,6 +5,7 @@
     'hint' => null,
     'options' => [],        // [value => label]; alternatively pass <option>s in the slot
     'placeholder' => null,
+    'selected' => null,     // pre-selected value when not using wire:model
 ])
 
 @php
@@ -30,7 +31,7 @@
                 <option value="">{{ $placeholder }}</option>
             @endif
             @foreach ($options as $value => $optionLabel)
-                <option value="{{ $value }}">{{ $optionLabel }}</option>
+                <option value="{{ $value }}" @selected($selected !== null && (string) $value === (string) $selected)>{{ $optionLabel }}</option>
             @endforeach
             {{ $slot }}
         </select>

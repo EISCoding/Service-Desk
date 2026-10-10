@@ -14,13 +14,13 @@ it('redirects guests from the staff area to the login', function () {
 });
 
 it('logs staff in and sends them to /intern', function () {
-    $user = User::factory()->create(['email' => 'anna@example.com']);
+    $user = User::factory()->staff()->create(['email' => 'anna@example.com']);
 
     $this->post('/intern/login', ['email' => 'anna@example.com', 'password' => 'password'])
         ->assertRedirect('/intern');
 
     $this->assertAuthenticatedAs($user);
-    $this->get('/intern')->assertRedirect('/intern/tickets');
+    $this->get('/intern')->assertRedirect(route('intern.tickets.index'));
     $this->get('/intern/tickets')->assertOk()->assertSee($user->name);
 });
 

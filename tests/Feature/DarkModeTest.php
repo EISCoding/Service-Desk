@@ -66,3 +66,11 @@ it('rejects unknown themes', function () {
 it('requires a login to store the theme', function () {
     $this->putJson(route('intern.theme.update'), ['theme' => 'dark'])->assertUnauthorized();
 });
+
+it('re-applies the theme after Livewire navigation (wire:navigate)', function () {
+    $head = str((string) $this->blade('<x-layouts::base>Inhalt</x-layouts::base>'))->between('<head>', '</head>')->toString();
+
+    expect($head)->toContain('livewire:navigating')
+        ->toContain('onSwap')
+        ->toContain('livewire:navigated');
+});

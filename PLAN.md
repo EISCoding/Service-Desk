@@ -49,22 +49,22 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 3 – Tickets
 
-- [ ] Enums `TicketStatus` und `TicketPriority` mit Label und Farbe
-- [ ] Migration + Model `tickets`: Nummer, Betreff, Status, Priorität, Kunde, Ansprechpartner, Gruppe, Bearbeiter, Wiedervorlage, Quelle (Mail/Portal/Intern), geschlossen_am
-- [ ] Ticketnummern-Generator (transaktionssicher, Zähler pro Jahr)
-- [ ] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
-- [ ] Migration + Model `attachments`: polymorph an Nachrichten, privat gespeichert, Download über Controller mit Policy
-- [ ] Ticketliste: Ansichten „Meine“, „Meine Gruppen“, „Alle“, „Nicht zugeordnet“; Filter nach Status, Priorität, Gruppe, Bearbeiter, Kunde; Volltextsuche in Betreff und Nummer
-- [ ] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
-- [ ] Ticketansicht: Verlauf chronologisch, interne Notizen farblich abgesetzt, Seitenleiste mit Status, Priorität, Gruppe, Bearbeiter, Kunde, Ansprechpartner
-- [ ] Ticket intern anlegen (für Kunde + Ansprechpartner)
-- [ ] Antworten (öffentlich) und interne Notiz schreiben, mit Anhängen
-- [ ] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
-- [ ] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`
-- [ ] Terminliste `/intern/termine` (kommende VOS-Termine, Filter nach Techniker)
-- [ ] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
-- [ ] Tickets zusammenführen (Recht `tickets.merge`)
-- [ ] Policies für Sichtbarkeit (eigene/Gruppe/alle), Activity-Log
+- [x] Enums `TicketStatus` und `TicketPriority` mit Label und Farbe
+- [x] Migration + Model `tickets`: Nummer, Betreff, Status, Priorität, Kunde, Ansprechpartner, Gruppe, Bearbeiter, Wiedervorlage, Quelle (Mail/Portal/Intern), geschlossen_am
+- [x] Ticketnummern-Generator (transaktionssicher, Zähler pro Jahr)
+- [x] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
+- [x] Migration + Model `attachments`: polymorph an Nachrichten, privat gespeichert, Download über Controller mit Policy
+- [x] Ticketliste: Ansichten „Meine“, „Meine Gruppen“, „Alle“, „Nicht zugeordnet“; Filter nach Status, Priorität, Gruppe, Bearbeiter, Kunde; Volltextsuche in Betreff und Nummer
+- [x] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
+- [x] Ticketansicht: Verlauf chronologisch, interne Notizen farblich abgesetzt, Seitenleiste mit Status, Priorität, Gruppe, Bearbeiter, Kunde, Ansprechpartner
+- [x] Ticket intern anlegen (für Kunde + Ansprechpartner)
+- [x] Antworten (öffentlich) und interne Notiz schreiben, mit Anhängen
+- [x] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
+- [x] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`
+- [x] Terminliste `/intern/termine` (kommende VOS-Termine, Filter nach Techniker)
+- [x] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
+- [x] Tickets zusammenführen (Recht `tickets.merge`)
+- [x] Policies für Sichtbarkeit (eigene/Gruppe/alle), Activity-Log
 
 **Fertig wenn:** Tickets lassen sich intern komplett bearbeiten, VOS-Termine funktionieren, Sichtbarkeit nach Rechten ist getestet.
 

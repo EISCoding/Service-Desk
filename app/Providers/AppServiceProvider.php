@@ -4,10 +4,14 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Models\Appointment;
+use App\Models\Attachment;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Group;
+use App\Models\Ticket;
+use App\Models\TicketMessage;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +41,10 @@ class AppServiceProvider extends ServiceProvider
             'customer' => Customer::class,
             'contact' => Contact::class,
             'customer_note' => CustomerNote::class,
+            'ticket' => Ticket::class,
+            'ticket_message' => TicketMessage::class,
+            'attachment' => Attachment::class,
+            'appointment' => Appointment::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.

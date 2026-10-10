@@ -280,7 +280,7 @@ describe('deactivated users', function () {
     });
 
     it('are logged out on their next request', function () {
-        $user = User::factory()->create();
+        $user = User::factory()->staff()->create();
         $this->actingAs($user)->get('/intern/tickets')->assertOk();
 
         $user->update(['is_active' => false]);
