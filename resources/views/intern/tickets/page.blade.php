@@ -1,6 +1,13 @@
 <x-layouts::intern :title="$ticket ? $ticket->number.' '.$ticket->subject : 'Tickets'" flush>
     <div class="lg:grid lg:h-[calc(100dvh-3.5rem)] lg:grid-cols-[minmax(320px,400px)_1fr]">
-        <aside @class(['lg:block lg:overflow-y-auto lg:border-r lg:border-separator', 'hidden' => $ticket]) aria-label="Ticketliste">
+        {{-- The list keeps its scroll position while switching tickets. --}}
+        <aside
+            x-data
+            x-init="$el.scrollTop = Number(sessionStorage.getItem('ticket-list-scroll') || 0)"
+            x-on:scroll.debounce.100ms="sessionStorage.setItem('ticket-list-scroll', $el.scrollTop)"
+            @class(['lg:block lg:overflow-y-auto lg:border-r lg:border-separator', 'hidden' => $ticket])
+            aria-label="Ticketliste"
+        >
             <livewire:intern.tickets.ticket-list :selected-id="$ticket?->id" />
         </aside>
 

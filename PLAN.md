@@ -55,7 +55,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
 - [x] Migration + Model `attachments`: polymorph an Nachrichten, privat gespeichert, Download über Controller mit Policy
 - [x] Ticketliste: Ansichten „Meine“, „Meine Gruppen“, „Alle“, „Nicht zugeordnet“; Filter nach Status, Priorität, Gruppe, Bearbeiter, Kunde; Volltextsuche in Betreff und Nummer
-- [ ] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
+- [x] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
 - [ ] Ticketansicht: Verlauf chronologisch, interne Notizen farblich abgesetzt, Seitenleiste mit Status, Priorität, Gruppe, Bearbeiter, Kunde, Ansprechpartner
 - [ ] Ticket intern anlegen (für Kunde + Ansprechpartner)
 - [ ] Antworten (öffentlich) und interne Notiz schreiben, mit Anhängen
