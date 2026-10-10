@@ -36,9 +36,12 @@ if [[ -z "$COMPOSER" ]]; then
 fi
 
 # Bring the application back up even if a step fails.
-log "Maintenance mode on"
-"$PHP" artisan down --retry=30 || true
-trap '"$PHP" artisan up >/dev/null 2>&1 || true' EXIT
+# (The very first deployment has no vendor/ yet, so there is nothing to put down.)
+if [[ -f vendor/autoload.php ]]; then
+    log "Maintenance mode on"
+    "$PHP" artisan down --retry=30 || true
+    trap '"$PHP" artisan up >/dev/null 2>&1 || true' EXIT
+fi
 
 log "Composer dependencies"
 # Run Composer with the configured PHP binary so the right PHP version is used.
