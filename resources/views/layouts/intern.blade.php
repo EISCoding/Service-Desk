@@ -83,26 +83,7 @@
                     <span class="sr-only">{{ config('app.name') }}</span>
                 </a>
 
-                {{-- Global search (functional in Phase 6, ⌘K / Strg+K focuses the field) --}}
-                <form
-                    role="search"
-                    x-on:submit.prevent
-                    x-on:keydown.window.meta.k.prevent="$refs.search.focus()"
-                    x-on:keydown.window.ctrl.k.prevent="$refs.search.focus()"
-                    class="relative w-full max-w-md"
-                >
-                    <label for="global-search" class="sr-only">Suchen</label>
-                    <x-heroicon-m-magnifying-glass class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
-                    <input
-                        id="global-search"
-                        x-ref="search"
-                        type="search"
-                        placeholder="Suchen …"
-                        autocomplete="off"
-                        class="block h-9 w-full rounded-[10px] bg-ink/[0.05] pr-14 pl-9 text-sm text-ink placeholder:text-ink-faint focus:bg-surface focus:ring-2 focus:ring-accent focus:outline-none"
-                    >
-                    <kbd class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-separator px-1.5 font-sans text-[11px] text-ink-faint sm:block">⌘K</kbd>
-                </form>
+                <livewire:intern.global-search />
 
                 <div class="ml-auto flex items-center gap-1">
                     <livewire:intern.notification-bell />
