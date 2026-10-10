@@ -117,7 +117,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
 - [x] Activity-Log im Ticket und beim Kunden als Tab anzeigen
 - [x] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
-- [ ] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
+- [x] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
 - [ ] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
 - [ ] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
 - [ ] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)

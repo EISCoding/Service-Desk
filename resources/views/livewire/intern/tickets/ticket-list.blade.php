@@ -60,7 +60,7 @@
     @if ($items->isEmpty())
         <x-ui.empty-state icon="inbox" title="Keine Tickets" :description="$search !== '' || $this->activeFilterCount() ? 'Kein Ticket passt zu Suche und Filtern.' : 'In dieser Ansicht ist gerade nichts offen.'" />
     @else
-        <ul class="divide-y divide-separator" aria-label="Tickets">
+        <ul class="divide-y divide-separator transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
             @foreach ($items as $ticket)
                 @php($selected = $ticket->id === $selectedId)
                 <li wire:key="ticket-{{ $ticket->id }}">
