@@ -21,7 +21,9 @@
         </div>
 
         <div class="flex shrink-0 items-center gap-2">
-            {{ $headerActions ?? '' }}
+            @if ($canUpdate && $ticket->assignee_id !== auth()->id())
+                <x-ui.button icon="hand-raised" wire:click="take">Übernehmen</x-ui.button>
+            @endif
             @can('delete', $ticket)
                 <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
                     <x-ui.button variant="secondary" x-on:click="open = ! open" x-bind:aria-expanded="open">
@@ -43,7 +45,7 @@
         <aside class="2xl:order-last" aria-label="Ticketdaten">
             <x-ui.card :padding="false" class="2xl:sticky 2xl:top-6">
                 <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 sm:grid-cols-3 2xl:grid-cols-1">
-                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" :disabled="! $canUpdate" />
+                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" :disabled="! $canUpdate" />
                     <x-ui.select label="Priorität" :options="$priorityOptions" :selected="$ticket->priority->value" wire:change="setPriority($event.target.value)" :disabled="! $canUpdate" />
                     <x-ui.select label="Gruppe" placeholder="Ohne Gruppe" :options="$this->groupOptions" :selected="$ticket->group_id" wire:change="setGroup($event.target.value)" :disabled="! $canUpdate" />
                     <x-ui.select label="Bearbeiter" placeholder="Nicht zugeordnet" :options="$this->assigneeOptions" :selected="$ticket->assignee_id" wire:change="setAssignee($event.target.value)" :disabled="! $canUpdate" />
@@ -182,4 +184,22 @@
             @endif
         </div>
     </div>
+
+    {{-- Follow-up date for "Warte auf Intern/Extern" --}}
+    <x-ui.modal name="follow-up" :title="$pendingStatus ? \App\Enums\TicketStatus::from($pendingStatus)->label() : 'Wiedervorlage'" description="Wann soll das Ticket wieder vorgelegt werden?" max-width="sm"
+        x-init="$watch('show', value => { if (! value && $wire.pendingStatus) $wire.cancelStatusChange() })"
+        x-effect="show = $wire.pendingStatus !== null">
+        <form wire:submit="confirmFollowUp" id="follow-up-form" class="space-y-3">
+            <x-ui.input label="Wiedervorlage am" type="date" wire:model="followUpDate" :min="today()->toDateString()" required />
+            <div class="flex flex-wrap gap-1.5">
+                @foreach (['Morgen' => today()->addWeekday(), 'In 2 Werktagen' => today()->addWeekdays(2), 'Nächste Woche' => today()->next('Monday')] as $label => $date)
+                    <button type="button" wire:click="$set('followUpDate', '{{ $date->toDateString() }}')" class="rounded-full bg-ink/[0.05] px-2.5 py-1 text-[12px] font-medium text-ink-muted hover:text-ink">{{ $label }}</button>
+                @endforeach
+            </div>
+        </form>
+        <x-slot:footer>
+            <x-ui.button variant="secondary" wire:click="cancelStatusChange">Abbrechen</x-ui.button>
+            <x-ui.button type="submit" form="follow-up-form">Status setzen</x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
 </div>

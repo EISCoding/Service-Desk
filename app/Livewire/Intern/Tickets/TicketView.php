@@ -11,7 +11,9 @@ use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
+use App\Services\TicketStatusService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -29,6 +31,14 @@ class TicketView extends Component
     public Ticket $ticket;
 
     public string $customerSearch = '';
+
+    /** Status waiting for a follow-up date (dialog). */
+    public ?string $pendingStatus = null;
+
+    public string $followUpDate = '';
+
+    /** Changes when a status change is cancelled, so the select shows the current status again. */
+    public int $statusVersion = 0;
 
     public function mount(Ticket $ticket): void
     {
@@ -99,14 +109,51 @@ class TicketView extends Component
             ->all();
     }
 
-    public function setStatus(string $value): void
+    public function setStatus(string $value, TicketStatusService $statuses): void
     {
         $status = TicketStatus::from($value);
         $this->authorize('update', $this->ticket);
 
-        $this->ticket->status = $status;
-        $this->ticket->closed_at = $status === TicketStatus::Closed ? ($this->ticket->closed_at ?? now()) : null;
-        $this->saveTicket("Status: {$status->label()}");
+        if ($status->requiresFollowUp()) {
+            $this->pendingStatus = $status->value;
+            $this->followUpDate = TicketStatusService::defaultFollowUp()->toDateString();
+            $this->resetValidation();
+
+            return;
+        }
+
+        $statuses->change($this->ticket, $status);
+        $this->afterSave("Status: {$status->label()}");
+    }
+
+    public function confirmFollowUp(TicketStatusService $statuses): void
+    {
+        $this->authorize('update', $this->ticket);
+
+        $status = TicketStatus::from((string) $this->pendingStatus);
+        $this->validate(['followUpDate' => ['required', 'date', 'after_or_equal:today']], attributes: ['followUpDate' => 'Wiedervorlage']);
+
+        $statuses->change($this->ticket, $status, Carbon::parse($this->followUpDate));
+
+        $this->pendingStatus = null;
+        $this->afterSave("Status: {$status->label()}, Wiedervorlage am ".Carbon::parse($this->followUpDate)->isoFormat('D. MMM'));
+    }
+
+    public function cancelStatusChange(): void
+    {
+        $this->pendingStatus = null;
+        $this->statusVersion++;
+    }
+
+    /**
+     * "Übernehmen": assign to me and set to "In Arbeit".
+     */
+    public function take(TicketStatusService $statuses): void
+    {
+        $this->authorize('update', $this->ticket);
+
+        $statuses->take($this->ticket, auth()->user());
+        $this->afterSave('Ticket übernommen.');
     }
 
     public function setPriority(string $value): void
@@ -181,6 +228,11 @@ class TicketView extends Component
     {
         $this->ticket->save();
         $this->ticket->touchActivity();
+        $this->afterSave($message);
+    }
+
+    private function afterSave(string $message): void
+    {
         $this->ticket->refresh();
 
         // E.g. handed over to a group the user is not a member of.

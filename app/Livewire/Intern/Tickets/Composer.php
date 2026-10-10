@@ -8,6 +8,7 @@ use App\Livewire\Concerns\InteractsWithToasts;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Services\AttachmentStorage;
+use App\Services\TicketStatusService;
 use App\Support\Html;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -60,7 +61,7 @@ class Composer extends Component
         $this->files = array_values($this->files);
     }
 
-    public function send(AttachmentStorage $storage): void
+    public function send(AttachmentStorage $storage, TicketStatusService $statuses): void
     {
         $internal = $this->mode === 'note';
         $this->authorize($internal ? 'addNote' : 'reply', $this->ticket);
@@ -80,7 +81,7 @@ class Composer extends Component
             'files.*.max' => 'Eine Datei darf höchstens '.round($maxKb / 1024).' MB groß sein.',
         ], ['body' => $internal ? 'Notiz' : 'Antwort', 'files' => 'Anhänge']);
 
-        DB::transaction(function () use ($internal, $storage) {
+        DB::transaction(function () use ($internal, $storage, $statuses) {
             $message = new TicketMessage([
                 'type' => $internal ? MessageType::Internal : MessageType::Public,
                 'body' => $this->body,
@@ -98,11 +99,7 @@ class Composer extends Component
                 : []);
 
             if (! $internal && $this->statusAfter !== '') {
-                $status = TicketStatus::from($this->statusAfter);
-                $this->ticket->status = $status;
-                $this->ticket->closed_at = $status === TicketStatus::Closed ? now() : null;
-                $this->ticket->follow_up_at = null;
-                $this->ticket->save();
+                $statuses->change($this->ticket, TicketStatus::from($this->statusAfter));
             }
 
             $this->ticket->touchActivity();

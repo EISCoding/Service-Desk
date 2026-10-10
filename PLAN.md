@@ -59,7 +59,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Ticketansicht: Verlauf chronologisch, interne Notizen farblich abgesetzt, Seitenleiste mit Status, Priorität, Gruppe, Bearbeiter, Kunde, Ansprechpartner
 - [x] Ticket intern anlegen (für Kunde + Ansprechpartner)
 - [x] Antworten (öffentlich) und interne Notiz schreiben, mit Anhängen
-- [ ] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
+- [x] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
 - [ ] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`
 - [ ] Terminliste `/intern/termine` (kommende VOS-Termine, Filter nach Techniker)
 - [ ] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
