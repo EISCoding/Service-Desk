@@ -46,6 +46,11 @@
                                     · {{ $ticket->contact->fullName() }}
                                 @endif
                             </p>
+                            @if ($appointment = $ticket->appointments->first())
+                                <p class="mt-1 inline-flex items-center gap-1 text-[12px] font-medium text-teal-700 dark:text-teal-300">
+                                    <x-heroicon-m-calendar-days class="size-3.5" aria-hidden="true" /> Vor-Ort-Termin {{ $appointment->timeRange() }}
+                                </p>
+                            @endif
                         </div>
                         <x-ui.badge :color="$ticket->status->portalColor()" dot class="shrink-0">{{ $ticket->status->portalLabel() }}</x-ui.badge>
                     </li>

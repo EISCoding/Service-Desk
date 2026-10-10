@@ -100,7 +100,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Ticket erstellen: Betreff, Beschreibung, Priorität (optional), Anhänge
 - [x] Ticketansicht: nur öffentliche Nachrichten und Mails, niemals interne Notizen oder Kundennotizen
 - [x] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
-- [ ] VOS-Termin im Portal anzeigen
+- [x] VOS-Termin im Portal anzeigen
 - [ ] Profil: Name, Telefon, Passwort, Darkmode
 - [ ] Gleiches Design-System, reduzierte Navigation
 - [ ] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte

@@ -4,6 +4,7 @@ namespace App\Livewire\Portal\Tickets;
 
 use App\Enums\MessageType;
 use App\Livewire\Concerns\InteractsWithToasts;
+use App\Models\Appointment;
 use App\Models\Contact;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
@@ -64,6 +65,17 @@ class Show extends Component
             ->where('type', '!=', MessageType::Internal->value)
             ->with(['author', 'attachments'])
             ->get();
+    }
+
+    /**
+     * Upcoming on-site appointments (the internal note is not shown).
+     *
+     * @return Collection<int, Appointment>
+     */
+    #[Computed]
+    public function appointments(): Collection
+    {
+        return $this->ticket->appointments()->upcoming()->reorder('starts_at')->with('technician:id,name')->get();
     }
 
     public function removeFile(int $index): void

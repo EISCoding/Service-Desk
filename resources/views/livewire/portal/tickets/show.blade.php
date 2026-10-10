@@ -14,7 +14,21 @@
     </header>
 
     <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
-        <aside class="lg:order-last" aria-label="Ticketdaten">
+        <aside class="space-y-4 lg:order-last" aria-label="Ticketdaten">
+            @foreach ($this->appointments as $appointment)
+                <x-ui.card wire:key="appointment-{{ $appointment->id }}" class="ring-teal-500/30">
+                    <p class="flex items-center gap-1.5 text-[13px] font-semibold text-teal-700 dark:text-teal-300">
+                        <x-heroicon-o-calendar-days class="size-4" aria-hidden="true" /> Vor-Ort-Termin
+                    </p>
+                    <p class="mt-2 text-sm font-medium">{{ $appointment->starts_at->isoFormat('dddd, D. MMMM YYYY') }}</p>
+                    <p class="text-sm">{{ $appointment->starts_at->format('H:i') }}–{{ $appointment->ends_at->format('H:i') }} Uhr</p>
+                    @if ($appointment->technician)
+                        <p class="mt-2 text-[13px] text-ink-muted">Techniker: <span class="text-ink">{{ $appointment->technician->name }}</span></p>
+                    @endif
+                    <p class="mt-1 text-[13px] whitespace-pre-line text-ink-muted">{{ $appointment->location }}</p>
+                </x-ui.card>
+            @endforeach
+
             <x-ui.card :padding="false" class="lg:sticky lg:top-20">
                 <dl class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 text-[13px] lg:grid-cols-1">
                     <div><dt class="text-ink-muted">Priorität</dt><dd class="mt-0.5 font-medium">{{ $ticket->priority->label() }}</dd></div>
