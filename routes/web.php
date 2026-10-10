@@ -4,6 +4,7 @@ use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
+use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
 use App\Models\Customer;
 use App\Models\Group;
@@ -36,6 +37,9 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
     Route::livewire('kunden', CustomerIndex::class)
         ->middleware('can:viewAny,'.Customer::class)
         ->name('customers.index');
+    Route::livewire('kunden/{customer}', CustomerShow::class)
+        ->middleware('can:view,customer')
+        ->name('customers.show');
 
     Route::livewire('einstellungen/sicherheit', Security::class)
         ->middleware('password.confirm')
