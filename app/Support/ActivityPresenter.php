@@ -55,6 +55,8 @@ final class ActivityPresenter
                 default => 'hat eine Notiz bearbeitet',
             },
             'customer_note.deleted' => 'hat eine Notiz gelöscht',
+            'ticket.reply_added' => 'hat geantwortet',
+            'ticket.note_added' => 'hat eine interne Notiz geschrieben',
             default => $activity->action,
         };
     }

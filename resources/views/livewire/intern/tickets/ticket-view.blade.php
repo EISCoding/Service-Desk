@@ -177,7 +177,9 @@
                 </x-ui.card>
             @endforelse
 
-            {{ $composer ?? '' }}
+            @if (auth()->user()->can('reply', $ticket) || auth()->user()->can('addNote', $ticket))
+                <livewire:intern.tickets.composer :ticket="$ticket" :key="'composer-'.$ticket->id" />
+            @endif
         </div>
     </div>
 </div>
