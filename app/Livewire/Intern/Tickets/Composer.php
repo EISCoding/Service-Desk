@@ -5,15 +5,19 @@ namespace App\Livewire\Intern\Tickets;
 use App\Enums\MessageType;
 use App\Enums\TicketStatus;
 use App\Livewire\Concerns\InteractsWithToasts;
+use App\Models\MailTemplate;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Services\AttachmentStorage;
 use App\Services\OutgoingMailService;
 use App\Services\TicketStatusService;
 use App\Support\Html;
+use App\Support\Placeholders;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -80,6 +84,27 @@ class Composer extends Component
     {
         $this->mode = $mode === 'note' ? 'note' : 'reply';
         $this->resetValidation();
+    }
+
+    /**
+     * @return Collection<int, MailTemplate>
+     */
+    #[Computed]
+    public function snippets(): Collection
+    {
+        return MailTemplate::snippets()->get(['id', 'name']);
+    }
+
+    /**
+     * Snippet with filled placeholders; the browser inserts it at the cursor.
+     */
+    public function snippet(int $id): string
+    {
+        $this->authorize('view', $this->ticket);
+
+        $snippet = MailTemplate::snippets()->findOrFail($id);
+
+        return (new Placeholders($this->ticket, staff: auth()->user()))->html($snippet->body);
     }
 
     public function removeFile(int $index): void

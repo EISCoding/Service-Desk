@@ -66,12 +66,29 @@
         @error('files.*') <p class="text-[13px] text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
 
         <div class="flex flex-wrap items-center justify-between gap-3">
-            <label class="inline-flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-ink-muted hover:text-ink">
-                <x-heroicon-o-paper-clip class="size-4" aria-hidden="true" />
-                <span wire:loading.remove wire:target="files">Dateien anhängen</span>
-                <span wire:loading wire:target="files">Wird hochgeladen …</span>
-                <input type="file" wire:model="files" multiple class="sr-only">
-            </label>
+            <div class="flex flex-wrap items-center gap-4">
+                <label class="inline-flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-ink-muted hover:text-ink">
+                    <x-heroicon-o-paper-clip class="size-4" aria-hidden="true" />
+                    <span wire:loading.remove wire:target="files">Dateien anhängen</span>
+                    <span wire:loading wire:target="files">Wird hochgeladen …</span>
+                    <input type="file" wire:model="files" multiple class="sr-only">
+                </label>
+
+                @if ($this->snippets->isNotEmpty())
+                    {{-- Text snippets, inserted at the cursor with filled placeholders --}}
+                    <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
+                        <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink-muted hover:text-ink">
+                            <x-heroicon-o-document-duplicate class="size-4" aria-hidden="true" /> Textbaustein
+                        </button>
+                        <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute bottom-full left-0 z-20 mb-1 max-h-64 w-64 overflow-y-auto rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+                            @foreach ($this->snippets as $snippet)
+                                <button type="button" wire:key="snippet-{{ $snippet->id }}" class="block w-full truncate rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted"
+                                    x-on:click="open = false; $wire.snippet({{ $snippet->id }}).then(html => $root.closest('section').querySelector('trix-editor').editor.insertHTML(html))">{{ $snippet->name }}</button>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
 
             <div class="flex items-center gap-2">
                 @unless ($isNote)
