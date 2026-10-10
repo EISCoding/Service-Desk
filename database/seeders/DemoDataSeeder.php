@@ -9,6 +9,8 @@ use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Group;
+use App\Models\Mailbox;
+use App\Models\MailTemplate;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
@@ -22,7 +24,44 @@ class DemoDataSeeder extends Seeder
     public function run(): void
     {
         $this->customers();
+        $this->mailbox();
         $this->tickets();
+        $this->snippets();
+    }
+
+    /**
+     * Inactive demo mailbox (no IMAP fetch). Replies go to the log with
+     * MAILBOX_MAILER=log, incoming mails via `php artisan servicedesk:import-mail`.
+     */
+    private function mailbox(): void
+    {
+        if (Mailbox::exists()) {
+            return;
+        }
+
+        Mailbox::factory()->create([
+            'name' => 'Support (Demo)',
+            'email' => 'support@servicedesk.test',
+            'is_active' => false,
+            'is_default' => true,
+            'default_group_id' => Group::firstOrCreate(['name' => 'Support'], ['description' => 'Erste Anlaufstelle'])->id,
+        ]);
+    }
+
+    private function snippets(): void
+    {
+        if (MailTemplate::snippets()->exists()) {
+            return;
+        }
+
+        MailTemplate::factory()->create([
+            'name' => 'Fernwartung',
+            'body' => '<div>{kontakt.anrede},<br><br>für die Fernwartung starten Sie bitte TeamViewer und nennen uns Ihre ID. Wir melden uns gleich telefonisch.</div>',
+        ]);
+        MailTemplate::factory()->create([
+            'name' => 'Rückfrage',
+            'body' => '<div>{kontakt.anrede},<br><br>damit wir Ihr Anliegen zu Ticket#{ticket.nummer} weiter bearbeiten können, benötigen wir noch folgende Angaben:</div>',
+        ]);
     }
 
     private function customers(): void
@@ -63,6 +102,7 @@ class DemoDataSeeder extends Seeder
             foreach (range(0, $index % 3) as $n) {
                 $status = $statuses[($index + $n) % count($statuses)];
                 $ticket = Ticket::factory()->status($status)->create([
+                    'mailbox_id' => Mailbox::value('id'),
                     'customer_id' => $customer->id,
                     'contact_id' => $customer->contacts->random()?->id,
                     'group_id' => ($index + $n) % 2 ? $technik->id : $support->id,

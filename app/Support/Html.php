@@ -11,6 +11,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
  */
 final class Html
 {
+    private const CID_HOST = 'cid.servicedesk.invalid';
+
     private static ?HtmlSanitizer $sanitizer = null;
 
     public static function sanitize(?string $html): string
@@ -19,7 +21,25 @@ final class Html
             return '';
         }
 
-        return trim(self::sanitizer()->sanitize($html));
+        // Full HTML mails: only the content of <body> counts.
+        if (preg_match('#<body[^>]*>(.*?)(</body>|$)#is', $html, $match)) {
+            $html = $match[1];
+        }
+
+        // Inline mail images (cid:…) pass the sanitizer under a reserved host and
+        // are turned back afterwards; all other images are dropped (privacy,
+        // tracking pixels).
+        $html = preg_replace('/(<img\b[^>]*\bsrc\s*=\s*["\']?)cid:/i', '$1https://'.self::CID_HOST.'/', $html);
+
+        $clean = self::sanitizer()->sanitize($html);
+        $clean = preg_replace_callback(
+            '#src="https://'.preg_quote(self::CID_HOST, '#').'/([^"]*)"#',
+            fn (array $match) => 'src="cid:'.e(html_entity_decode($match[1], ENT_QUOTES | ENT_HTML5)).'"',
+            $clean,
+        );
+        $clean = preg_replace('/<img(?![^>]*\ssrc=)[^>]*>/i', '', $clean);
+
+        return trim($clean);
     }
 
     /**
@@ -50,7 +70,11 @@ final class Html
         return self::$sanitizer ??= new HtmlSanitizer(
             (new HtmlSanitizerConfig)
                 ->allowSafeElements()
-                ->blockElement('img') // inline images get their own handling with mail import (Phase 4)
+                // Only inline images of mails (cid:…), shown through the attachment controller.
+                ->allowElement('img', ['src', 'alt', 'width', 'height', 'title'])
+                ->allowMediaSchemes(['https'])
+                ->allowMediaHosts([self::CID_HOST])
+                ->allowRelativeMedias(false)
                 ->allowLinkSchemes(['http', 'https', 'mailto', 'tel'])
                 ->allowRelativeLinks(false)
                 ->forceAttribute('a', 'rel', 'noopener noreferrer')

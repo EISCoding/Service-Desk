@@ -32,3 +32,8 @@ Schedule::command('queue:work', [
 Schedule::job(new MarkDueFollowUps)
     ->name('mark-due-follow-ups')
     ->dailyAt('06:00');
+
+// Mail: one FetchMailbox job per active mailbox every minute (unique per mailbox).
+Schedule::command('servicedesk:fetch-mail')
+    ->everyMinute()
+    ->withoutOverlapping(5);

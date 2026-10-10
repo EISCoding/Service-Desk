@@ -19,6 +19,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Mail
+    |--------------------------------------------------------------------------
+    |
+    | fetch_limit: mails per mailbox and minute (the queue worker runs <= 50 s).
+    | reopen_days: a reply to a closed ticket within this many days reopens it,
+    | later replies start a new ticket (adjustable in the admin in Phase 6).
+    |
+    */
+
+    'mail' => [
+        'fetch_limit' => (int) env('MAIL_FETCH_LIMIT', 25),
+        'reopen_days' => (int) env('TICKET_REOPEN_DAYS', 14),
+        // Laravel mailer used instead of the mailbox SMTP (e.g. "log" for local
+        // development). Leave empty in production.
+        'mailer' => env('MAILBOX_MAILER') ?: null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Attachments
     |--------------------------------------------------------------------------
     |

@@ -187,15 +187,52 @@
                         @if ($message->isInternal())
                             <x-ui.badge color="yellow"><x-heroicon-m-lock-closed class="size-3" aria-hidden="true" /> Interne Notiz</x-ui.badge>
                         @elseif ($message->type !== \App\Enums\MessageType::Public)
-                            <x-ui.badge><x-heroicon-m-envelope class="size-3" aria-hidden="true" /> {{ $message->type->label() }}</x-ui.badge>
+                            <div class="flex flex-wrap justify-end gap-1">
+                                @if ($message->is_automatic)
+                                    <x-ui.badge color="gray"><x-heroicon-m-cpu-chip class="size-3" aria-hidden="true" /> Automatisch</x-ui.badge>
+                                @endif
+                                @if ($template = \App\Enums\SystemTemplate::tryFrom((string) $message->template_key))
+                                    <x-ui.badge color="gray"><x-heroicon-m-document-text class="size-3" aria-hidden="true" /> {{ $template->label() }}</x-ui.badge>
+                                @endif
+                                <x-ui.badge><x-heroicon-m-envelope class="size-3" aria-hidden="true" /> {{ $message->type->label() }}</x-ui.badge>
+                            </div>
                         @endif
                     </header>
 
-                    <div class="message-body">{!! $message->body !!}</div>
+                    @if ($message->type === \App\Enums\MessageType::MailOut)
+                        <p class="-mt-1 mb-3 text-[12px] text-ink-muted">
+                            An {{ collect($message->to)->pluck('email')->join(', ') }}@if ($message->cc) · CC {{ collect($message->cc)->pluck('email')->join(', ') }}@endif
+                            @switch($message->mail_status)
+                                @case('queued') · <span class="text-yellow-700 dark:text-yellow-300">wird gesendet …</span> @break
+                                @case('sent') · gesendet {{ $message->sent_at?->isoFormat('D. MMM, HH:mm') }} @break
+                            @endswitch
+                        </p>
+                        @if ($message->mailFailed())
+                            <x-ui.alert type="error" class="mb-3">
+                                Versand fehlgeschlagen: {{ $message->mail_error }}
+                                @can('reply', $ticket)
+                                    <button type="button" wire:click="retryMail({{ $message->id }})" class="ml-1 font-medium underline">Erneut senden</button>
+                                @endcan
+                            </x-ui.alert>
+                        @endif
+                    @endif
 
-                    @if ($message->attachments->isNotEmpty())
+                    @php([$mainText, $quotedText] = $message->displayParts())
+                    <div class="message-body">{!! $mainText !!}</div>
+                    @if ($quotedText)
+                        <details class="group mt-3">
+                            <summary class="inline-flex cursor-pointer list-none items-center gap-1 rounded-full bg-ink/[0.05] px-2.5 py-0.5 text-[12px] font-medium text-ink-muted hover:text-ink">
+                                <x-heroicon-m-ellipsis-horizontal class="size-4" aria-hidden="true" />
+                                <span class="group-open:hidden">Zitierten Verlauf anzeigen</span>
+                                <span class="hidden group-open:inline">Zitierten Verlauf ausblenden</span>
+                            </summary>
+                            <div class="message-body mt-3 border-l-2 border-separator pl-3 text-ink-muted">{!! $quotedText !!}</div>
+                        </details>
+                    @endif
+
+                    @if ($message->listedAttachments()->isNotEmpty())
                         <ul class="mt-4 flex flex-wrap gap-2" aria-label="Anhänge">
-                            @foreach ($message->attachments as $attachment)
+                            @foreach ($message->listedAttachments() as $attachment)
                                 <li>
                                     <a href="{{ $attachment->url(inline: $attachment->canBeShownInline()) }}" target="_blank" class="flex max-w-60 items-center gap-2 rounded-xl bg-surface-muted px-3 py-2 text-[13px] ring-1 ring-separator hover:ring-accent">
                                         @if ($attachment->isImage())
@@ -258,6 +295,10 @@
             <x-ui.select label="Techniker" wire:model="appointmentTechnician" :options="$this->assigneeOptions" required />
             <x-ui.textarea label="Einsatzort" wire:model="appointmentLocation" rows="3" required />
             <x-ui.textarea label="Notiz" wire:model="appointmentNote" rows="2" placeholder="z. B. Zugang über Hintereingang" />
+            @if ($planningAppointment && $this->canConfirmAppointment())
+                <x-ui.checkbox label="Terminbestätigung an den Kunden senden" wire:model="appointmentNotify"
+                    :description="'Vorlage „Termin bestätigt“ an '.$ticket->recipient()['email']" />
+            @endif
         </form>
         <x-slot:footer>
             <x-ui.button variant="secondary" wire:click="cancelStatusChange">Abbrechen</x-ui.button>
@@ -265,21 +306,32 @@
         </x-slot:footer>
     </x-ui.modal>
 
-    {{-- Follow-up date for "Warte auf Intern/Extern" --}}
-    <x-ui.modal name="follow-up" :title="$pendingStatus ? \App\Enums\TicketStatus::from($pendingStatus)->label() : 'Wiedervorlage'" description="Wann soll das Ticket wieder vorgelegt werden?" max-width="sm"
+    {{-- Status change: follow-up date ("Warte auf Intern/Extern") and/or mail to the customer --}}
+    @php($pending = $pendingStatus ? \App\Enums\TicketStatus::tryFrom($pendingStatus) : null)
+    @php($notification = $pending ? $this->notification($pending) : null)
+    <x-ui.modal name="status" :title="$taking ? 'Ticket übernehmen' : ($pending ? 'Status: '.$pending->label() : 'Status ändern')" max-width="sm"
         x-init="$watch('show', value => { if (! value && $wire.pendingStatus) $wire.cancelStatusChange() })"
         x-effect="show = $wire.pendingStatus !== null">
-        <form wire:submit="confirmFollowUp" id="follow-up-form" class="space-y-3">
-            <x-ui.input label="Wiedervorlage am" type="date" wire:model="followUpDate" :min="today()->toDateString()" required />
-            <div class="flex flex-wrap gap-1.5">
-                @foreach (['Morgen' => today()->addWeekday(), 'In 2 Werktagen' => today()->addWeekdays(2), 'Nächste Woche' => today()->next('Monday')] as $label => $date)
-                    <button type="button" wire:click="$set('followUpDate', '{{ $date->toDateString() }}')" class="rounded-full bg-ink/[0.05] px-2.5 py-1 text-[12px] font-medium text-ink-muted hover:text-ink">{{ $label }}</button>
-                @endforeach
-            </div>
+        <form wire:submit="confirmStatus" id="status-form" class="space-y-4">
+            @if ($pending?->requiresFollowUp())
+                <div class="space-y-3">
+                    <p class="text-sm text-ink-muted">Wann soll das Ticket wieder vorgelegt werden?</p>
+                    <x-ui.input label="Wiedervorlage am" type="date" wire:model="followUpDate" :min="today()->toDateString()" required />
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach (['Morgen' => today()->addWeekday(), 'In 2 Werktagen' => today()->addWeekdays(2), 'Nächste Woche' => today()->next('Monday')] as $label => $date)
+                            <button type="button" wire:click="$set('followUpDate', '{{ $date->toDateString() }}')" class="rounded-full bg-ink/[0.05] px-2.5 py-1 text-[12px] font-medium text-ink-muted hover:text-ink">{{ $label }}</button>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+            @if ($notification)
+                <x-ui.checkbox label="Kunden per E-Mail informieren" wire:model="notifyCustomer"
+                    :description="'Vorlage „'.$notification->label().'“ an '.$ticket->recipient()['email']" />
+            @endif
         </form>
         <x-slot:footer>
             <x-ui.button variant="secondary" wire:click="cancelStatusChange">Abbrechen</x-ui.button>
-            <x-ui.button type="submit" form="follow-up-form">Status setzen</x-ui.button>
+            <x-ui.button type="submit" form="status-form">{{ $taking ? 'Übernehmen' : 'Status setzen' }}</x-ui.button>
         </x-slot:footer>
     </x-ui.modal>
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MessageType;
 use App\Enums\Permission;
 use App\Enums\TicketPriority;
 use App\Enums\TicketSource;
@@ -22,7 +23,7 @@ class Ticket extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'subject', 'status', 'priority', 'source', 'follow_up_at',
+        'subject', 'status', 'priority', 'source', 'follow_up_at', 'requester_email', 'requester_name',
     ];
 
     /**
@@ -82,6 +83,11 @@ class Ticket extends Model
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function mailbox(): BelongsTo
+    {
+        return $this->belongsTo(Mailbox::class);
     }
 
     public function assignee(): BelongsTo
@@ -161,6 +167,49 @@ class Ticket extends Model
     public static function normalizeSearch(string $search): string
     {
         return trim(preg_replace('/^\s*ticket\s*#\s*/i', '', $search));
+    }
+
+    /**
+     * Who receives mails of this ticket: the contact, else the original sender.
+     *
+     * @return array{email: string, name: ?string}|null
+     */
+    public function recipient(): ?array
+    {
+        if ($this->contact?->email) {
+            return ['email' => $this->contact->email, 'name' => $this->contact->fullName()];
+        }
+
+        return $this->requester_email ? ['email' => $this->requester_email, 'name' => $this->requester_name] : null;
+    }
+
+    /**
+     * Subject of outgoing mails, always with the ticket tag "[#JJJJ-NNNNN]".
+     */
+    public function mailSubject(?string $subject = null): string
+    {
+        $subject = trim($subject ?? $this->subject);
+        $tag = "[#{$this->number}]";
+
+        return str_contains($subject, $tag) ? $subject : "{$subject} {$tag}";
+    }
+
+    public function lastIncomingMessageId(): ?string
+    {
+        return $this->messages()->reorder()->where('type', MessageType::MailIn->value)
+            ->whereNotNull('message_id')->latest('id')->value('message_id');
+    }
+
+    /**
+     * Message ids of the conversation for the References header (last 20).
+     *
+     * @return list<string>
+     */
+    public function mailReferences(?TicketMessage $except = null): array
+    {
+        return $this->messages()->reorder()->whereNotNull('message_id')
+            ->when($except, fn ($query) => $query->whereKeyNot($except->id))
+            ->latest('id')->limit(20)->pluck('message_id')->reverse()->values()->all();
     }
 
     public function isClosed(): bool

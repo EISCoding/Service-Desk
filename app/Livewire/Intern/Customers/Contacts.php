@@ -3,9 +3,11 @@
 namespace App\Livewire\Intern\Customers;
 
 use App\Enums\Salutation;
+use App\Enums\SystemTemplate;
 use App\Livewire\Concerns\InteractsWithToasts;
 use App\Models\Contact;
 use App\Models\Customer;
+use App\Models\MailTemplate;
 use App\Notifications\Portal\ContactInvitation;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +25,8 @@ use Livewire\Component;
 class Contacts extends Component
 {
     use InteractsWithToasts;
+
+    private const INVITATION_DISABLED = 'Keine Einladung verschickt: Die Systemvorlage „Portal-Einladung“ ist deaktiviert.';
 
     #[Locked]
     public Customer $customer;
@@ -138,8 +142,11 @@ class Contacts extends Component
         $this->showForm = false;
 
         if ($inviteNow && $contact->portalStatus() !== 'active') {
-            $this->sendInvitationTo($contact);
-            $this->changed($creating ? 'Ansprechpartner angelegt und eingeladen.' : 'Ansprechpartner gespeichert und eingeladen.');
+            $this->changed(match (true) {
+                ! $this->sendInvitationTo($contact) => ($creating ? 'Ansprechpartner angelegt. ' : 'Ansprechpartner gespeichert. ').self::INVITATION_DISABLED,
+                $creating => 'Ansprechpartner angelegt und eingeladen.',
+                default => 'Ansprechpartner gespeichert und eingeladen.',
+            });
 
             return;
         }
@@ -158,7 +165,12 @@ class Contacts extends Component
             return;
         }
 
-        $this->sendInvitationTo($contact);
+        if (! $this->sendInvitationTo($contact)) {
+            $this->toast(self::INVITATION_DISABLED, 'error');
+
+            return;
+        }
+
         $this->changed("Einladung an {$contact->email} verschickt.");
     }
 
@@ -172,13 +184,22 @@ class Contacts extends Component
         $this->changed('Ansprechpartner gelöscht.');
     }
 
-    private function sendInvitationTo(Contact $contact): void
+    /**
+     * @return bool false when the template "Portal-Einladung" is switched off
+     */
+    private function sendInvitationTo(Contact $contact): bool
     {
+        if (! MailTemplate::system(SystemTemplate::PortalInvitation)) {
+            return false;
+        }
+
         $token = Password::broker('contact_invitations')->createToken($contact);
 
         $contact->forceFill(['invited_at' => now()])->save();
         $contact->notify(new ContactInvitation($token));
         $contact->logActivity('portal_invited', ['email' => ['old' => null, 'new' => $contact->email]]);
+
+        return true;
     }
 
     /**

@@ -1,0 +1,14 @@
+Message-ID: <{{MESSAGE_ID}}>
+Date: Thu, 15 Oct 2026 10:00:00 +0200
+From: {{FROM}}
+To: Support Musterfirma <support@musterfirma.test>
+Subject: {{SUBJECT}}
+{{HEADERS}}
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+{{BODY}}
+
+Am 14.10.2026 um 16:00 schrieb Support Musterfirma:
+> Alte Nachricht

@@ -40,6 +40,10 @@
 
         <div class="my-1 border-t border-separator"></div>
 
+        <a href="{{ route('intern.settings.signature') }}" wire:navigate class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
+            <x-heroicon-o-pencil-square class="size-4 text-ink-muted" aria-hidden="true" />
+            Signatur
+        </a>
         <a href="{{ route('intern.settings.security') }}" wire:navigate class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
             <x-heroicon-o-shield-check class="size-4 text-ink-muted" aria-hidden="true" />
             Sicherheit

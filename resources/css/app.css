@@ -108,6 +108,10 @@
     .message-body :where(table) {
         @apply block max-w-full overflow-x-auto;
     }
+
+    .message-body :where(img) {
+        @apply inline-block h-auto max-w-full rounded-md;
+    }
 }
 
 /* Trix editor in the design system (unlayered, so it wins over trix.css) */

@@ -72,22 +72,22 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 4 – Mail (IMAP/SMTP) und Vorlagen
 
-- [ ] Migration + Model `mailboxes`: Name, Adresse, IMAP (Host, Port, Verschlüsselung, Benutzer, Passwort verschlüsselt, Ordner), SMTP (dito), Standardgruppe, aktiv
-- [ ] Admin-Oberfläche für Postfächer mit Button „Verbindung testen“ (IMAP und SMTP)
-- [ ] Job `FetchMailbox` pro Postfach, jede Minute per Scheduler, `withoutOverlapping`
-- [ ] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
-- [ ] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
-- [ ] Antwort auf geschlossenes Ticket: Frist prüfen (Annahmen oben)
-- [ ] Antwort auf „Warte auf Kunden“ → „In Arbeit“
-- [ ] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar
-- [ ] Loop-Schutz: `Auto-Submitted`, `X-Auto-Response-Suppress`, Abwesenheitsnotizen → keine automatische Antwort
-- [ ] Verarbeitete Mails als gelesen markieren oder in Ordner verschieben (pro Postfach einstellbar)
-- [ ] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue
-- [ ] Migration + Model `mail_templates`: Typ (System/Textbaustein), Name, Betreff, Text
-- [ ] Platzhalter-Engine: `{ticket.nummer}`, `{ticket.betreff}`, `{ticket.status}`, `{kontakt.anrede}`, `{kontakt.name}`, `{kunde.firma}`, `{termin.datum}`, `{termin.zeit}`, `{mitarbeiter.name}`, `{portal.link}`
-- [ ] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)
-- [ ] Textbausteine im Antwort-Editor einfügbar
-- [ ] Signatur pro Mitarbeiter automatisch anhängen
+- [x] Migration + Model `mailboxes`: Name, Adresse, IMAP (Host, Port, Verschlüsselung, Benutzer, Passwort verschlüsselt, Ordner), SMTP (dito), Standardgruppe, aktiv
+- [x] Admin-Oberfläche für Postfächer mit Button „Verbindung testen“ (IMAP und SMTP)
+- [x] Job `FetchMailbox` pro Postfach, jede Minute per Scheduler, `withoutOverlapping`
+- [x] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
+- [x] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
+- [x] Antwort auf geschlossenes Ticket: Frist prüfen (Annahmen oben)
+- [x] Antwort auf „Warte auf Kunden“ → „In Arbeit“
+- [x] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar
+- [x] Loop-Schutz: `Auto-Submitted`, `X-Auto-Response-Suppress`, Abwesenheitsnotizen → keine automatische Antwort
+- [x] Verarbeitete Mails als gelesen markieren oder in Ordner verschieben (pro Postfach einstellbar)
+- [x] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue
+- [x] Migration + Model `mail_templates`: Typ (System/Textbaustein), Name, Betreff, Text
+- [x] Platzhalter-Engine: `{ticket.nummer}`, `{ticket.betreff}`, `{ticket.status}`, `{kontakt.anrede}`, `{kontakt.name}`, `{kunde.firma}`, `{termin.datum}`, `{termin.zeit}`, `{mitarbeiter.name}`, `{portal.link}`
+- [x] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)
+- [x] Textbausteine im Antwort-Editor einfügbar
+- [x] Signatur pro Mitarbeiter automatisch anhängen
 
 **Fertig wenn:** Eine Mail an ein Postfach erzeugt ein Ticket, eine Antwort daraus landet im selben Ticket, Vorlagen werden korrekt befüllt. Tests mit Fixture-Mails (.eml) grün.
 

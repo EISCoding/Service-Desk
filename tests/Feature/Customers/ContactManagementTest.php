@@ -4,13 +4,16 @@ use App\Enums\Salutation;
 use App\Livewire\Intern\Customers\Contacts;
 use App\Models\Contact;
 use App\Models\Customer;
+use App\Models\MailTemplate;
 use App\Models\User;
 use App\Notifications\Portal\ContactInvitation;
+use Database\Seeders\MailTemplateSeeder;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 beforeEach(function () {
+    $this->seed(MailTemplateSeeder::class);
     Notification::fake();
     $this->staff = User::factory()->staff()->create();
     $this->customer = Customer::factory()->create();
@@ -123,10 +126,13 @@ describe('portal invitation', function () {
 
         Notification::assertSentTo($contact, ContactInvitation::class, function (ContactInvitation $notification) use ($contact) {
             $mail = $notification->toMail($contact);
+            $url = $notification->url($contact);
 
-            return str_contains($notification->url($contact), '/portal/einladung/')
-                && $mail->subject === 'Ihr Zugang zum Kundenportal von ServiceDesk'
-                && $mail->greeting === $contact->formalGreeting().',';
+            return str_contains($url, '/portal/einladung/')
+                && $mail->subject === 'Ihr Zugang zum Kundenportal'
+                && str_starts_with($mail->viewData['body'], '<div>'.e($contact->formalGreeting()).',')
+                && str_contains($mail->viewData['body'], '<a href="'.e($url).'">')
+                && str_contains($mail->viewData['text'], $url);
         });
     });
 
@@ -161,6 +167,17 @@ describe('portal invitation', function () {
         $other = Contact::factory()->for($this->customer)->create();
         contactsTab()->call('edit', $other->id)->set('portal_access', true)->call('save');
         Notification::assertSentTo($other, ContactInvitation::class);
+    });
+
+    it('does not invite while the template is switched off', function () {
+        MailTemplate::where('key', 'portal_invitation')->update(['is_active' => false]);
+        $contact = Contact::factory()->for($this->customer)->withPortalAccess()->create();
+
+        contactsTab()->call('invite', $contact->id)
+            ->assertDispatched('toast', type: 'error', message: 'Keine Einladung verschickt: Die Systemvorlage „Portal-Einladung“ ist deaktiviert.');
+
+        expect($contact->refresh()->portalStatus())->toBe('not_invited');
+        Notification::assertNothingSent();
     });
 
     it('does not invite contacts without portal access', function () {
