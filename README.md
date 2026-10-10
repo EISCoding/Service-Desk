@@ -56,6 +56,13 @@ Oder alles zusammen mit `composer dev`.
 
 Anmeldung unter <http://localhost:8000/intern/login>.
 
+Nach dem Login:
+
+- **Benutzer und Gruppen**: Admin → Benutzer / Gruppen (`/intern/admin/benutzer`, `/intern/admin/gruppen`)
+- **2FA einrichten / Passwort ändern**: Benutzermenü oben rechts → Sicherheit
+- **Darkmode**: Benutzermenü → Darstellung (System / Hell / Dunkel)
+- **Design-System**: <http://localhost:8000/intern/styleguide> (nur bei `APP_ENV=local`)
+
 Mails (Passwort-Reset usw.) landen lokal in `storage/logs/laravel-*.log` (`MAIL_MAILER=log`).
 
 ### MariaDB statt SQLite
