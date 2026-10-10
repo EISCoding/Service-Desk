@@ -4,11 +4,8 @@
     $twoFactorPending = ! $twoFactorEnabled && $user->two_factor_secret;
 @endphp
 
-<div class="mx-auto max-w-2xl space-y-6">
-    <div>
-        <h1 class="text-[22px] font-semibold tracking-tight">Sicherheit</h1>
-        <p class="mt-1 text-sm text-ink-muted">Passwort und Zwei-Faktor-Authentifizierung für dein Konto.</p>
-    </div>
+<div class="max-w-2xl space-y-6">
+    <x-ui.page-header title="Sicherheit" description="Passwort und Zwei-Faktor-Authentifizierung für dein Konto." class="mb-0!" />
 
     <x-ui.card title="Passwort ändern" description="Mindestens 10 Zeichen mit Buchstaben und Zahlen.">
         <form wire:submit="updatePassword" class="space-y-4" id="password-form">

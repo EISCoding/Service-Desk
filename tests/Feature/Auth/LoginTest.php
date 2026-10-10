@@ -20,7 +20,8 @@ it('logs staff in and sends them to /intern', function () {
         ->assertRedirect('/intern');
 
     $this->assertAuthenticatedAs($user);
-    $this->get('/intern')->assertOk()->assertSee($user->name);
+    $this->get('/intern')->assertRedirect('/intern/tickets');
+    $this->get('/intern/tickets')->assertOk()->assertSee($user->name);
 });
 
 it('accepts the email address case-insensitively', function () {
