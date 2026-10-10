@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -31,6 +32,22 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * User with the Admin role (all permissions).
+     */
+    public function admin(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Role::Admin->value));
+    }
+
+    /**
+     * User with the Mitarbeiter role.
+     */
+    public function staff(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Role::Staff->value));
     }
 
     /**

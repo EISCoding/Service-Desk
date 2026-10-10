@@ -53,6 +53,7 @@ it('runs all deployment steps in the right order', function () {
             'npm ci --include=dev --no-audit --no-fund',
             'npm run build',
             'php artisan migrate --force',
+            'php artisan db:seed --class=RolesAndPermissionsSeeder --force',
             'php artisan config:cache',
             'php artisan route:cache',
             'php artisan view:cache',

@@ -63,6 +63,10 @@ mkdir -p storage/app/private storage/framework/{cache,sessions,views} storage/lo
 log "Database migrations"
 "$PHP" artisan migrate --force
 
+# Adds new permissions and re-syncs the default roles (idempotent).
+log "Roles and permissions"
+"$PHP" artisan db:seed --class=RolesAndPermissionsSeeder --force
+
 log "Caches"
 "$PHP" artisan config:cache
 "$PHP" artisan route:cache
