@@ -38,7 +38,7 @@
         x-bind:aria-expanded="open"
         class="block h-9 w-full rounded-[10px] bg-ink/[0.05] pr-14 pl-9 text-sm text-ink placeholder:text-ink-faint focus:bg-surface focus:ring-2 focus:ring-accent focus:outline-none"
     >
-    <kbd class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-separator px-1.5 font-sans text-[11px] text-ink-faint sm:block">⌘K</kbd>
+    <kbd class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-separator px-1.5 font-sans text-[11px] text-ink-muted sm:block">⌘K</kbd>
 
     @if (mb_strlen(trim($query)) >= 2)
         <div x-show="open" x-cloak x-ref="results" id="global-search-results" class="absolute inset-x-0 top-full z-40 mt-1 max-h-[70vh] overflow-y-auto rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">

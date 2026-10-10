@@ -52,7 +52,7 @@
         @else
             <p class="-mt-1 text-[12px] text-ink-muted">
                 {{ auth()->user()->signature ? 'Deine Signatur wird automatisch angehängt.' : 'Noch keine Signatur hinterlegt.' }}
-                <a href="{{ route('intern.settings.signature') }}" wire:navigate class="text-accent hover:underline">{{ auth()->user()->signature ? 'Bearbeiten' : 'Signatur einrichten' }}</a>
+                <a href="{{ route('intern.settings.signature') }}" wire:navigate class="text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent">{{ auth()->user()->signature ? 'Bearbeiten' : 'Signatur einrichten' }}</a>
             </p>
         @endif
 

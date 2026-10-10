@@ -3,23 +3,23 @@
 namespace App\Support;
 
 /**
- * Accent colors to choose from (Apple system colors). Light mode uses the darker,
- * accessible variants so white text on buttons keeps its contrast; light accents
- * in dark mode get dark text on buttons.
+ * Accent colors to choose from (Apple system colors). Text and links use the
+ * darker variant in light mode and the brighter one in dark mode; buttons
+ * (accent-fill) always use the darker variant so white text keeps 4.5:1.
  */
 final class AccentColor
 {
     /**
-     * key => [label, light, light hover, dark, dark hover, text on accent in dark mode]
+     * key => [label, light (also fill), light hover, dark, dark hover]
      */
     public const PALETTE = [
-        'blue' => ['Blau', '#0071e3', '#0077ed', '#0a84ff', '#409cff', '#ffffff'],
-        'purple' => ['Lila', '#8944ab', '#9a55bd', '#bf5af2', '#cd7cf5', '#ffffff'],
-        'pink' => ['Rosa', '#d30f45', '#e0204f', '#ff375f', '#ff6482', '#ffffff'],
-        'red' => ['Rot', '#d70015', '#e3242b', '#ff453a', '#ff6961', '#ffffff'],
-        'orange' => ['Orange', '#c93400', '#d9480f', '#ff9f0a', '#ffb340', '#1d1d1f'],
-        'green' => ['Grün', '#248a3d', '#2a9a46', '#30d158', '#4fdd73', '#1d1d1f'],
-        'graphite' => ['Graphit', '#6e6e73', '#7c7c81', '#98989d', '#aeaeb2', '#1d1d1f'],
+        'blue' => ['Blau', '#0066cc', '#0071e3', '#2997ff', '#5aadff'],
+        'purple' => ['Lila', '#8944ab', '#9a55bd', '#cd7cf5', '#da8fff'],
+        'pink' => ['Rosa', '#d30f45', '#e0204f', '#ff6482', '#ff7a93'],
+        'red' => ['Rot', '#d70015', '#e3242b', '#ff6961', '#ff7b74'],
+        'orange' => ['Orange', '#c93400', '#d9480f', '#ff9f0a', '#ffb340'],
+        'green' => ['Grün', '#1f7f37', '#248a3d', '#30d158', '#4fdd73'],
+        'graphite' => ['Graphit', '#636366', '#6e6e73', '#98989d', '#aeaeb2'],
     ];
 
     /**
@@ -31,9 +31,9 @@ final class AccentColor
             return null;
         }
 
-        [, $light, $lightHover, $dark, $darkHover, $onDark] = self::PALETTE[$key];
+        [, $light, $lightHover, $dark, $darkHover] = self::PALETTE[$key];
 
-        return ":root{--accent:{$light};--accent-hover:{$lightHover};--on-accent:#ffffff}"
-            .".dark{--accent:{$dark};--accent-hover:{$darkHover};--on-accent:{$onDark}}";
+        return ":root{--accent:{$light};--accent-hover:{$lightHover};--accent-fill:{$light};--accent-fill-hover:{$lightHover}}"
+            .".dark{--accent:{$dark};--accent-hover:{$darkHover};--accent-fill:{$light};--accent-fill-hover:{$lightHover}}";
     }
 }

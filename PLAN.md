@@ -118,7 +118,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Activity-Log im Ticket und beim Kunden als Tab anzeigen
 - [x] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
 - [x] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
-- [ ] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
+- [x] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
 - [ ] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
 - [ ] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
 
