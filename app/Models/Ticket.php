@@ -84,6 +84,11 @@ class Ticket extends Model
         return $this->belongsTo(Group::class);
     }
 
+    public function mailbox(): BelongsTo
+    {
+        return $this->belongsTo(Mailbox::class);
+    }
+
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assignee_id');

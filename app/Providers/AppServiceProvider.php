@@ -10,6 +10,7 @@ use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Group;
+use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
@@ -45,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
             'ticket_message' => TicketMessage::class,
             'attachment' => Attachment::class,
             'appointment' => Appointment::class,
+            'mailbox' => Mailbox::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.

@@ -72,7 +72,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 4 – Mail (IMAP/SMTP) und Vorlagen
 
-- [ ] Migration + Model `mailboxes`: Name, Adresse, IMAP (Host, Port, Verschlüsselung, Benutzer, Passwort verschlüsselt, Ordner), SMTP (dito), Standardgruppe, aktiv
+- [x] Migration + Model `mailboxes`: Name, Adresse, IMAP (Host, Port, Verschlüsselung, Benutzer, Passwort verschlüsselt, Ordner), SMTP (dito), Standardgruppe, aktiv
 - [ ] Admin-Oberfläche für Postfächer mit Button „Verbindung testen“ (IMAP und SMTP)
 - [ ] Job `FetchMailbox` pro Postfach, jede Minute per Scheduler, `withoutOverlapping`
 - [ ] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
