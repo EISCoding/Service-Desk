@@ -119,7 +119,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
 - [x] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
 - [x] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
-- [ ] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
+- [x] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
 - [ ] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
 
 **Fertig wenn:** Alle Tests grün, Deployment auf Plesk nach README in einem Durchgang möglich.
