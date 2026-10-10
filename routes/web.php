@@ -1,5 +1,7 @@
 <?php
 
+use App\Enums\Permission;
+use App\Http\Controllers\BrandingLogoController;
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\Portal\LoginController;
 use App\Http\Controllers\Portal\PasswordResetController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
+use App\Livewire\Intern\Admin\Settings\Index as AdminSettings;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
@@ -78,6 +81,10 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
             ->middleware('can:viewAny,'.User::class)
             ->name('users.index');
 
+        Route::livewire('einstellungen', AdminSettings::class)
+            ->middleware('can:'.Permission::AdminSettings->value)
+            ->name('settings');
+
         Route::livewire('postfaecher', MailboxIndex::class)
             ->middleware('can:viewAny,'.Mailbox::class)
             ->name('mailboxes.index');
@@ -87,6 +94,8 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
             ->name('groups.index');
     });
 });
+
+Route::get('logo', BrandingLogoController::class)->name('branding.logo');
 
 /*
 | Customer portal (guard "contact").

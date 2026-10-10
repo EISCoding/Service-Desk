@@ -18,6 +18,7 @@ use App\Models\MailTemplate;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
+use App\Support\AppSettings;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -31,11 +32,15 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->singleton(AppSettings::class);
         $this->app->bind(MailboxConnector::class, ImapMailboxConnector::class);
     }
 
     public function boot(): void
     {
+        // Company name and reopen period from the admin settings.
+        $this->app->make(AppSettings::class)->apply();
+
         // German dates ("vor 5 Minuten", "3. Okt. 2026").
         Carbon::setLocale(config('app.locale'));
 

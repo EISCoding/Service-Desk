@@ -19,9 +19,7 @@
         {{-- Sidebar (desktop) --}}
         <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-separator bg-surface/70 backdrop-blur-xl backdrop-saturate-150 lg:flex">
             <a href="{{ route('intern.dashboard') }}" wire:navigate class="flex h-14 items-center gap-2.5 px-5">
-                <span class="grid size-7 place-items-center rounded-lg bg-gradient-to-b from-accent to-accent-hover text-white shadow-sm">
-                    <x-heroicon-o-lifebuoy class="size-4.5" aria-hidden="true" />
-                </span>
+                <x-brand-mark size="sm" />
                 <span class="text-[15px] font-semibold tracking-tight">{{ config('app.name') }}</span>
             </a>
 
@@ -78,8 +76,8 @@
         <div class="lg:pl-60">
             {{-- Topbar --}}
             <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-separator bg-canvas/80 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6">
-                <a href="{{ route('intern.dashboard') }}" wire:navigate class="grid size-8 shrink-0 place-items-center rounded-lg bg-gradient-to-b from-accent to-accent-hover text-white lg:hidden">
-                    <x-heroicon-o-lifebuoy class="size-5" aria-hidden="true" />
+                <a href="{{ route('intern.dashboard') }}" wire:navigate class="shrink-0 lg:hidden">
+                    <x-brand-mark />
                     <span class="sr-only">{{ config('app.name') }}</span>
                 </a>
 

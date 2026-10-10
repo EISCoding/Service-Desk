@@ -20,7 +20,7 @@
             'secondary' => 'bg-surface text-ink ring-1 ring-inset ring-separator shadow-xs hover:bg-surface-muted',
             'ghost' => 'text-ink-muted hover:bg-surface-muted hover:text-ink',
             'danger' => 'bg-red-600 text-white shadow-xs hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600',
-            default => 'bg-accent text-white shadow-xs hover:bg-accent-hover',
+            default => 'bg-accent text-on-accent shadow-xs hover:bg-accent-hover',
         },
     ]);
 @endphp

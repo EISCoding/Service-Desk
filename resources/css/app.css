@@ -15,6 +15,7 @@
 :root {
     --accent: #0071e3;
     --accent-hover: #0077ed;
+    --on-accent: #ffffff;
     --canvas: #f5f5f7;
     --surface: #ffffff;
     --surface-muted: #f5f5f7;
@@ -28,6 +29,7 @@
 .dark {
     --accent: #0a84ff;
     --accent-hover: #409cff;
+    --on-accent: #ffffff;
     --canvas: #000000;
     --surface: #1c1c1e;
     --surface-muted: #2c2c2e;
@@ -44,6 +46,7 @@
 
     --color-accent: var(--accent);
     --color-accent-hover: var(--accent-hover);
+    --color-on-accent: var(--on-accent);
     --color-canvas: var(--canvas);
     --color-surface: var(--surface);
     --color-surface-muted: var(--surface-muted);
