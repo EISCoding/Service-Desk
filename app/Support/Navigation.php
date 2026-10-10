@@ -19,7 +19,7 @@ final class Navigation
     {
         return self::visible($user, [
             ['label' => 'Tickets', 'route' => 'intern.tickets.index', 'icon' => 'inbox-stack', 'active' => 'intern.tickets.*'],
-            ['label' => 'Kunden', 'route' => 'intern.customers.index', 'icon' => 'building-office-2', 'active' => 'intern.customers.*'],
+            ['label' => 'Kunden', 'route' => 'intern.customers.index', 'icon' => 'building-office-2', 'active' => 'intern.customers.*', 'ability' => Permission::CustomersManage->value],
             ['label' => 'Termine', 'route' => 'intern.appointments.index', 'icon' => 'calendar-days', 'active' => 'intern.appointments.*'],
             ['label' => 'Vorlagen', 'route' => 'intern.templates.index', 'icon' => 'document-duplicate', 'active' => 'intern.templates.*'],
             ['label' => 'Admin', 'route' => 'intern.admin.index', 'icon' => 'cog-6-tooth', 'active' => 'intern.admin.*', 'ability' => 'access-admin'],

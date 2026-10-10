@@ -3,7 +3,9 @@
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
+use App\Livewire\Intern\Customers\Index as CustomerIndex;
 use App\Livewire\Intern\Settings\Security;
+use App\Models\Customer;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -22,10 +24,6 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         'title' => 'Tickets', 'icon' => 'inbox-stack', 'heading' => 'Noch keine Tickets',
         'description' => 'Die Ticketverwaltung folgt in Phase 3.',
     ])->name('tickets.index');
-    Route::view('kunden', 'intern.placeholder', [
-        'title' => 'Kunden', 'icon' => 'building-office-2', 'heading' => 'Noch keine Kunden',
-        'description' => 'Kunden und Ansprechpartner folgen in Phase 2.',
-    ])->name('customers.index');
     Route::view('termine', 'intern.placeholder', [
         'title' => 'Termine', 'icon' => 'calendar-days', 'heading' => 'Keine anstehenden Termine',
         'description' => 'VOS-Termine folgen in Phase 3.',
@@ -34,6 +32,10 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         'title' => 'Vorlagen', 'icon' => 'document-duplicate', 'heading' => 'Noch keine Vorlagen',
         'description' => 'Mail-Vorlagen und Textbausteine folgen in Phase 4.',
     ])->name('templates.index');
+
+    Route::livewire('kunden', CustomerIndex::class)
+        ->middleware('can:viewAny,'.Customer::class)
+        ->name('customers.index');
 
     Route::livewire('einstellungen/sicherheit', Security::class)
         ->middleware('password.confirm')
