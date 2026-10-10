@@ -182,6 +182,7 @@ return [
         'recovery_code' => 'Wiederherstellungscode',
         'roles' => 'Rollen',
         'groups' => 'Gruppen',
+        'members' => 'Mitglieder',
         'description' => 'Beschreibung',
         'theme' => 'Darstellung',
     ],

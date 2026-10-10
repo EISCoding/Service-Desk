@@ -19,7 +19,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Scheduler-Eintrag für die Queue (`queue:work --stop-when-empty --max-time=50`, jede Minute, `withoutOverlapping`)
 - [x] Mitarbeiter-Login unter `/intern/login` mit Fortify, Passwort-Reset, 2FA (TOTP) optional pro Benutzer
 - [x] Rollen und Rechte mit spatie/laravel-permission; Seeder mit Rollen `Admin`, `Mitarbeiter` und allen Rechten (siehe unten)
-- [ ] Gruppen (`groups`, Pivot `group_user`), Verwaltung unter `/intern/admin/gruppen`
+- [x] Gruppen (`groups`, Pivot `group_user`), Verwaltung unter `/intern/admin/gruppen`
 - [ ] Benutzerverwaltung unter `/intern/admin/benutzer` (anlegen, deaktivieren, Rollen, Gruppen)
 - [x] Layout `/intern`: Sidebar (Tickets, Kunden, Termine, Vorlagen, Admin), Topbar mit Suche und Benutzermenü
 - [x] Design-System als Blade-Komponenten: Button, Input, Select, Card, Badge/Pill, Modal, Tabelle, Leerzustand, Toast

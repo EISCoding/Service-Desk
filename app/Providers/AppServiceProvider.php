@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\Permission;
+use App\Models\Group;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         // Short, stable type names in polymorphic columns (activity log, roles).
         Relation::enforceMorphMap([
             'user' => User::class,
+            'group' => Group::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.
