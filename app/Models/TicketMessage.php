@@ -22,12 +22,13 @@ class TicketMessage extends Model
     /** @use HasFactory<TicketMessageFactory> */
     use HasFactory;
 
-    protected $fillable = ['type', 'body', 'message_id', 'in_reply_to', 'from_email', 'from_name', 'to', 'cc', 'template_key'];
+    protected $fillable = ['type', 'is_automatic', 'body', 'message_id', 'in_reply_to', 'from_email', 'from_name', 'to', 'cc', 'template_key'];
 
     protected function casts(): array
     {
         return [
             'type' => MessageType::class,
+            'is_automatic' => 'boolean',
             'to' => 'array',
             'cc' => 'array',
             'sent_at' => 'datetime',

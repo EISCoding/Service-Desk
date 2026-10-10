@@ -6,6 +6,7 @@ use App\Enums\MessageType;
 use App\Enums\TicketSource;
 use App\Enums\TicketStatus;
 use App\Mail\Inbound\InboundMail;
+use App\Mail\Inbound\LoopDetector;
 use App\Models\Contact;
 use App\Models\Mailbox;
 use App\Models\Ticket;
@@ -21,22 +22,33 @@ class InboundMailProcessor
     public function __construct(
         private AttachmentStorage $attachments,
         private TicketStatusService $statuses,
+        private LoopDetector $loops,
     ) {}
 
-    public function process(Mailbox $mailbox, InboundMail $mail): TicketMessage
+    /**
+     * @return TicketMessage|null null when the mail was ignored (sent by one of our own mailboxes)
+     */
+    public function process(Mailbox $mailbox, InboundMail $mail): ?TicketMessage
     {
+        if ($this->loops->isOwnMail($mail, Mailbox::addresses())) {
+            return null;
+        }
+
+        $automatic = $this->loops->isAutomatic($mail);
+
         // The same mail is never imported twice (e.g. after a failed "mark as read").
         if ($mail->messageId && $existing = TicketMessage::where('message_id', $mail->messageId)->first()) {
             return $existing;
         }
 
-        return DB::transaction(function () use ($mailbox, $mail) {
+        return DB::transaction(function () use ($mailbox, $mail, $automatic) {
             $contact = $this->contactFor($mail);
             $ticket = $this->findTicket($mail);
 
-            // Replies to tickets closed longer than the reopen period start a new ticket.
+            // Replies to tickets closed longer than the reopen period start a new
+            // ticket (automatic mails such as out-of-office notes never do).
             $previous = null;
-            if ($ticket?->isClosed() && ! $this->canReopen($ticket)) {
+            if ($ticket?->isClosed() && ! $this->canReopen($ticket) && ! $automatic) {
                 [$previous, $ticket] = [$ticket, null];
             }
 
@@ -50,9 +62,9 @@ class InboundMailProcessor
                 $ticket->save();
             }
 
-            $message = $this->addMessage($ticket, $mail, $contact);
+            $message = $this->addMessage($ticket, $mail, $contact, $automatic);
 
-            if ($isReply) {
+            if ($isReply && ! $automatic) {
                 $this->statusAfterCustomerReply($ticket);
             }
 
@@ -151,10 +163,11 @@ class InboundMailProcessor
         return $ticket;
     }
 
-    private function addMessage(Ticket $ticket, InboundMail $mail, ?Contact $contact): TicketMessage
+    private function addMessage(Ticket $ticket, InboundMail $mail, ?Contact $contact, bool $automatic): TicketMessage
     {
         $message = new TicketMessage([
             'type' => MessageType::MailIn,
+            'is_automatic' => $automatic,
             'body' => $mail->html ?? Html::fromText((string) $mail->text),
             'message_id' => $mail->messageId,
             'in_reply_to' => $mail->inReplyTo,

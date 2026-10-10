@@ -187,7 +187,12 @@
                         @if ($message->isInternal())
                             <x-ui.badge color="yellow"><x-heroicon-m-lock-closed class="size-3" aria-hidden="true" /> Interne Notiz</x-ui.badge>
                         @elseif ($message->type !== \App\Enums\MessageType::Public)
-                            <x-ui.badge><x-heroicon-m-envelope class="size-3" aria-hidden="true" /> {{ $message->type->label() }}</x-ui.badge>
+                            <div class="flex flex-wrap justify-end gap-1">
+                                @if ($message->is_automatic)
+                                    <x-ui.badge color="gray"><x-heroicon-m-cpu-chip class="size-3" aria-hidden="true" /> Automatisch</x-ui.badge>
+                                @endif
+                                <x-ui.badge><x-heroicon-m-envelope class="size-3" aria-hidden="true" /> {{ $message->type->label() }}</x-ui.badge>
+                            </div>
                         @endif
                     </header>
 
