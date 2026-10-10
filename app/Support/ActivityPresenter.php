@@ -56,6 +56,8 @@ final class ActivityPresenter
             },
             'customer_note.deleted' => 'hat eine Notiz gelöscht',
             'ticket.reply_added' => 'hat geantwortet',
+            'appointment.created' => 'hat einen VOS-Termin geplant',
+            'appointment.deleted' => 'hat einen VOS-Termin gelöscht',
             'ticket.note_added' => 'hat eine interne Notiz geschrieben',
             default => $activity->action,
         };

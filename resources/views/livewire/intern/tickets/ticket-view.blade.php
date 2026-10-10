@@ -110,6 +110,35 @@
                     </div>
                 </div>
 
+                {{-- On-site appointments (VOS) --}}
+                <div class="border-t border-separator px-4 py-3">
+                    <div class="flex items-center justify-between">
+                        <p class="text-[13px] font-medium">Termine</p>
+                        @if ($canUpdate)
+                            <button type="button" wire:click="planAppointment" class="text-[12px] font-medium text-accent hover:underline">Termin planen</button>
+                        @endif
+                    </div>
+                    @forelse ($this->appointments as $appointment)
+                        <div wire:key="appointment-{{ $appointment->id }}" @class(['mt-2 rounded-lg bg-teal-500/10 px-3 py-2 text-[12px]', 'opacity-60' => $appointment->ends_at->isPast()])>
+                            <div class="flex items-start justify-between gap-2">
+                                <p class="font-medium text-ink">{{ $appointment->timeRange() }}</p>
+                                @if ($canUpdate)
+                                    <button type="button" wire:click="deleteAppointment({{ $appointment->id }})" wire:confirm="Termin löschen?" class="text-ink-faint hover:text-red-600">
+                                        <x-heroicon-m-x-mark class="size-4" aria-hidden="true" /><span class="sr-only">Termin löschen</span>
+                                    </button>
+                                @endif
+                            </div>
+                            <p class="text-ink-muted">{{ $appointment->technician?->name ?? 'Kein Techniker' }}</p>
+                            <p class="mt-1 whitespace-pre-line text-ink-muted">{{ $appointment->location }}</p>
+                            @if ($appointment->note)
+                                <p class="mt-1 text-ink">{{ $appointment->note }}</p>
+                            @endif
+                        </div>
+                    @empty
+                        <p class="mt-1 text-[12px] text-ink-muted">Keine Termine.</p>
+                    @endforelse
+                </div>
+
                 <dl class="grid grid-cols-2 gap-3 border-t border-separator px-4 py-3 text-[12px] text-ink-muted 2xl:grid-cols-1">
                     <div class="flex justify-between gap-2"><dt>Quelle</dt><dd class="text-ink">{{ $ticket->source->label() }}</dd></div>
                     <div class="flex justify-between gap-2"><dt>Erstellt</dt><dd class="text-ink">{{ $ticket->created_at->isoFormat('D. MMM YYYY, HH:mm') }}</dd></div>
@@ -184,6 +213,25 @@
             @endif
         </div>
     </div>
+
+    {{-- Appointment dialog (VOS) --}}
+    <x-ui.modal name="appointment" wire:model="planningAppointment" title="VOS-Termin planen" description="Vor-Ort-Service / Kundentermin. Das Ticket erhält den Status „VOS“." max-width="lg"
+        x-init="$watch('show', value => { if (! value) $wire.statusVersion++ })">
+        <form wire:submit="saveAppointment" id="appointment-form" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <x-ui.input label="Datum" type="date" wire:model="appointmentDate" :min="today()->toDateString()" required class="col-span-2" />
+                <x-ui.input label="Von" type="time" wire:model="appointmentFrom" required />
+                <x-ui.input label="Bis" type="time" wire:model="appointmentTo" required />
+            </div>
+            <x-ui.select label="Techniker" wire:model="appointmentTechnician" :options="$this->assigneeOptions" required />
+            <x-ui.textarea label="Einsatzort" wire:model="appointmentLocation" rows="3" required />
+            <x-ui.textarea label="Notiz" wire:model="appointmentNote" rows="2" placeholder="z. B. Zugang über Hintereingang" />
+        </form>
+        <x-slot:footer>
+            <x-ui.button variant="secondary" wire:click="cancelStatusChange">Abbrechen</x-ui.button>
+            <x-ui.button type="submit" form="appointment-form">Termin speichern</x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
 
     {{-- Follow-up date for "Warte auf Intern/Extern" --}}
     <x-ui.modal name="follow-up" :title="$pendingStatus ? \App\Enums\TicketStatus::from($pendingStatus)->label() : 'Wiedervorlage'" description="Wann soll das Ticket wieder vorgelegt werden?" max-width="sm"

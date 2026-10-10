@@ -5,15 +5,18 @@ namespace App\Livewire\Intern\Tickets;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
 use App\Livewire\Concerns\InteractsWithToasts;
+use App\Models\Appointment;
 use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
+use App\Services\AppointmentService;
 use App\Services\TicketStatusService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -39,6 +42,21 @@ class TicketView extends Component
 
     /** Changes when a status change is cancelled, so the select shows the current status again. */
     public int $statusVersion = 0;
+
+    /** Appointment dialog (VOS) */
+    public bool $planningAppointment = false;
+
+    public string $appointmentDate = '';
+
+    public string $appointmentFrom = '09:00';
+
+    public string $appointmentTo = '10:00';
+
+    public string $appointmentTechnician = '';
+
+    public string $appointmentLocation = '';
+
+    public string $appointmentNote = '';
 
     public function mount(Ticket $ticket): void
     {
@@ -114,6 +132,12 @@ class TicketView extends Component
         $status = TicketStatus::from($value);
         $this->authorize('update', $this->ticket);
 
+        if ($status === TicketStatus::OnSite) {
+            $this->planAppointment();
+
+            return;
+        }
+
         if ($status->requiresFollowUp()) {
             $this->pendingStatus = $status->value;
             $this->followUpDate = TicketStatusService::defaultFollowUp()->toDateString();
@@ -142,7 +166,76 @@ class TicketView extends Component
     public function cancelStatusChange(): void
     {
         $this->pendingStatus = null;
+        $this->planningAppointment = false;
         $this->statusVersion++;
+    }
+
+    /**
+     * Open the appointment dialog, prefilled with the customer's address.
+     */
+    public function planAppointment(): void
+    {
+        $this->authorize('update', $this->ticket);
+
+        $this->appointmentDate = today()->addWeekday()->toDateString();
+        $this->appointmentFrom = '09:00';
+        $this->appointmentTo = '10:00';
+        $this->appointmentTechnician = (string) ($this->ticket->assignee_id ?? auth()->id());
+        $this->appointmentLocation = AppointmentService::defaultLocation($this->ticket);
+        $this->appointmentNote = '';
+        $this->resetValidation();
+        $this->planningAppointment = true;
+    }
+
+    public function saveAppointment(AppointmentService $appointments): void
+    {
+        $this->authorize('update', $this->ticket);
+
+        $this->validate([
+            'appointmentDate' => ['required', 'date', 'after_or_equal:today'],
+            'appointmentFrom' => ['required', 'date_format:H:i'],
+            'appointmentTo' => ['required', 'date_format:H:i', 'after:appointmentFrom'],
+            'appointmentTechnician' => ['required', Rule::exists('users', 'id')->where('is_active', true)],
+            'appointmentLocation' => ['required', 'string', 'max:1000'],
+            'appointmentNote' => ['nullable', 'string', 'max:2000'],
+        ], attributes: [
+            'appointmentDate' => 'Datum', 'appointmentFrom' => 'Beginn', 'appointmentTo' => 'Ende',
+            'appointmentTechnician' => 'Techniker', 'appointmentLocation' => 'Einsatzort', 'appointmentNote' => 'Notiz',
+        ]);
+
+        $appointment = $appointments->schedule(
+            $this->ticket,
+            Carbon::parse("{$this->appointmentDate} {$this->appointmentFrom}"),
+            Carbon::parse("{$this->appointmentDate} {$this->appointmentTo}"),
+            User::find((int) $this->appointmentTechnician),
+            $this->appointmentLocation,
+            $this->appointmentNote,
+            auth()->user(),
+        );
+
+        $this->planningAppointment = false;
+        unset($this->appointments);
+        $this->afterSave("Termin geplant: {$appointment->timeRange()}");
+    }
+
+    public function deleteAppointment(int $appointmentId): void
+    {
+        $this->authorize('update', $this->ticket);
+
+        $this->ticket->appointments()->findOrFail($appointmentId)->delete();
+
+        unset($this->appointments);
+        $this->dispatch('ticket-updated');
+        $this->toast('Termin gelöscht.');
+    }
+
+    /**
+     * @return Collection<int, Appointment>
+     */
+    #[Computed]
+    public function appointments(): Collection
+    {
+        return $this->ticket->appointments()->with('technician:id,name')->get();
     }
 
     /**

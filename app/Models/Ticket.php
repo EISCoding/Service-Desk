@@ -97,6 +97,14 @@ class Ticket extends Model
         return $this->hasMany(TicketMessage::class)->oldest()->oldest('id');
     }
 
+    /**
+     * On-site appointments (VOS), earliest first.
+     */
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class)->orderBy('starts_at');
+    }
+
     public function mergedInto(): BelongsTo
     {
         return $this->belongsTo(self::class, 'merged_into_id');
