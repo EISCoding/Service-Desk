@@ -1,9 +1,12 @@
 {{-- Local-only overview of the design system (route: /intern/styleguide). --}}
 <x-layouts::base title="Design-System">
     <main x-data class="mx-auto max-w-5xl space-y-8 px-4 py-10 sm:px-6">
-        <header>
-            <h1 class="text-2xl font-semibold tracking-tight">Design-System</h1>
-            <p class="mt-1 text-sm text-ink-muted">Alle Blade-Komponenten unter <code>resources/views/components/ui</code>.</p>
+        <header class="flex flex-wrap items-end justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-semibold tracking-tight">Design-System</h1>
+                <p class="mt-1 text-sm text-ink-muted">Alle Blade-Komponenten unter <code>resources/views/components/ui</code>.</p>
+            </div>
+            <x-theme-switcher class="w-64" />
         </header>
 
         <x-ui.card title="Buttons" description="primary, secondary, ghost, danger – in sm, md, lg">

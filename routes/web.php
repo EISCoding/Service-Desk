@@ -1,9 +1,16 @@
 <?php
 
+use App\Http\Controllers\Intern\UpdateThemeController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
 
-if (app()->isLocal()) {
-    Route::view('/intern/styleguide', 'intern.styleguide')->name('intern.styleguide');
-}
+Route::prefix('intern')->name('intern.')->group(function () {
+    Route::middleware('auth')->group(function () {
+        Route::put('darstellung', UpdateThemeController::class)->name('theme.update');
+    });
+
+    if (app()->isLocal()) {
+        Route::view('styleguide', 'intern.styleguide')->name('styleguide');
+    }
+});

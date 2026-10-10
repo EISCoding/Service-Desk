@@ -1,6 +1,34 @@
 // Alpine.js ships with Livewire; register Alpine extensions in the `alpine:init` hook.
 
 document.addEventListener('alpine:init', () => {
+    // Appearance switch (System/Hell/Dunkel), see resources/views/components/theme-switcher.blade.php
+    window.Alpine.data('themeSwitcher', (updateUrl = null) => ({
+        current: document.documentElement.dataset.theme || 'system',
+
+        set(theme) {
+            this.current = theme;
+            window.applyTheme(theme);
+
+            try {
+                localStorage.setItem('theme', theme);
+            } catch (e) {
+                // Storage may be unavailable (private mode); the setting still applies to this page.
+            }
+
+            if (updateUrl) {
+                fetch(updateUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({ theme }),
+                });
+            }
+        },
+    }));
+
     // Toast notifications, see resources/views/components/ui/toasts.blade.php
     window.Alpine.data('toasts', (initial = null) => ({
         items: [],
