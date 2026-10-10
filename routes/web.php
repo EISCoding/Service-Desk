@@ -13,6 +13,8 @@ use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
 use App\Livewire\Intern\Customers\Show as CustomerShow;
+use App\Livewire\Intern\Settings\General as GeneralSettings;
+use App\Livewire\Intern\Settings\Notifications as NotificationSettings;
 use App\Livewire\Intern\Settings\Security;
 use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
@@ -36,7 +38,7 @@ Route::redirect('/', '/intern');
 */
 Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(function () {
     // Start page: the first area the user may open.
-    Route::get('/', fn () => redirect()->route(Navigation::main(auth()->user())[0]['route'] ?? 'intern.settings.security'))
+    Route::get('/', fn () => redirect()->route(Navigation::main(auth()->user())[0]['route'] ?? 'intern.settings.general'))
         ->name('dashboard');
 
     // Areas built in later phases (placeholders until then).
@@ -60,6 +62,8 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         ->middleware('password.confirm')
         ->name('settings.security');
 
+    Route::livewire('einstellungen', GeneralSettings::class)->name('settings.general');
+    Route::livewire('einstellungen/benachrichtigungen', NotificationSettings::class)->name('settings.notifications');
     Route::livewire('einstellungen/signatur', Signature::class)->name('settings.signature');
 
     Route::put('darstellung', UpdateThemeController::class)->name('theme.update');

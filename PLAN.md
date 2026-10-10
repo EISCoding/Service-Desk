@@ -111,7 +111,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 6 – Feinschliff
 
-- [ ] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
+- [x] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
 - [ ] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
 - [ ] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
 - [ ] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
