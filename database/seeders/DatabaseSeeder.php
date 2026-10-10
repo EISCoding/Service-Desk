@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
 
         if (app()->isLocal()) {
             $this->seedLocalAdmin();
+            $this->call(DemoDataSeeder::class);
         }
     }
 

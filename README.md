@@ -61,9 +61,12 @@ Nach dem Login:
 - **Benutzer und Gruppen**: Admin → Benutzer / Gruppen (`/intern/admin/benutzer`, `/intern/admin/gruppen`)
 - **2FA einrichten / Passwort ändern**: Benutzermenü oben rechts → Sicherheit
 - **Darkmode**: Benutzermenü → Darstellung (System / Hell / Dunkel)
+- **Kunden**: `/intern/kunden` – `db:seed` legt lokal 12 Demo-Kunden mit Ansprechpartnern an
 - **Design-System**: <http://localhost:8000/intern/styleguide> (nur bei `APP_ENV=local`)
 
 Mails (Passwort-Reset usw.) landen lokal in `storage/logs/laravel-*.log` (`MAIL_MAILER=log`).
+Portal-Einladungen laufen über die Queue: Damit sie im Log erscheinen, muss `php artisan schedule:work`
+(oder einmalig `php artisan queue:work --stop-when-empty`) laufen.
 
 ### MariaDB statt SQLite
 
