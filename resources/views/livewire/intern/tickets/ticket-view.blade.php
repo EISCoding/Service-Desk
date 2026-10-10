@@ -15,7 +15,9 @@
                 <x-ui.badge :color="$ticket->status->color()" dot :title="$ticket->status->description()">{{ $ticket->status->label() }}</x-ui.badge>
                 <x-ui.badge :color="$ticket->priority->color()">{{ $ticket->priority->label() }}</x-ui.badge>
                 @if ($ticket->mergedInto)
-                    <x-ui.badge>Zusammengeführt in {{ $ticket->mergedInto->number }}</x-ui.badge>
+                    <a href="{{ route('intern.tickets.show', $ticket->mergedInto) }}" wire:navigate>
+                        <x-ui.badge>Zusammengeführt in {{ $ticket->mergedInto->number }} →</x-ui.badge>
+                    </a>
                 @endif
             </div>
         </div>
@@ -24,19 +26,28 @@
             @if ($canUpdate && $ticket->assignee_id !== auth()->id())
                 <x-ui.button icon="hand-raised" wire:click="take">Übernehmen</x-ui.button>
             @endif
-            @can('delete', $ticket)
+            @canany(['delete', 'merge'], $ticket)
                 <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
                     <x-ui.button variant="secondary" x-on:click="open = ! open" x-bind:aria-expanded="open">
                         <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
                         <span class="sr-only">Weitere Aktionen</span>
                     </x-ui.button>
                     <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
-                        <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="Ticket {{ $ticket->number }} mit allen Nachrichten und Anhängen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
-                            <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Ticket löschen
-                        </button>
+                        @if (! $ticket->merged_into_id)
+                            @can('merge', $ticket)
+                                <button type="button" x-on:click="open = false; $dispatch('open-modal', { name: 'merge' })" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
+                                    <x-heroicon-o-arrows-pointing-in class="size-4 text-ink-muted" aria-hidden="true" /> Zusammenführen …
+                                </button>
+                            @endcan
+                        @endif
+                        @can('delete', $ticket)
+                            <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="Ticket {{ $ticket->number }} mit allen Nachrichten und Anhängen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
+                                <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Ticket löschen
+                            </button>
+                        @endcan
                     </div>
                 </div>
-            @endcan
+            @endcanany
         </div>
     </header>
 
@@ -213,6 +224,27 @@
             @endif
         </div>
     </div>
+
+    {{-- Merge into another ticket --}}
+    @can('merge', $ticket)
+        <x-ui.modal name="merge" title="Ticket zusammenführen" description="Nachrichten, Anhänge und Termine wandern in das gewählte Ticket. Dieses Ticket wird geschlossen." max-width="lg">
+            <x-ui.input wire:model.live.debounce.250ms="mergeSearch" type="search" placeholder="Zielticket: Nummer oder Betreff …" aria-label="Zielticket suchen" />
+            <ul class="mt-3 divide-y divide-separator">
+                @foreach ($this->mergeResults as $target)
+                    <li wire:key="merge-{{ $target->id }}" class="flex items-center justify-between gap-3 py-2.5">
+                        <div class="min-w-0 text-sm">
+                            <p class="truncate"><span class="font-mono text-[12px] text-ink-muted">{{ $target->number }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
+                            <p class="text-[12px] text-ink-muted">{{ $target->customer?->company ?? 'Ohne Kunde' }} · {{ $target->status->label() }}</p>
+                        </div>
+                        <x-ui.button size="sm" variant="secondary" wire:click="merge({{ $target->id }})" wire:confirm="Ticket {{ $ticket->number }} in {{ $target->number }} zusammenführen? Das lässt sich nicht rückgängig machen.">Hierhin</x-ui.button>
+                    </li>
+                @endforeach
+            </ul>
+            @if (mb_strlen(trim($mergeSearch)) >= 2 && $this->mergeResults->isEmpty())
+                <p class="mt-3 text-sm text-ink-muted">Kein passendes Ticket gefunden.</p>
+            @endif
+        </x-ui.modal>
+    @endcan
 
     {{-- Appointment dialog (VOS) --}}
     <x-ui.modal name="appointment" wire:model="planningAppointment" title="VOS-Termin planen" description="Vor-Ort-Service / Kundentermin. Das Ticket erhält den Status „VOS“." max-width="lg"

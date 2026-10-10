@@ -63,7 +63,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`
 - [x] Terminliste `/intern/termine` (kommende VOS-Termine, Filter nach Techniker)
 - [x] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
-- [ ] Tickets zusammenführen (Recht `tickets.merge`)
+- [x] Tickets zusammenführen (Recht `tickets.merge`)
 - [ ] Policies für Sichtbarkeit (eigene/Gruppe/alle), Activity-Log
 
 **Fertig wenn:** Tickets lassen sich intern komplett bearbeiten, VOS-Termine funktionieren, Sichtbarkeit nach Rechten ist getestet.

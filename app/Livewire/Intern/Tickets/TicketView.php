@@ -13,10 +13,12 @@ use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
 use App\Services\AppointmentService;
+use App\Services\TicketMerger;
 use App\Services\TicketStatusService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
+use InvalidArgumentException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -34,6 +36,8 @@ class TicketView extends Component
     public Ticket $ticket;
 
     public string $customerSearch = '';
+
+    public string $mergeSearch = '';
 
     /** Status waiting for a follow-up date (dialog). */
     public ?string $pendingStatus = null;
@@ -297,6 +301,50 @@ class TicketView extends Component
 
         $this->ticket->contact()->associate($contact);
         $this->saveTicket($contact ? "Ansprechpartner: {$contact->fullName()}" : 'Ansprechpartner entfernt');
+    }
+
+    /**
+     * Possible merge targets (visible, not merged, not this ticket).
+     *
+     * @return Collection<int, Ticket>
+     */
+    #[Computed]
+    public function mergeResults(): Collection
+    {
+        $search = trim($this->mergeSearch);
+
+        if (mb_strlen($search) < 2) {
+            return new Collection;
+        }
+
+        return Ticket::query()
+            ->visibleTo(auth()->user())
+            ->whereKeyNot($this->ticket->id)
+            ->whereNull('merged_into_id')
+            ->where(fn ($query) => $query->where('number', 'like', "%{$search}%")->orWhere('subject', 'like', "%{$search}%"))
+            ->with('customer:id,company')
+            ->latest('last_activity_at')
+            ->limit(8)
+            ->get();
+    }
+
+    public function merge(int $targetId, TicketMerger $merger): void
+    {
+        $this->authorize('merge', $this->ticket);
+
+        $target = Ticket::visibleTo(auth()->user())->findOrFail($targetId);
+        $this->authorize('merge', $target);
+
+        try {
+            $merger->merge($this->ticket, $target, auth()->user());
+        } catch (InvalidArgumentException) {
+            $this->toast('Diese Tickets können nicht zusammengeführt werden.', 'error');
+
+            return;
+        }
+
+        $this->flashToast("Ticket {$this->ticket->number} wurde in {$target->number} zusammengeführt.");
+        $this->redirectRoute('intern.tickets.show', $target, navigate: true);
     }
 
     public function delete(): void

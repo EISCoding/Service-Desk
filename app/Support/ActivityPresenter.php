@@ -59,6 +59,8 @@ final class ActivityPresenter
             'appointment.created' => 'hat einen VOS-Termin geplant',
             'appointment.deleted' => 'hat einen VOS-Termin gelöscht',
             'ticket.note_added' => 'hat eine interne Notiz geschrieben',
+            'ticket.merged_into' => 'hat das Ticket in '.($changes['ticket']['new'] ?? '?').' zusammengeführt',
+            'ticket.merged_from' => 'hat Ticket '.($changes['ticket']['new'] ?? '?').' hierher zusammengeführt',
             default => $activity->action,
         };
     }
