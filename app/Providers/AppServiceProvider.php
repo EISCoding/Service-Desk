@@ -8,6 +8,7 @@ use App\Models\Contact;
 use App\Models\Customer;
 use App\Models\CustomerNote;
 use App\Models\Group;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
             'customer' => Customer::class,
             'contact' => Contact::class,
             'customer_note' => CustomerNote::class,
+            'ticket' => Ticket::class,
         ]);
 
         // Catch N+1 queries and unfillable attributes during development and tests.

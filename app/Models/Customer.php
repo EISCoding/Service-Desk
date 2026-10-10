@@ -69,12 +69,14 @@ class Customer extends Model
         return $this->hasMany(CustomerNote::class)->orderByDesc('is_pinned')->latest()->latest('id');
     }
 
-    /**
-     * Tickets are introduced in Phase 3; until then a customer has none.
-     */
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
     public function hasTickets(): bool
     {
-        return false;
+        return $this->tickets()->exists();
     }
 
     public function isArchived(): bool

@@ -50,7 +50,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 ## Phase 3 – Tickets
 
 - [x] Enums `TicketStatus` und `TicketPriority` mit Label und Farbe
-- [ ] Migration + Model `tickets`: Nummer, Betreff, Status, Priorität, Kunde, Ansprechpartner, Gruppe, Bearbeiter, Wiedervorlage, Quelle (Mail/Portal/Intern), geschlossen_am
+- [x] Migration + Model `tickets`: Nummer, Betreff, Status, Priorität, Kunde, Ansprechpartner, Gruppe, Bearbeiter, Wiedervorlage, Quelle (Mail/Portal/Intern), geschlossen_am
 - [ ] Ticketnummern-Generator (transaktionssicher, Zähler pro Jahr)
 - [ ] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
 - [ ] Migration + Model `attachments`: polymorph an Nachrichten, privat gespeichert, Download über Controller mit Policy
