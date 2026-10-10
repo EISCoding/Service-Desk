@@ -31,6 +31,9 @@ return [
     'mail' => [
         'fetch_limit' => (int) env('MAIL_FETCH_LIMIT', 25),
         'reopen_days' => (int) env('TICKET_REOPEN_DAYS', 14),
+        // Laravel mailer used instead of the mailbox SMTP (e.g. "log" for local
+        // development). Leave empty in production.
+        'mailer' => env('MAILBOX_MAILER') ?: null,
     ],
 
     /*

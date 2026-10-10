@@ -7,6 +7,10 @@
         </x-slot:actions>
     </x-ui.page-header>
 
+    @if (config('servicedesk.mail.mailer'))
+        <x-ui.alert type="warning" class="mb-4">E-Mails werden nicht über die Postfächer verschickt, sondern über den Mailer „{{ config('servicedesk.mail.mailer') }}“ (MAILBOX_MAILER in der .env). In Produktion leer lassen.</x-ui.alert>
+    @endif
+
     <x-ui.card :padding="false">
         @if ($this->mailboxes->isEmpty())
             <x-ui.empty-state icon="inbox" title="Noch keine Postfächer" description="Lege ein Postfach an, damit eingehende Mails zu Tickets werden.">
