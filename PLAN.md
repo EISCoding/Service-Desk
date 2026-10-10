@@ -1,0 +1,125 @@
+# ServiceDesk – Aufgabenplan
+
+Sechs Phasen. Jede Phase endet mit einem lauffähigen, getesteten Stand.
+Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
+
+## Festgelegte Annahmen
+- Ticketnummer: `JJJJ-NNNNN` (z. B. `2026-00123`), Zähler pro Jahr
+- Prioritäten: Niedrig, Normal, Hoch, Dringend (ohne SLA-Zeiten)
+- Kundenantwort auf geschlossenes Ticket: innerhalb von 14 Tagen → Ticket wieder „In Arbeit“, danach neues Ticket (Frist im Admin einstellbar)
+- Status (fest, als PHP-Enum): Neu, In Arbeit, Warte auf Kunden, Warte auf Intern, Warte auf Extern, VOS (Vor-Ort-Service/Kundentermin), Geschlossen
+
+---
+
+## Phase 1 – Grundgerüst
+
+- [ ] Laravel-Projekt anlegen, Pest, Tailwind, Livewire, Alpine einrichten
+- [ ] `.env.example` mit allen benötigten Variablen, README mit lokalem Setup
+- [ ] Plesk-Deploy-Skript `deploy.sh`: `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force`, `config:cache`, `route:cache`, `view:cache`
+- [ ] Scheduler-Eintrag für die Queue (`queue:work --stop-when-empty --max-time=50`, jede Minute, `withoutOverlapping`)
+- [ ] Mitarbeiter-Login unter `/intern/login` mit Fortify, Passwort-Reset, 2FA (TOTP) optional pro Benutzer
+- [ ] Rollen und Rechte mit spatie/laravel-permission; Seeder mit Rollen `Admin`, `Mitarbeiter` und allen Rechten (siehe unten)
+- [ ] Gruppen (`groups`, Pivot `group_user`), Verwaltung unter `/intern/admin/gruppen`
+- [ ] Benutzerverwaltung unter `/intern/admin/benutzer` (anlegen, deaktivieren, Rollen, Gruppen)
+- [ ] Layout `/intern`: Sidebar (Tickets, Kunden, Termine, Vorlagen, Admin), Topbar mit Suche und Benutzermenü
+- [ ] Design-System als Blade-Komponenten: Button, Input, Select, Card, Badge/Pill, Modal, Tabelle, Leerzustand, Toast
+- [ ] Darkmode: System/Hell/Dunkel, ohne Flackern beim Laden
+- [ ] Activity-Log-Grundlage (`activity_log`: Benutzer, Objekt, Aktion, Änderungen als JSON, Zeit)
+
+**Rechte:** `tickets.view.own`, `tickets.view.group`, `tickets.view.all`, `tickets.edit`, `tickets.delete`, `tickets.merge`, `notes.manage`, `customers.manage`, `contacts.portal`, `templates.manage`, `admin.users`, `admin.groups`, `admin.mailboxes`, `admin.settings`
+
+**Fertig wenn:** Admin kann sich mit 2FA anmelden, Benutzer und Gruppen anlegen, Darkmode funktioniert, Tests für Login und Rechte laufen grün.
+
+---
+
+## Phase 2 – Kunden
+
+- [ ] Migration + Model `customers`: Kundennummer (automatisch, überschreibbar, eindeutig), Firma, Straße, PLZ, Ort, Land, E-Mail, Telefon, Website, aktiv/archiviert
+- [ ] Migration + Model `contacts`: Kunde, Anrede, Vorname, Nachname, E-Mail (eindeutig), Telefon, Position, Portal-Zugang ja/nein, Hauptansprechpartner ja/nein
+- [ ] Migration + Model `customer_notes`: Kunde, Autor, Text, angeheftet ja/nein
+- [ ] Kundenliste mit Suche, Filter (aktiv/archiviert), Sortierung, Pagination
+- [ ] Kundenansicht mit Tabs: Übersicht, Ansprechpartner, Tickets, Notizen, Verlauf
+- [ ] Kunden anlegen, bearbeiten, archivieren (nicht löschen, wenn Tickets existieren)
+- [ ] Ansprechpartner anlegen/bearbeiten, Portal-Einladung per Mail (Link zum Passwort setzen)
+- [ ] Policies für alle Aktionen, Activity-Log-Einträge
+
+**Fertig wenn:** Kunden und Ansprechpartner sind vollständig pflegbar, Rechte greifen, Tests grün.
+
+---
+
+## Phase 3 – Tickets
+
+- [ ] Enums `TicketStatus` und `TicketPriority` mit Label und Farbe
+- [ ] Migration + Model `tickets`: Nummer, Betreff, Status, Priorität, Kunde, Ansprechpartner, Gruppe, Bearbeiter, Wiedervorlage, Quelle (Mail/Portal/Intern), geschlossen_am
+- [ ] Ticketnummern-Generator (transaktionssicher, Zähler pro Jahr)
+- [ ] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
+- [ ] Migration + Model `attachments`: polymorph an Nachrichten, privat gespeichert, Download über Controller mit Policy
+- [ ] Ticketliste: Ansichten „Meine“, „Meine Gruppen“, „Alle“, „Nicht zugeordnet“; Filter nach Status, Priorität, Gruppe, Bearbeiter, Kunde; Volltextsuche in Betreff und Nummer
+- [ ] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
+- [ ] Ticketansicht: Verlauf chronologisch, interne Notizen farblich abgesetzt, Seitenleiste mit Status, Priorität, Gruppe, Bearbeiter, Kunde, Ansprechpartner
+- [ ] Ticket intern anlegen (für Kunde + Ansprechpartner)
+- [ ] Antworten (öffentlich) und interne Notiz schreiben, mit Anhängen
+- [ ] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
+- [ ] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`
+- [ ] Terminliste `/intern/termine` (kommende VOS-Termine, Filter nach Techniker)
+- [ ] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
+- [ ] Tickets zusammenführen (Recht `tickets.merge`)
+- [ ] Policies für Sichtbarkeit (eigene/Gruppe/alle), Activity-Log
+
+**Fertig wenn:** Tickets lassen sich intern komplett bearbeiten, VOS-Termine funktionieren, Sichtbarkeit nach Rechten ist getestet.
+
+---
+
+## Phase 4 – Mail (IMAP/SMTP) und Vorlagen
+
+- [ ] Migration + Model `mailboxes`: Name, Adresse, IMAP (Host, Port, Verschlüsselung, Benutzer, Passwort verschlüsselt, Ordner), SMTP (dito), Standardgruppe, aktiv
+- [ ] Admin-Oberfläche für Postfächer mit Button „Verbindung testen“ (IMAP und SMTP)
+- [ ] Job `FetchMailbox` pro Postfach, jede Minute per Scheduler, `withoutOverlapping`
+- [ ] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
+- [ ] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
+- [ ] Antwort auf geschlossenes Ticket: Frist prüfen (Annahmen oben)
+- [ ] Antwort auf „Warte auf Kunden“ → „In Arbeit“
+- [ ] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar
+- [ ] Loop-Schutz: `Auto-Submitted`, `X-Auto-Response-Suppress`, Abwesenheitsnotizen → keine automatische Antwort
+- [ ] Verarbeitete Mails als gelesen markieren oder in Ordner verschieben (pro Postfach einstellbar)
+- [ ] Versand über das SMTP des Postfachs, an dem das Ticket hängt; Ticketnummer im Betreff; Message-ID speichern; Versand über Queue
+- [ ] Migration + Model `mail_templates`: Typ (System/Textbaustein), Name, Betreff, Text
+- [ ] Platzhalter-Engine: `{ticket.nummer}`, `{ticket.betreff}`, `{ticket.status}`, `{kontakt.anrede}`, `{kontakt.name}`, `{kunde.firma}`, `{termin.datum}`, `{termin.zeit}`, `{mitarbeiter.name}`, `{portal.link}`
+- [ ] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)
+- [ ] Textbausteine im Antwort-Editor einfügbar
+- [ ] Signatur pro Mitarbeiter automatisch anhängen
+
+**Fertig wenn:** Eine Mail an ein Postfach erzeugt ein Ticket, eine Antwort daraus landet im selben Ticket, Vorlagen werden korrekt befüllt. Tests mit Fixture-Mails (.eml) grün.
+
+---
+
+## Phase 5 – Kundenportal
+
+- [ ] Guard `contact`, Login `/portal/login`, Passwort setzen über Einladungslink, Passwort vergessen
+- [ ] Ticketliste: Ansprechpartner sieht eigene Tickets, Hauptansprechpartner alle Tickets seiner Firma
+- [ ] Ticket erstellen: Betreff, Beschreibung, Priorität (optional), Anhänge
+- [ ] Ticketansicht: nur öffentliche Nachrichten und Mails, niemals interne Notizen oder Kundennotizen
+- [ ] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
+- [ ] VOS-Termin im Portal anzeigen
+- [ ] Profil: Name, Telefon, Passwort, Darkmode
+- [ ] Gleiches Design-System, reduzierte Navigation
+- [ ] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte
+
+**Fertig wenn:** Kunden können Tickets anlegen, einsehen und beantworten; Isolationstests grün.
+
+---
+
+## Phase 6 – Feinschliff
+
+- [ ] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
+- [ ] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
+- [ ] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
+- [ ] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
+- [ ] Activity-Log im Ticket und beim Kunden als Tab anzeigen
+- [ ] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
+- [ ] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
+- [ ] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
+- [ ] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
+- [ ] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
+
+**Fertig wenn:** Alle Tests grün, Deployment auf Plesk nach README in einem Durchgang möglich.
