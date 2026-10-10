@@ -4,6 +4,8 @@ use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\Portal\InvitationController;
+use App\Http\Controllers\Portal\LoginController;
+use App\Http\Controllers\Portal\PasswordResetController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
@@ -78,12 +80,25 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
 });
 
 /*
-| Customer portal (guard "contact"). Login and tickets follow in Phase 5.
+| Customer portal (guard "contact").
 */
 Route::prefix('portal')->name('portal.')->group(function () {
-    Route::view('willkommen', 'portal.invitation-done')->name('invitation.done');
+    Route::middleware('guest:contact')->group(function () {
+        Route::get('login', [LoginController::class, 'create'])->name('login');
+        Route::post('login', [LoginController::class, 'store'])->name('login.store');
+        Route::get('passwort-vergessen', [PasswordResetController::class, 'create'])->name('password.request');
+        Route::post('passwort-vergessen', [PasswordResetController::class, 'store'])->middleware('throttle:6,1')->name('password.email');
+        Route::get('passwort-zuruecksetzen/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+        Route::post('passwort-zuruecksetzen', [PasswordResetController::class, 'update'])->middleware('throttle:6,1')->name('password.update');
+    });
+
     Route::get('einladung/{token}', [InvitationController::class, 'show'])->name('invitation.show');
     Route::post('einladung', [InvitationController::class, 'store'])->middleware('throttle:6,1')->name('invitation.store');
+
+    Route::middleware(['auth:contact', 'portal'])->group(function () {
+        Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+        Route::view('/', 'portal.home')->name('home');
+    });
 });
 
 if (app()->isLocal()) {

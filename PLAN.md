@@ -95,7 +95,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 5 – Kundenportal
 
-- [ ] Guard `contact`, Login `/portal/login`, Passwort setzen über Einladungslink, Passwort vergessen
+- [x] Guard `contact`, Login `/portal/login`, Passwort setzen über Einladungslink, Passwort vergessen
 - [ ] Ticketliste: Ansprechpartner sieht eigene Tickets, Hauptansprechpartner alle Tickets seiner Firma
 - [ ] Ticket erstellen: Betreff, Beschreibung, Priorität (optional), Anhänge
 - [ ] Ticketansicht: nur öffentliche Nachrichten und Mails, niemals interne Notizen oder Kundennotizen

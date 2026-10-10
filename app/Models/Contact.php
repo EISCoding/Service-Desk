@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Salutation;
 use App\Models\Concerns\LogsActivity;
+use App\Notifications\Portal\ResetPassword;
 use Database\Factories\ContactFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,19 @@ class Contact extends Authenticatable
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    /**
+     * Portal login allowed: access granted, password set, customer not archived.
+     */
+    public function canUsePortal(): bool
+    {
+        return $this->portal_access && $this->password !== null && ! $this->loadMissing('customer')->customer?->archived_at;
+    }
+
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPassword($token));
     }
 
     public function activityParent(): ?Model
