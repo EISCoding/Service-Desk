@@ -103,7 +103,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] VOS-Termin im Portal anzeigen
 - [x] Profil: Name, Telefon, Passwort, Darkmode
 - [x] Gleiches Design-System, reduzierte Navigation
-- [ ] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte
+- [x] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte
 
 **Fertig wenn:** Kunden können Tickets anlegen, einsehen und beantworten; Isolationstests grün.
 
