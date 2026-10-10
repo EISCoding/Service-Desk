@@ -52,7 +52,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Enums `TicketStatus` und `TicketPriority` mit Label und Farbe
 - [x] Migration + Model `tickets`: Nummer, Betreff, Status, Priorität, Kunde, Ansprechpartner, Gruppe, Bearbeiter, Wiedervorlage, Quelle (Mail/Portal/Intern), geschlossen_am
 - [x] Ticketnummern-Generator (transaktionssicher, Zähler pro Jahr)
-- [ ] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
+- [x] Migration + Model `ticket_messages`: Typ (`public`, `internal`, `mail_in`, `mail_out`), Text (HTML, bereinigt), Autor (Mitarbeiter oder Kontakt), Message-ID, In-Reply-To
 - [ ] Migration + Model `attachments`: polymorph an Nachrichten, privat gespeichert, Download über Controller mit Policy
 - [ ] Ticketliste: Ansichten „Meine“, „Meine Gruppen“, „Alle“, „Nicht zugeordnet“; Filter nach Status, Priorität, Gruppe, Bearbeiter, Kunde; Volltextsuche in Betreff und Nummer
 - [ ] Geteilte Ansicht auf Desktop (Liste links, Ticket rechts), getrennte Seiten auf dem Handy
