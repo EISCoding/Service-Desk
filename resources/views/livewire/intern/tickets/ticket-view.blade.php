@@ -163,8 +163,18 @@
             </x-ui.card>
         </aside>
 
-        {{-- Conversation --}}
+        {{-- Conversation / activity log --}}
         <div class="min-w-0 space-y-4">
+            <div role="tablist" aria-label="Ansicht" class="inline-grid grid-cols-2 gap-0.5 rounded-[10px] bg-ink/[0.05] p-0.5">
+                @foreach (['messages' => 'Nachrichten', 'activity' => 'Aktivität'] as $value => $label)
+                    <button type="button" role="tab" aria-selected="{{ $tab === $value ? 'true' : 'false' }}" wire:click="$set('tab', '{{ $value }}')"
+                        @class(['rounded-lg px-3 py-1 text-[13px] font-medium', 'bg-surface shadow-xs' => $tab === $value, 'text-ink-muted hover:text-ink' => $tab !== $value])>{{ $label }}</button>
+                @endforeach
+            </div>
+
+            @if ($tab === 'activity')
+                <livewire:intern.tickets.history :ticket="$ticket" :key="'history-'.$ticket->id" />
+            @else
             @forelse ($this->messages as $message)
                 <article wire:key="message-{{ $message->id }}" @class([
                     'rounded-card p-4 ring-1 sm:p-5',
@@ -258,6 +268,7 @@
 
             @if (auth()->user()->can('reply', $ticket) || auth()->user()->can('addNote', $ticket))
                 <livewire:intern.tickets.composer :ticket="$ticket" :key="'composer-'.$ticket->id" />
+            @endif
             @endif
         </div>
     </div>

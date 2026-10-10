@@ -40,6 +40,9 @@ class TicketView extends Component
     #[Locked]
     public Ticket $ticket;
 
+    /** messages | activity */
+    public string $tab = 'messages';
+
     public string $customerSearch = '';
 
     public string $mergeSearch = '';
