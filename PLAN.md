@@ -15,7 +15,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 - [x] Laravel-Projekt anlegen, Pest, Tailwind, Livewire, Alpine einrichten
 - [x] `.env.example` mit allen benötigten Variablen, README mit lokalem Setup
-- [ ] Plesk-Deploy-Skript `deploy.sh`: `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force`, `config:cache`, `route:cache`, `view:cache`
+- [x] Plesk-Deploy-Skript `deploy.sh`: `composer install --no-dev -o`, `npm ci && npm run build`, `php artisan migrate --force`, `config:cache`, `route:cache`, `view:cache`
 - [ ] Scheduler-Eintrag für die Queue (`queue:work --stop-when-empty --max-time=50`, jede Minute, `withoutOverlapping`)
 - [ ] Mitarbeiter-Login unter `/intern/login` mit Fortify, Passwort-Reset, 2FA (TOTP) optional pro Benutzer
 - [ ] Rollen und Rechte mit spatie/laravel-permission; Seeder mit Rollen `Admin`, `Mitarbeiter` und allen Rechten (siehe unten)
