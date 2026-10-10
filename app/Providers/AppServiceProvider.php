@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\Permission;
+use App\Http\Middleware\EnsureContactCanUsePortal;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Mail\Inbound\ImapMailboxConnector;
 use App\Mail\Inbound\MailboxConnector;
@@ -66,6 +67,6 @@ class AppServiceProvider extends ServiceProvider
         ));
 
         // Re-apply these route middlewares to Livewire requests of the protected pages.
-        Livewire::addPersistentMiddleware([RequirePassword::class, EnsureUserIsActive::class]);
+        Livewire::addPersistentMiddleware([RequirePassword::class, EnsureUserIsActive::class, EnsureContactCanUsePortal::class]);
     }
 }

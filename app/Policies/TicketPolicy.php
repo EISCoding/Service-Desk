@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\Permission;
+use App\Models\Contact;
 use App\Models\Ticket;
 use App\Models\User;
 
@@ -12,9 +13,18 @@ use App\Models\User;
  * - tickets.view.own:   tickets assigned to the user
  * - tickets.view.group: tickets of the user's groups and tickets without group (shared pool)
  * Every other action additionally requires that the ticket is visible.
+ *
+ * Portal (contacts): own tickets, main contacts all tickets of their company.
  */
 class TicketPolicy
 {
+    public function viewInPortal(Contact $contact, Ticket $ticket): bool
+    {
+        return $ticket->customer_id === $contact->customer_id
+            && $ticket->merged_into_id === null
+            && ($contact->is_primary || $ticket->contact_id === $contact->id);
+    }
+
     public function viewAny(User $user): bool
     {
         return $user->hasAnyPermission([

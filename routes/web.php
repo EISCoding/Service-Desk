@@ -15,6 +15,7 @@ use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
 use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
+use App\Livewire\Portal\Tickets\Index as PortalTickets;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Mailbox;
@@ -97,7 +98,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
 
     Route::middleware(['auth:contact', 'portal'])->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
-        Route::view('/', 'portal.home')->name('home');
+        Route::livewire('/', PortalTickets::class)->name('home');
     });
 });
 

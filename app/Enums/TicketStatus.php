@@ -39,6 +39,28 @@ enum TicketStatus: string
     /**
      * Pill color of the design system (x-ui.badge).
      */
+    /**
+     * Wording for customers in the portal (internal waiting states are not shown).
+     */
+    public function portalLabel(): string
+    {
+        return match ($this) {
+            self::New => 'Eingegangen',
+            self::InProgress, self::WaitingInternal, self::WaitingExternal => 'In Bearbeitung',
+            self::WaitingCustomer => 'Wartet auf Ihre Antwort',
+            self::OnSite => 'Vor-Ort-Termin',
+            self::Closed => 'Geschlossen',
+        };
+    }
+
+    public function portalColor(): string
+    {
+        return match ($this) {
+            self::InProgress, self::WaitingInternal, self::WaitingExternal => 'indigo',
+            default => $this->color(),
+        };
+    }
+
     public function color(): string
     {
         return match ($this) {
