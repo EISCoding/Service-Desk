@@ -43,7 +43,7 @@ class FakeMailboxConnector implements MailboxConnector
             '{{MESSAGE_ID}}' => $messageId ?? uniqid('reply-', true).'@mail.kunde.test',
             '{{FROM}}' => $from,
             '{{SUBJECT}}' => $subject,
-            '{{HEADERS}}' => collect($headers)->map(fn ($value, $name) => "{$name}: {$value}")->implode("\r\n") ?: 'X-Fixture: 1',
+            '{{HEADERS}}' => collect($headers)->map(fn ($value, $name) => "{$name}: {$value}")->implode("\n") ?: 'X-Fixture: 1',
             '{{BODY}}' => $body,
         ]);
     }

@@ -76,7 +76,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Admin-Oberfläche für Postfächer mit Button „Verbindung testen“ (IMAP und SMTP)
 - [x] Job `FetchMailbox` pro Postfach, jede Minute per Scheduler, `withoutOverlapping`
 - [x] Zuordnung: 1) `[#JJJJ-NNNNN]` im Betreff, 2) `In-Reply-To`/`References`, 3) sonst neues Ticket
-- [ ] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
+- [x] Absender über E-Mail einem Ansprechpartner zuordnen, sonst Ticket „nicht zugeordnet“ (Kunde nachträglich wählbar)
 - [ ] Antwort auf geschlossenes Ticket: Frist prüfen (Annahmen oben)
 - [ ] Antwort auf „Warte auf Kunden“ → „In Arbeit“
 - [ ] Anhänge und Inline-Bilder speichern, HTML bereinigen (z. B. mit `mews/purifier` oder `symfony/html-sanitizer`), zitierten Verlauf einklappbar

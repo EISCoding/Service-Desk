@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\MessageType;
 use App\Enums\TicketSource;
 use App\Mail\Inbound\InboundMail;
+use App\Models\Contact;
 use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
@@ -26,9 +27,17 @@ class InboundMailProcessor
         }
 
         return DB::transaction(function () use ($mailbox, $mail) {
-            $ticket = $this->findTicket($mail) ?? $this->newTicket($mailbox, $mail);
+            $contact = $this->contactFor($mail);
+            $ticket = $this->findTicket($mail) ?? $this->newTicket($mailbox, $mail, $contact);
 
-            return $this->addMessage($ticket, $mail);
+            // A ticket without customer gets the customer of a known sender.
+            if (! $ticket->customer_id && $contact) {
+                $ticket->customer()->associate($contact->customer_id);
+                $ticket->contact()->associate($contact);
+                $ticket->save();
+            }
+
+            return $this->addMessage($ticket, $mail, $contact);
         });
     }
 
@@ -57,7 +66,16 @@ class InboundMailProcessor
         return $ticket;
     }
 
-    private function newTicket(Mailbox $mailbox, InboundMail $mail): Ticket
+    /**
+     * The contact with the sender's address; unknown senders stay without
+     * customer ("Ohne Kunde") until someone assigns one.
+     */
+    public function contactFor(InboundMail $mail): ?Contact
+    {
+        return $mail->fromEmail !== '' ? Contact::where('email', $mail->fromEmail)->first() : null;
+    }
+
+    private function newTicket(Mailbox $mailbox, InboundMail $mail, ?Contact $contact): Ticket
     {
         $ticket = new Ticket([
             'subject' => $mail->subject,
@@ -67,12 +85,14 @@ class InboundMailProcessor
         ]);
         $ticket->mailbox()->associate($mailbox);
         $ticket->group()->associate($mailbox->default_group_id);
+        $ticket->customer()->associate($contact?->customer_id);
+        $ticket->contact()->associate($contact);
         $ticket->save();
 
         return $ticket;
     }
 
-    private function addMessage(Ticket $ticket, InboundMail $mail): TicketMessage
+    private function addMessage(Ticket $ticket, InboundMail $mail, ?Contact $contact): TicketMessage
     {
         $message = new TicketMessage([
             'type' => MessageType::MailIn,
@@ -85,6 +105,7 @@ class InboundMailProcessor
             'cc' => $mail->cc,
         ]);
         $message->ticket()->associate($ticket);
+        $message->author()->associate($contact);
         $message->created_at = $mail->date->isFuture() ? now() : $mail->date;
         $message->save();
 
