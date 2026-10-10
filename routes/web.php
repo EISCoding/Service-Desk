@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Intern\UpdateThemeController;
+use App\Http\Controllers\Portal\InvitationController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
@@ -59,6 +60,15 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
             ->middleware('can:viewAny,'.Group::class)
             ->name('groups.index');
     });
+});
+
+/*
+| Customer portal (guard "contact"). Login and tickets follow in Phase 5.
+*/
+Route::prefix('portal')->name('portal.')->group(function () {
+    Route::view('willkommen', 'portal.invitation-done')->name('invitation.done');
+    Route::get('einladung/{token}', [InvitationController::class, 'show'])->name('invitation.show');
+    Route::post('einladung', [InvitationController::class, 'store'])->middleware('throttle:6,1')->name('invitation.store');
 });
 
 if (app()->isLocal()) {

@@ -62,6 +62,18 @@ class Contact extends Authenticatable
     }
 
     /**
+     * Formal German greeting, e.g. "Sehr geehrte Frau Becker".
+     */
+    public function formalGreeting(): string
+    {
+        return match ($this->salutation) {
+            Salutation::Mr => "Sehr geehrter Herr {$this->last_name}",
+            Salutation::Ms => "Sehr geehrte Frau {$this->last_name}",
+            default => "Guten Tag {$this->fullName()}",
+        };
+    }
+
+    /**
      * Portal state for display: active (password set), invited, or not invited yet.
      */
     public function portalStatus(): ?string

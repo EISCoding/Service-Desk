@@ -47,6 +47,7 @@ final class ActivityPresenter
             'contact.updated' => 'hat den Ansprechpartner '.self::contactName($activity).' geändert',
             'contact.deleted' => 'hat den Ansprechpartner '.self::contactName($activity).' gelöscht',
             'contact.portal_invited' => 'hat '.self::contactName($activity).' ins Kundenportal eingeladen',
+            'contact.portal_password_set' => 'hat das Passwort für das Kundenportal festgelegt',
             'customer_note.created' => 'hat eine Notiz hinzugefügt',
             'customer_note.updated' => match (true) {
                 array_keys($changes) === ['is_pinned'] && $changes['is_pinned']['new'] => 'hat eine Notiz angeheftet',
