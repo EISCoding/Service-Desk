@@ -1,6 +1,10 @@
 {{-- Segmented control: System / Hell / Dunkel. Saved for the user (if logged in) and in localStorage. --}}
+@props([
+    'url' => null, // where the choice is stored (default: staff setting)
+])
+
 <div
-    x-data="themeSwitcher(@js(auth()->check() ? route('intern.theme.update') : null))"
+    x-data="themeSwitcher(@js($url ?? (auth('web')->check() ? route('intern.theme.update') : null)))"
     role="radiogroup"
     aria-label="Darstellung"
     {{ $attributes->class('grid grid-cols-3 gap-0.5 rounded-[10px] bg-surface-muted p-0.5') }}

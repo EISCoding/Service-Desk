@@ -16,6 +16,7 @@ use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
 use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
+use App\Livewire\Portal\Profile as PortalProfile;
 use App\Livewire\Portal\Tickets\Create as PortalCreateTicket;
 use App\Livewire\Portal\Tickets\Index as PortalTickets;
 use App\Livewire\Portal\Tickets\Show as PortalTicket;
@@ -101,6 +102,8 @@ Route::prefix('portal')->name('portal.')->group(function () {
 
     Route::middleware(['auth:contact', 'portal'])->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+        Route::put('darstellung', UpdateThemeController::class)->name('theme.update');
+        Route::livewire('profil', PortalProfile::class)->name('profile');
         Route::livewire('/', PortalTickets::class)->name('home');
         Route::livewire('tickets/neu', PortalCreateTicket::class)->name('tickets.create');
         Route::livewire('tickets/{ticket}', PortalTicket::class)->name('tickets.show');

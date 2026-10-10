@@ -54,7 +54,17 @@
                             <p class="truncate text-sm font-medium">{{ $contact->fullName() }}</p>
                             <p class="truncate text-[12px] text-ink-muted">{{ $contact->loadMissing('customer')->customer->company }}</p>
                         </div>
+                        <div class="px-3 pt-1 pb-2">
+                            <p class="mb-1.5 text-[12px] font-medium text-ink-muted">Darstellung</p>
+                            <x-theme-switcher :url="route('portal.theme.update')" />
+                        </div>
                         <div class="my-1 border-t border-separator"></div>
+                        @if (Route::has('portal.profile'))
+                            <a href="{{ route('portal.profile') }}" wire:navigate class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
+                                <x-heroicon-o-user-circle class="size-4 text-ink-muted" aria-hidden="true" />
+                                Profil
+                            </a>
+                        @endif
                         <form method="POST" action="{{ route('portal.logout') }}">
                             @csrf
                             <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">

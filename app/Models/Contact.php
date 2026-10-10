@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Salutation;
+use App\Enums\Theme;
 use App\Models\Concerns\LogsActivity;
 use App\Notifications\Portal\ResetPassword;
 use Database\Factories\ContactFactory;
@@ -22,17 +23,18 @@ class Contact extends Authenticatable
     use HasFactory, LogsActivity, Notifiable;
 
     protected $fillable = [
-        'salutation', 'first_name', 'last_name', 'email', 'phone', 'position', 'is_primary', 'portal_access',
+        'salutation', 'first_name', 'last_name', 'email', 'phone', 'position', 'is_primary', 'portal_access', 'theme',
     ];
 
     protected $hidden = ['password', 'remember_token'];
 
     /** @var list<string> */
-    protected array $activityIgnored = ['invited_at'];
+    protected array $activityIgnored = ['invited_at', 'theme'];
 
     protected $attributes = [
         'is_primary' => false,
         'portal_access' => false,
+        'theme' => 'system',
     ];
 
     protected function casts(): array
@@ -43,6 +45,7 @@ class Contact extends Authenticatable
             'portal_access' => 'boolean',
             'password' => 'hashed',
             'invited_at' => 'datetime',
+            'theme' => Theme::class,
         ];
     }
 
