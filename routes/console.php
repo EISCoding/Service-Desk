@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\MarkDueFollowUps;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -26,3 +27,8 @@ Schedule::command('queue:work', [
     // A crashed worker must not block the queue for long: the lock expires after 10 minutes.
     ->withoutOverlapping(10)
     ->runInBackground();
+
+// Wiedervorlage: flag tickets whose follow-up date has come (processed by the queue worker above).
+Schedule::job(new MarkDueFollowUps)
+    ->name('mark-due-follow-ups')
+    ->dailyAt('06:00');

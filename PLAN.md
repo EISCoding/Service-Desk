@@ -62,7 +62,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Status-Logik: Übernehmen → „In Arbeit“; Wiedervorlage-Datum bei „Warte auf Intern/Extern“
 - [x] VOS: Wechsel auf VOS öffnet Termin-Dialog (Datum, Uhrzeit von–bis, Techniker, Einsatzort vorbelegt mit Kundenadresse, Notiz); Migration `appointments`
 - [x] Terminliste `/intern/termine` (kommende VOS-Termine, Filter nach Techniker)
-- [ ] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
+- [x] Wiedervorlage: täglicher Job, der fällige Tickets in der Liste markiert
 - [ ] Tickets zusammenführen (Recht `tickets.merge`)
 - [ ] Policies für Sichtbarkeit (eigene/Gruppe/alle), Activity-Log
 
