@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use PragmaRX\Google2FA\Google2FA;
 
 /**
  * @extends Factory<User>
@@ -48,6 +49,18 @@ class UserFactory extends Factory
     public function staff(): static
     {
         return $this->afterCreating(fn (User $user) => $user->assignRole(Role::Staff->value));
+    }
+
+    /**
+     * User with confirmed two-factor authentication (recovery codes: recovery-code-1/-2).
+     */
+    public function withTwoFactor(): static
+    {
+        return $this->state(fn () => [
+            'two_factor_secret' => encrypt(app(Google2FA::class)->generateSecretKey()),
+            'two_factor_recovery_codes' => encrypt(json_encode(['recovery-code-1', 'recovery-code-2'])),
+            'two_factor_confirmed_at' => now(),
+        ]);
     }
 
     /**
