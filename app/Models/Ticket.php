@@ -22,7 +22,7 @@ class Ticket extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'subject', 'status', 'priority', 'source', 'follow_up_at',
+        'subject', 'status', 'priority', 'source', 'follow_up_at', 'requester_email', 'requester_name',
     ];
 
     /**

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Mail\Inbound\ImapMailboxConnector;
+use App\Mail\Inbound\MailboxConnector;
 use App\Models\Appointment;
 use App\Models\Attachment;
 use App\Models\Contact;
@@ -27,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(MailboxConnector::class, ImapMailboxConnector::class);
     }
 
     public function boot(): void

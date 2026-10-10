@@ -1,0 +1,48 @@
+Return-Path: <anna.becker@kunde.test>
+Message-ID: <CAF1234567890@mail.kunde.test>
+Date: Wed, 14 Oct 2026 09:15:00 +0200
+From: =?UTF-8?Q?Anna_B=C3=A4cker?= <Anna.Becker@kunde.test>
+To: Support Musterfirma <support@musterfirma.test>
+Cc: Chef <chef@kunde.test>, support@musterfirma.test
+Subject: =?UTF-8?Q?Drucker_im_2._OG_druckt_nicht?=
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="mixed-boundary"
+
+--mixed-boundary
+Content-Type: multipart/alternative; boundary="alt-boundary"
+
+--alt-boundary
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hallo zusammen,
+
+der Drucker im 2. OG druckt seit heute fr=C3=BCh nicht mehr.
+
+Viele Gr=C3=BC=C3=9Fe
+Anna
+
+--alt-boundary
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<html><body><p>Hallo zusammen,</p><p>der Drucker im 2. OG druckt seit heute fr=C3=BCh <b>nicht mehr</b>.</p><p><img src=3D"cid:logo@kunde.test" alt=3D"Logo"><img src=3D"https://tracker.example/pixel.gif"></p><script>alert(1)</script><p>Viele Gr=C3=BC=C3=9Fe<br>Anna</p></body></html>
+
+--alt-boundary--
+
+--mixed-boundary
+Content-Type: image/png; name="logo.png"
+Content-Transfer-Encoding: base64
+Content-ID: <logo@kunde.test>
+Content-Disposition: inline; filename="logo.png"
+
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==
+
+--mixed-boundary
+Content-Type: application/pdf; name="fehlerbericht.pdf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="fehlerbericht.pdf"
+
+JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSPj4Kc3RyZWFtCmVuZHN0cmVhbQplbmRvYmoKdHJhaWxlcgo8PC9TaXplIDM+PgolJUVPRgo=
+
+--mixed-boundary--

@@ -20,12 +20,15 @@ class TicketMessage extends Model
     /** @use HasFactory<TicketMessageFactory> */
     use HasFactory;
 
-    protected $fillable = ['type', 'body', 'message_id', 'in_reply_to'];
+    protected $fillable = ['type', 'body', 'message_id', 'in_reply_to', 'from_email', 'from_name', 'to', 'cc', 'template_key'];
 
     protected function casts(): array
     {
         return [
             'type' => MessageType::class,
+            'to' => 'array',
+            'cc' => 'array',
+            'sent_at' => 'datetime',
         ];
     }
 
@@ -65,7 +68,7 @@ class TicketMessage extends Model
         return match (true) {
             $this->author instanceof User => $this->author->name,
             $this->author instanceof Contact => $this->author->fullName(),
-            default => 'Unbekannt',
+            default => $this->from_name ?: ($this->from_email ?: 'Unbekannt'),
         };
     }
 
