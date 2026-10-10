@@ -159,7 +159,7 @@ class CreateTicket extends Component
         });
 
         $this->show = false;
-        $this->flashToast("Ticket {$ticket->number} angelegt.");
+        $this->flashToast("{$ticket->reference()} angelegt.");
         $this->redirectRoute('intern.tickets.show', $ticket, navigate: true);
     }
 

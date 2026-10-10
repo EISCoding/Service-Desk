@@ -121,7 +121,8 @@ describe('filters', function () {
         Ticket::factory()->create(['subject' => 'VPN']);
 
         expect(listed(freshList()->set('search', 'drucker')))->toBe(['Drucker defekt'])
-            ->and(listed(freshList()->set('search', $ticket->number)))->toBe(['Drucker defekt']);
+            ->and(listed(freshList()->set('search', $ticket->number)))->toBe(['Drucker defekt'])
+            ->and(listed(freshList()->set('search', $ticket->reference())))->toBe(['Drucker defekt']);
     });
 
     it('sorts by activity, priority or creation', function () {
@@ -152,6 +153,15 @@ describe('filters', function () {
     });
 });
 
+it('keeps its header (views, search, filters) sticky over the whole list', function () {
+    // The sticky header's parent must grow with the list (min-h-full, not h-full),
+    // otherwise the header scrolls away once the list is longer than the window.
+    $html = Livewire::test(TicketList::class)->html();
+
+    expect($html)->toMatch('/^<div[^>]*class="flex min-h-full flex-col"/')
+        ->and($html)->toContain('sticky top-0');
+});
+
 it('shows status, priority, due follow-up and assignee in the list', function () {
     Ticket::factory()->create([
         'subject' => 'Server down', 'priority' => TicketPriority::Urgent, 'status' => TicketStatus::WaitingInternal,
@@ -160,6 +170,7 @@ it('shows status, priority, due follow-up and assignee in the list', function ()
 
     Livewire::test(TicketList::class)
         ->assertSee('Server down')
+        ->assertSee('Ticket#')
         ->assertSee('Warte auf Intern')
         ->assertSee('Dringend')
         ->assertSee('Wiedervorlage fällig')

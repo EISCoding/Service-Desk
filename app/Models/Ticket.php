@@ -142,6 +142,27 @@ class Ticket extends Model
         });
     }
 
+    /**
+     * How tickets are named everywhere in the UI: "Ticket#2026-00123".
+     */
+    public function reference(): string
+    {
+        return self::formatReference($this->number);
+    }
+
+    public static function formatReference(string $number): string
+    {
+        return 'Ticket#'.$number;
+    }
+
+    /**
+     * Search input may contain the reference ("Ticket#2026-00123"); return the bare term.
+     */
+    public static function normalizeSearch(string $search): string
+    {
+        return trim(preg_replace('/^\s*ticket\s*#\s*/i', '', $search));
+    }
+
     public function isClosed(): bool
     {
         return $this->status === TicketStatus::Closed;

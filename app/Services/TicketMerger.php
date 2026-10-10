@@ -40,8 +40,8 @@ class TicketMerger
                 $target->save();
             }
 
-            $this->note($target, $user, "Ticket {$source->number} „{$source->subject}“ wurde in dieses Ticket zusammengeführt.");
-            $this->note($source, $user, "Zusammengeführt in Ticket {$target->number} „{$target->subject}“.");
+            $this->note($target, $user, "{$source->reference()} „{$source->subject}“ wurde in dieses Ticket zusammengeführt.");
+            $this->note($source, $user, "Zusammengeführt in {$target->reference()} „{$target->subject}“.");
 
             $source->mergedInto()->associate($target);
             $this->statuses->change($source, TicketStatus::Closed);

@@ -9,14 +9,14 @@
 
     <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0">
-            <p class="font-mono text-[13px] text-ink-muted">{{ $ticket->number }}</p>
+            <p class="font-mono text-[13px] text-ink-muted">{{ $ticket->reference() }}</p>
             <h2 class="mt-0.5 text-[22px] leading-tight font-semibold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h2>
             <div class="mt-2 flex flex-wrap gap-1.5">
                 <x-ui.badge :color="$ticket->status->color()" dot :title="$ticket->status->description()">{{ $ticket->status->label() }}</x-ui.badge>
                 <x-ui.badge :color="$ticket->priority->color()">{{ $ticket->priority->label() }}</x-ui.badge>
                 @if ($ticket->mergedInto)
                     <a href="{{ route('intern.tickets.show', $ticket->mergedInto) }}" wire:navigate>
-                        <x-ui.badge>Zusammengeführt in {{ $ticket->mergedInto->number }} →</x-ui.badge>
+                        <x-ui.badge>Zusammengeführt in {{ $ticket->mergedInto->reference() }} →</x-ui.badge>
                     </a>
                 @endif
             </div>
@@ -41,7 +41,7 @@
                             @endcan
                         @endif
                         @can('delete', $ticket)
-                            <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="Ticket {{ $ticket->number }} mit allen Nachrichten und Anhängen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
+                            <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="{{ $ticket->reference() }} mit allen Nachrichten und Anhängen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
                                 <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Ticket löschen
                             </button>
                         @endcan
@@ -233,10 +233,10 @@
                 @foreach ($this->mergeResults as $target)
                     <li wire:key="merge-{{ $target->id }}" class="flex items-center justify-between gap-3 py-2.5">
                         <div class="min-w-0 text-sm">
-                            <p class="truncate"><span class="font-mono text-[12px] text-ink-muted">{{ $target->number }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
+                            <p class="truncate"><span class="font-mono text-[12px] text-ink-muted">{{ $target->reference() }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
                             <p class="text-[12px] text-ink-muted">{{ $target->customer?->company ?? 'Ohne Kunde' }} · {{ $target->status->label() }}</p>
                         </div>
-                        <x-ui.button size="sm" variant="secondary" wire:click="merge({{ $target->id }})" wire:confirm="Ticket {{ $ticket->number }} in {{ $target->number }} zusammenführen? Das lässt sich nicht rückgängig machen.">Hierhin</x-ui.button>
+                        <x-ui.button size="sm" variant="secondary" wire:click="merge({{ $target->id }})" wire:confirm="{{ $ticket->reference() }} in {{ $target->reference() }} zusammenführen? Das lässt sich nicht rückgängig machen.">Hierhin</x-ui.button>
                     </li>
                 @endforeach
             </ul>

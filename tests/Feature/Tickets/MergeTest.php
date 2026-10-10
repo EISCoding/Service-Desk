@@ -65,7 +65,7 @@ it('merges from the ticket view and opens the target', function () {
         ->assertRedirect(route('intern.tickets.show', $this->target));
 
     expect($this->source->refresh()->merged_into_id)->toBe($this->target->id)
-        ->and(session('toast.message'))->toBe("Ticket {$this->source->number} wurde in {$this->target->number} zusammengeführt.");
+        ->and(session('toast.message'))->toBe("Ticket#{$this->source->number} wurde in Ticket#{$this->target->number} zusammengeführt.");
 });
 
 it('offers only visible, unmerged other tickets as targets', function () {

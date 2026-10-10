@@ -19,7 +19,7 @@
                 </x-slot:head>
                 @foreach ($this->tickets as $ticket)
                     <x-ui.table.row wire:key="customer-ticket-{{ $ticket->id }}">
-                        <x-ui.table.cell class="font-mono text-[13px] text-ink-muted">{{ $ticket->number }}</x-ui.table.cell>
+                        <x-ui.table.cell class="font-mono text-[13px] text-ink-muted">{{ $ticket->reference() }}</x-ui.table.cell>
                         <x-ui.table.cell>
                             <a href="{{ route('intern.tickets.show', $ticket) }}" wire:navigate class="font-medium hover:text-accent">{{ $ticket->subject }}</a>
                             @if ($ticket->contact)

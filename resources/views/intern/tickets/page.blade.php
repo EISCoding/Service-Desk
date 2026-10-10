@@ -1,4 +1,4 @@
-<x-layouts::intern :title="$ticket ? $ticket->number.' '.$ticket->subject : 'Tickets'" flush>
+<x-layouts::intern :title="$ticket ? $ticket->reference().' '.$ticket->subject : 'Tickets'" flush>
     <div class="lg:grid lg:h-[calc(100dvh-3.5rem)] lg:grid-cols-[minmax(320px,400px)_1fr] lg:grid-rows-[minmax(0,1fr)]">
         {{-- The list keeps its scroll position while switching tickets. --}}
         <aside

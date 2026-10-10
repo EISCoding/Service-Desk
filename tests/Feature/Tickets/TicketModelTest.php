@@ -81,3 +81,13 @@ it('logs field changes but not bookkeeping columns', function () {
     expect($ticket->activities->pluck('action')->all())->toBe(['updated', 'created'])
         ->and($ticket->activities->first()->changes)->toBe(['priority' => ['old' => 'normal', 'new' => 'urgent']]);
 });
+
+it('is called Ticket#NUMMER everywhere', function () {
+    $ticket = Ticket::factory()->create();
+
+    expect($ticket->reference())->toBe("Ticket#{$ticket->number}")
+        ->and(Ticket::formatReference('2026-00123'))->toBe('Ticket#2026-00123')
+        ->and(Ticket::normalizeSearch(' Ticket#2026-00123'))->toBe('2026-00123')
+        ->and(Ticket::normalizeSearch('ticket # 2026-00123'))->toBe('2026-00123')
+        ->and(Ticket::normalizeSearch('Drucker'))->toBe('Drucker');
+});

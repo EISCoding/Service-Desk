@@ -188,7 +188,7 @@ class TicketList extends Component
 
     private function applyFilters(Builder $query): void
     {
-        $search = trim($this->search);
+        $search = Ticket::normalizeSearch($this->search);
         $customer = trim($this->customer);
 
         $query

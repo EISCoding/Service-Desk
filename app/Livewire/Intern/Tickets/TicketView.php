@@ -313,7 +313,7 @@ class TicketView extends Component
     #[Computed]
     public function mergeResults(): Collection
     {
-        $search = trim($this->mergeSearch);
+        $search = Ticket::normalizeSearch($this->mergeSearch);
 
         if (mb_strlen($search) < 2) {
             return new Collection;
@@ -345,7 +345,7 @@ class TicketView extends Component
             return;
         }
 
-        $this->flashToast("Ticket {$this->ticket->number} wurde in {$target->number} zusammengeführt.");
+        $this->flashToast("{$this->ticket->reference()} wurde in {$target->reference()} zusammengeführt.");
         $this->redirectRoute('intern.tickets.show', $target, navigate: true);
     }
 
@@ -353,10 +353,10 @@ class TicketView extends Component
     {
         $this->authorize('delete', $this->ticket);
 
-        $number = $this->ticket->number;
+        $reference = $this->ticket->reference();
         $this->ticket->delete();
 
-        $this->flashToast("Ticket {$number} gelöscht.");
+        $this->flashToast("{$reference} gelöscht.");
         $this->redirectRoute('intern.tickets.index', navigate: true);
     }
 

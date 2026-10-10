@@ -15,7 +15,7 @@ beforeEach(function () {
 it('shows list and ticket side by side under /intern/tickets/{id}', function () {
     $this->get("/intern/tickets/{$this->ticket->id}")
         ->assertOk()
-        ->assertSee("<title>{$this->ticket->number} Drucker defekt · ServiceDesk</title>", false)
+        ->assertSee("<title>Ticket#{$this->ticket->number} Drucker defekt · ServiceDesk</title>", false)
         ->assertSeeLivewire(TicketList::class)
         ->assertSeeLivewire(TicketView::class)
         ->assertSee('lg:grid-cols-[minmax(320px,400px)_1fr]', false)

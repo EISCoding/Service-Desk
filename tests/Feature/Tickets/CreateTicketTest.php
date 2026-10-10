@@ -54,7 +54,7 @@ it('creates a ticket for a customer and contact, assigned to me', function () {
     expect($message->type)->toBe(MessageType::Public)
         ->and($message->author->is($this->staff))->toBeTrue()
         ->and($message->body)->toBe('<div>Der Drucker <strong>druckt nicht</strong>.</div>')
-        ->and(session('toast.message'))->toBe("Ticket {$ticket->number} angelegt.");
+        ->and(session('toast.message'))->toBe("Ticket#{$ticket->number} angelegt.");
 });
 
 it('creates an unassigned new ticket', function () {
