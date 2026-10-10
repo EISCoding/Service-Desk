@@ -33,7 +33,6 @@ it('renders placeholder pages for upcoming areas', function (string $url, string
 })->with([
     ['/intern/tickets', 'Tickets'],
     ['/intern/kunden', 'Kunden'],
-    ['/intern/termine', 'Termine'],
     ['/intern/vorlagen', 'Vorlagen'],
 ]);
 

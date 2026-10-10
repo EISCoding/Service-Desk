@@ -6,6 +6,7 @@ use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
+use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
 use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
@@ -29,14 +30,12 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
     // Areas built in later phases (placeholders until then).
     Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');
     Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])->name('tickets.show');
-    Route::view('termine', 'intern.placeholder', [
-        'title' => 'Termine', 'icon' => 'calendar-days', 'heading' => 'Keine anstehenden Termine',
-        'description' => 'VOS-Termine folgen in Phase 3.',
-    ])->name('appointments.index');
     Route::view('vorlagen', 'intern.placeholder', [
         'title' => 'Vorlagen', 'icon' => 'document-duplicate', 'heading' => 'Noch keine Vorlagen',
         'description' => 'Mail-Vorlagen und Textbausteine folgen in Phase 4.',
     ])->name('templates.index');
+
+    Route::livewire('termine', AppointmentIndex::class)->name('appointments.index');
 
     Route::livewire('kunden', CustomerIndex::class)
         ->middleware('can:viewAny,'.Customer::class)
