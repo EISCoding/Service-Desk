@@ -24,7 +24,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Layout `/intern`: Sidebar (Tickets, Kunden, Termine, Vorlagen, Admin), Topbar mit Suche und Benutzermenü
 - [x] Design-System als Blade-Komponenten: Button, Input, Select, Card, Badge/Pill, Modal, Tabelle, Leerzustand, Toast
 - [x] Darkmode: System/Hell/Dunkel, ohne Flackern beim Laden
-- [ ] Activity-Log-Grundlage (`activity_log`: Benutzer, Objekt, Aktion, Änderungen als JSON, Zeit)
+- [x] Activity-Log-Grundlage (`activity_log`: Benutzer, Objekt, Aktion, Änderungen als JSON, Zeit)
 
 **Rechte:** `tickets.view.own`, `tickets.view.group`, `tickets.view.all`, `tickets.edit`, `tickets.delete`, `tickets.merge`, `notes.manage`, `customers.manage`, `contacts.portal`, `templates.manage`, `admin.users`, `admin.groups`, `admin.mailboxes`, `admin.settings`
 

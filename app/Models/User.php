@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Theme;
+use App\Models\Concerns\LogsActivity;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -17,7 +18,14 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, HasRoles, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, HasRoles, LogsActivity, Notifiable, TwoFactorAuthenticatable;
+
+    /**
+     * Not written to the activity log (personal preferences and 2FA secrets).
+     *
+     * @var list<string>
+     */
+    protected array $activityIgnored = ['theme', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     /**
      * @var array<string, mixed>

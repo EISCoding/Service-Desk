@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -20,6 +21,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Short, stable type names in polymorphic columns (activity log, roles).
+        Relation::enforceMorphMap([
+            'user' => User::class,
+        ]);
+
         // Catch N+1 queries and unfillable attributes during development and tests.
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
