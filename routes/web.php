@@ -11,9 +11,11 @@ use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
 use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
+use App\Livewire\Intern\Templates\Index as TemplateIndex;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\Mailbox;
+use App\Models\MailTemplate;
 use App\Models\User;
 use App\Support\Navigation;
 use Illuminate\Support\Facades\Route;
@@ -32,12 +34,12 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
     // Areas built in later phases (placeholders until then).
     Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');
     Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])->name('tickets.show');
-    Route::view('vorlagen', 'intern.placeholder', [
-        'title' => 'Vorlagen', 'icon' => 'document-duplicate', 'heading' => 'Noch keine Vorlagen',
-        'description' => 'Mail-Vorlagen und Textbausteine folgen in Phase 4.',
-    ])->name('templates.index');
 
     Route::livewire('termine', AppointmentIndex::class)->name('appointments.index');
+
+    Route::livewire('vorlagen', TemplateIndex::class)
+        ->middleware('can:viewAny,'.MailTemplate::class)
+        ->name('templates.index');
 
     Route::livewire('kunden', CustomerIndex::class)
         ->middleware('can:viewAny,'.Customer::class)
