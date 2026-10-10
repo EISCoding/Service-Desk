@@ -61,6 +61,14 @@ class Customer extends Model
         return $this->hasMany(Contact::class)->orderByDesc('is_primary')->orderBy('last_name')->orderBy('first_name');
     }
 
+    /**
+     * Notes, pinned first, then newest first.
+     */
+    public function notes(): HasMany
+    {
+        return $this->hasMany(CustomerNote::class)->orderByDesc('is_pinned')->latest()->latest('id');
+    }
+
     public function isArchived(): bool
     {
         return $this->archived_at !== null;
