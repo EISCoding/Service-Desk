@@ -158,7 +158,9 @@ class TicketView extends Component
     {
         $this->authorize('update', $this->ticket);
 
-        $status = TicketStatus::from((string) $this->pendingStatus);
+        $status = TicketStatus::tryFrom((string) $this->pendingStatus);
+        abort_unless($status?->requiresFollowUp(), 422);
+
         $this->validate(['followUpDate' => ['required', 'date', 'after_or_equal:today']], attributes: ['followUpDate' => 'Wiedervorlage']);
 
         $statuses->change($this->ticket, $status, Carbon::parse($this->followUpDate));
