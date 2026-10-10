@@ -134,15 +134,16 @@ class Composer extends Component
         ], ['body' => $internal ? 'Notiz' : 'Antwort', 'files' => 'Anhänge']);
 
         $byMail = ! $internal && $mail->canMail($this->ticket);
+        $body = $internal ? $this->body : auth()->user()->withSignature($this->body);
 
-        $message = DB::transaction(function () use ($internal, $storage, $statuses, $mail, $byMail) {
+        $message = DB::transaction(function () use ($internal, $storage, $statuses, $mail, $byMail, $body) {
             if ($byMail) {
                 // Public reply as e-mail through the ticket's mailbox.
-                $message = $mail->queue($this->ticket, $this->body, auth()->user(), $this->cc);
+                $message = $mail->queue($this->ticket, $body, auth()->user(), $this->cc);
             } else {
                 $message = new TicketMessage([
                     'type' => $internal ? MessageType::Internal : MessageType::Public,
-                    'body' => $this->body,
+                    'body' => $body,
                 ]);
                 $message->ticket()->associate($this->ticket);
                 $message->author()->associate(auth()->user());

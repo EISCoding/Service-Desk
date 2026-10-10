@@ -87,7 +87,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Platzhalter-Engine: `{ticket.nummer}`, `{ticket.betreff}`, `{ticket.status}`, `{kontakt.anrede}`, `{kontakt.name}`, `{kunde.firma}`, `{termin.datum}`, `{termin.zeit}`, `{mitarbeiter.name}`, `{portal.link}`
 - [x] System-Vorlagen: Ticket eröffnet, Status geändert, Termin bestätigt, Ticket geschlossen, Portal-Einladung (jeweils aktivierbar)
 - [x] Textbausteine im Antwort-Editor einfügbar
-- [ ] Signatur pro Mitarbeiter automatisch anhängen
+- [x] Signatur pro Mitarbeiter automatisch anhängen
 
 **Fertig wenn:** Eine Mail an ein Postfach erzeugt ein Ticket, eine Antwort daraus landet im selben Ticket, Vorlagen werden korrekt befüllt. Tests mit Fixture-Mails (.eml) grün.
 

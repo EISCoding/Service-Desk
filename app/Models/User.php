@@ -4,11 +4,13 @@ namespace App\Models;
 
 use App\Enums\Theme;
 use App\Models\Concerns\LogsActivity;
+use App\Support\Html;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'is_active', 'password', 'theme'])]
+#[Fillable(['name', 'email', 'is_active', 'password', 'theme', 'signature'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
@@ -28,7 +30,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected array $activityIgnored = ['theme', 'two_factor_secret', 'two_factor_recovery_codes'];
+    protected array $activityIgnored = ['theme', 'signature', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     /**
      * @var array<string, mixed>
@@ -43,6 +45,23 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
+    protected function signature(): Attribute
+    {
+        return Attribute::make(set: function (?string $value) {
+            $html = Html::sanitize($value);
+
+            return Html::toText($html) === '' ? null : $html;
+        });
+    }
+
+    /**
+     * Reply body with the user's signature below it (if one is set).
+     */
+    public function withSignature(string $html): string
+    {
+        return $this->signature ? $html.'<div><br></div>'.$this->signature : $html;
+    }
+
     #[Scope]
     protected function active(Builder $query): void
     {

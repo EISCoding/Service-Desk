@@ -11,6 +11,7 @@ use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
 use App\Livewire\Intern\Customers\Show as CustomerShow;
 use App\Livewire\Intern\Settings\Security;
+use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
 use App\Models\Customer;
 use App\Models\Group;
@@ -51,6 +52,8 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
     Route::livewire('einstellungen/sicherheit', Security::class)
         ->middleware('password.confirm')
         ->name('settings.security');
+
+    Route::livewire('einstellungen/signatur', Signature::class)->name('settings.signature');
 
     Route::put('darstellung', UpdateThemeController::class)->name('theme.update');
 

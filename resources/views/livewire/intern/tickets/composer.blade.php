@@ -46,6 +46,11 @@
         <x-ui.rich-editor wire:model="body" placeholder="Nachricht schreiben …" />
         @if ($isNote)
             <p class="-mt-1 text-[12px] text-ink-muted">Interne Notizen sind für Kunden nie sichtbar.</p>
+        @else
+            <p class="-mt-1 text-[12px] text-ink-muted">
+                {{ auth()->user()->signature ? 'Deine Signatur wird automatisch angehängt.' : 'Noch keine Signatur hinterlegt.' }}
+                <a href="{{ route('intern.settings.signature') }}" wire:navigate class="text-accent hover:underline">{{ auth()->user()->signature ? 'Bearbeiten' : 'Signatur einrichten' }}</a>
+            </p>
         @endif
 
         @if ($files)
