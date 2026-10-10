@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Intern\AttachmentController;
+use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
@@ -11,6 +12,7 @@ use App\Livewire\Intern\Settings\Security;
 use App\Models\Customer;
 use App\Models\Group;
 use App\Models\User;
+use App\Support\Navigation;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
@@ -20,13 +22,13 @@ Route::redirect('/', '/intern');
 | are registered by Fortify under the same /intern prefix.
 */
 Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(function () {
-    Route::redirect('/', '/intern/tickets')->name('dashboard');
+    // Start page: the first area the user may open.
+    Route::get('/', fn () => redirect()->route(Navigation::main(auth()->user())[0]['route'] ?? 'intern.settings.security'))
+        ->name('dashboard');
 
     // Areas built in later phases (placeholders until then).
-    Route::view('tickets', 'intern.placeholder', [
-        'title' => 'Tickets', 'icon' => 'inbox-stack', 'heading' => 'Noch keine Tickets',
-        'description' => 'Die Ticketverwaltung folgt in Phase 3.',
-    ])->name('tickets.index');
+    Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');
+    Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])->name('tickets.show');
     Route::view('termine', 'intern.placeholder', [
         'title' => 'Termine', 'icon' => 'calendar-days', 'heading' => 'Keine anstehenden Termine',
         'description' => 'VOS-Termine folgen in Phase 3.',

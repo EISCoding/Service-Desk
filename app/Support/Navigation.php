@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Enums\Permission;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +19,10 @@ final class Navigation
     public static function main(User $user): array
     {
         return self::visible($user, [
-            ['label' => 'Tickets', 'route' => 'intern.tickets.index', 'icon' => 'inbox-stack', 'active' => 'intern.tickets.*'],
+            ['label' => 'Tickets', 'route' => 'intern.tickets.index', 'icon' => 'inbox-stack', 'active' => 'intern.tickets.*', 'ability' => ['viewAny', Ticket::class]],
             ['label' => 'Kunden', 'route' => 'intern.customers.index', 'icon' => 'building-office-2', 'active' => 'intern.customers.*', 'ability' => Permission::CustomersManage->value],
-            ['label' => 'Termine', 'route' => 'intern.appointments.index', 'icon' => 'calendar-days', 'active' => 'intern.appointments.*'],
-            ['label' => 'Vorlagen', 'route' => 'intern.templates.index', 'icon' => 'document-duplicate', 'active' => 'intern.templates.*'],
+            ['label' => 'Termine', 'route' => 'intern.appointments.index', 'icon' => 'calendar-days', 'active' => 'intern.appointments.*', 'ability' => ['viewAny', Ticket::class]],
+            ['label' => 'Vorlagen', 'route' => 'intern.templates.index', 'icon' => 'document-duplicate', 'active' => 'intern.templates.*', 'ability' => ['viewAny', Ticket::class]],
             ['label' => 'Admin', 'route' => 'intern.admin.index', 'icon' => 'cog-6-tooth', 'active' => 'intern.admin.*', 'ability' => 'access-admin'],
         ]);
     }
@@ -38,13 +39,13 @@ final class Navigation
     }
 
     /**
-     * @param  list<array<string, string>>  $items
+     * @param  list<array<string, mixed>>  $items
      * @return list<array{label: string, route: string, icon: string, active: string}>
      */
     private static function visible(User $user, array $items): array
     {
         $visible = array_filter($items, fn (array $item) => Route::has($item['route'])
-            && (! isset($item['ability']) || $user->can($item['ability'])));
+            && (! isset($item['ability']) || $user->can(...(array) $item['ability'])));
 
         return array_values(array_map(fn (array $item) => array_diff_key($item, ['ability' => true]), $visible));
     }

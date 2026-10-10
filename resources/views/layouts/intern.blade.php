@@ -3,7 +3,10 @@
     Desktop: blurred sidebar on the left, topbar with search and user menu.
     Mobile: compact topbar and a tab bar at the bottom.
 --}}
-@props(['title' => null])
+@props([
+    'title' => null,
+    'flush' => false, // no padding, full height (split views)
+])
 
 @php
     $user = auth()->user();
@@ -106,7 +109,7 @@
                 </div>
             </header>
 
-            <main class="px-4 pt-6 pb-28 sm:px-6 lg:px-8 lg:pb-10">
+            <main @class(['pb-24 lg:pb-0' => $flush, 'px-4 pt-6 pb-28 sm:px-6 lg:px-8 lg:pb-10' => ! $flush])>
                 {{ $slot }}
             </main>
         </div>
