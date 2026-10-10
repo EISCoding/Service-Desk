@@ -12,7 +12,7 @@
     $error = $name ? ($errors ?? null)?->first($name) : null;
 @endphp
 
-<x-ui.field :$id :$label :$hint :$error :required="$attributes->has('required')" :class="$attributes->get('class')">
+<x-ui.field :$id :$label :$hint :$error :required="(bool) $attributes->get('required')" :class="$attributes->get('class')">
     <input
         id="{{ $id }}"
         type="{{ $type }}"

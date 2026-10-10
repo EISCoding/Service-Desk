@@ -20,7 +20,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Mitarbeiter-Login unter `/intern/login` mit Fortify, Passwort-Reset, 2FA (TOTP) optional pro Benutzer
 - [x] Rollen und Rechte mit spatie/laravel-permission; Seeder mit Rollen `Admin`, `Mitarbeiter` und allen Rechten (siehe unten)
 - [x] Gruppen (`groups`, Pivot `group_user`), Verwaltung unter `/intern/admin/gruppen`
-- [ ] Benutzerverwaltung unter `/intern/admin/benutzer` (anlegen, deaktivieren, Rollen, Gruppen)
+- [x] Benutzerverwaltung unter `/intern/admin/benutzer` (anlegen, deaktivieren, Rollen, Gruppen)
 - [x] Layout `/intern`: Sidebar (Tickets, Kunden, Termine, Vorlagen, Admin), Topbar mit Suche und Benutzermenü
 - [x] Design-System als Blade-Komponenten: Button, Input, Select, Card, Badge/Pill, Modal, Tabelle, Leerzustand, Toast
 - [x] Darkmode: System/Hell/Dunkel, ohne Flackern beim Laden

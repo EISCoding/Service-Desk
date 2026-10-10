@@ -101,3 +101,24 @@ it('stores short type names for subjects and causers', function () {
         ->subject_type->toBe('user')
         ->causer_type->toBe('user');
 });
+
+it('stores cast values', function () {
+    $user = User::factory()->create();
+
+    $user->update(['is_active' => false]);
+
+    expect($user->activities()->first()->changes)->toBe(['is_active' => ['old' => true, 'new' => false]]);
+});
+
+it('masks encrypted attributes', function () {
+    $model = new class extends User
+    {
+        protected function casts(): array
+        {
+            return [...parent::casts(), 'name' => 'encrypted'];
+        }
+    };
+
+    expect((fn () => $this->activityValue('name', encrypt('Geheim')))->call($model))->toBe(Activity::MASKED)
+        ->and((fn () => $this->activityValue('email', 'a@b.de'))->call($model))->toBe('a@b.de');
+});

@@ -56,14 +56,18 @@ class Index extends Component
     }
 
     /**
-     * Staff members that can be added to a group.
+     * Staff members that can be added to a group: active users plus current
+     * members (so deactivated members are not removed by accident).
      *
      * @return Collection<int, User>
      */
     #[Computed]
     public function users(): Collection
     {
-        return User::query()->orderBy('name')->get(['id', 'name', 'email']);
+        return User::query()
+            ->where(fn ($query) => $query->active()->orWhereIn('id', $this->members))
+            ->orderBy('name')
+            ->get(['id', 'name', 'email', 'is_active']);
     }
 
     public function create(): void

@@ -78,7 +78,7 @@
                 <div class="mt-2 max-h-56 space-y-2 overflow-y-auto rounded-xl bg-surface-muted/60 p-3">
                     @forelse ($this->users as $user)
                         <div wire:key="member-{{ $user->id }}" x-show="@js(mb_strtolower($user->name.' '.$user->email)).includes(filter.toLowerCase())">
-                            <x-ui.checkbox :label="$user->name" :description="$user->email" wire:model="members" value="{{ $user->id }}" />
+                            <x-ui.checkbox :label="$user->name.($user->is_active ? '' : ' (deaktiviert)')" :description="$user->email" wire:model="members" value="{{ $user->id }}" />
                         </div>
                     @empty
                         <p class="text-[13px] text-ink-muted">Noch keine Mitarbeiter angelegt.</p>

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\Permission;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -40,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
             array_map(fn (Permission $permission) => $permission->value, Permission::admin())
         ));
 
-        // Re-apply the password confirmation to Livewire requests of protected pages.
-        Livewire::addPersistentMiddleware([RequirePassword::class]);
+        // Re-apply these route middlewares to Livewire requests of the protected pages.
+        Livewire::addPersistentMiddleware([RequirePassword::class, EnsureUserIsActive::class]);
     }
 }

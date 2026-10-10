@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  * Logs created/updated/deleted events of a model to the activity log.
  *
  * - Attributes in $activityIgnored (plus timestamps) are not logged.
- * - Hidden attributes (e.g. password) are logged as changed, but masked.
+ * - Hidden and encrypted attributes (passwords, IMAP/SMTP credentials) are
+ *   logged as changed, but their values are masked.
+ * - Values are stored cast (true instead of 1, enum values, dates).
  *
  * @mixin Model
  */
@@ -82,16 +84,34 @@ trait LogsActivity
                 continue;
             }
 
-            $masked = in_array($key, $this->getHidden(), true);
-
-            $oldValue = $old[$key] ?? null;
-
             $changes[$key] = [
-                'old' => $masked && $oldValue !== null ? Activity::MASKED : $oldValue,
-                'new' => $masked && $value !== null ? Activity::MASKED : $value,
+                'old' => $this->activityValue($key, $old[$key] ?? null),
+                'new' => $this->activityValue($key, $value),
             ];
         }
 
         return $changes;
+    }
+
+    /**
+     * Turn a raw attribute value into the value stored in the log.
+     */
+    protected function activityValue(string $key, mixed $raw): mixed
+    {
+        if ($raw === null) {
+            return null;
+        }
+
+        if (in_array($key, $this->getHidden(), true) || $this->isEncryptedCastable($key)) {
+            return Activity::MASKED;
+        }
+
+        $value = $this->hasCast($key) ? $this->castAttribute($key, $raw) : $raw;
+
+        return match (true) {
+            $value instanceof \BackedEnum => $value->value,
+            $value instanceof \DateTimeInterface => $value->format('Y-m-d H:i:s'),
+            default => $value,
+        };
     }
 }

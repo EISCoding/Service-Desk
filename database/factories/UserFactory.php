@@ -36,6 +36,14 @@ class UserFactory extends Factory
     }
 
     /**
+     * Deactivated user (cannot log in).
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn () => ['is_active' => false]);
+    }
+
+    /**
      * User with the Admin role (all permissions).
      */
     public function admin(): static

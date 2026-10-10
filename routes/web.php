@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
+use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Settings\Security;
 use App\Models\Group;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
@@ -12,7 +14,7 @@ Route::redirect('/', '/intern');
 | Staff area. Login, logout, password reset and the two-factor challenge
 | are registered by Fortify under the same /intern prefix.
 */
-Route::prefix('intern')->name('intern.')->middleware('auth')->group(function () {
+Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(function () {
     Route::redirect('/', '/intern/tickets')->name('dashboard');
 
     // Areas built in later phases (placeholders until then).
@@ -42,6 +44,10 @@ Route::prefix('intern')->name('intern.')->middleware('auth')->group(function () 
     // Admin area: requires at least one admin.* permission; each page checks its own permission.
     Route::prefix('admin')->name('admin.')->middleware('can:access-admin')->group(function () {
         Route::view('/', 'intern.admin.index')->name('index');
+
+        Route::livewire('benutzer', UserIndex::class)
+            ->middleware('can:viewAny,'.User::class)
+            ->name('users.index');
 
         Route::livewire('gruppen', GroupIndex::class)
             ->middleware('can:viewAny,'.Group::class)
