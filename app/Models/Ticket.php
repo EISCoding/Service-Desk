@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Ticket extends Model
 {
@@ -31,7 +33,7 @@ class Ticket extends Model
      *
      * @var list<string>
      */
-    protected array $activityIgnored = ['last_activity_at', 'follow_up_due'];
+    protected array $activityIgnored = ['last_activity_at', 'follow_up_due', 'customer_replied_at', 'team_replied_at'];
 
     protected $attributes = [
         'status' => 'new',
@@ -50,6 +52,8 @@ class Ticket extends Model
             'follow_up_due' => 'boolean',
             'closed_at' => 'datetime',
             'last_activity_at' => 'datetime',
+            'customer_replied_at' => 'datetime',
+            'team_replied_at' => 'datetime',
         ];
     }
 
@@ -160,6 +164,72 @@ class Ticket extends Model
         if (! $contact->is_primary) {
             $query->where('contact_id', $contact->id);
         }
+    }
+
+    /**
+     * Tickets with news for the reader: for staff a customer reply, for
+     * contacts a team reply since they last opened the ticket.
+     */
+    #[Scope]
+    protected function unreadBy(Builder $query, User|Contact $reader): void
+    {
+        $column = 'tickets.'.self::unreadColumn($reader);
+
+        $query->whereNotNull($column)->whereNotExists(fn ($query) => self::readsOf($reader, $query)
+            ->whereColumn('ticket_reads.ticket_id', 'tickets.id')
+            ->whereColumn('ticket_reads.read_at', '>=', $column));
+    }
+
+    /**
+     * Loads when the reader last opened each ticket (for isUnreadFor() in lists).
+     */
+    #[Scope]
+    protected function withReadState(Builder $query, User|Contact $reader): void
+    {
+        $query->addSelect(['last_read_at' => self::readsOf($reader, DB::query())
+            ->whereColumn('ticket_reads.ticket_id', 'tickets.id')
+            ->select('read_at')
+            ->limit(1)])
+            ->withCasts(['last_read_at' => 'datetime']);
+    }
+
+    public function isUnreadFor(User|Contact $reader): bool
+    {
+        $repliedAt = $this->{self::unreadColumn($reader)};
+
+        if (! $repliedAt) {
+            return false;
+        }
+
+        $readAt = array_key_exists('last_read_at', $this->attributes)
+            ? $this->last_read_at
+            : self::readsOf($reader, DB::query())->where('ticket_reads.ticket_id', $this->id)->value('read_at');
+
+        return ! $readAt || $repliedAt->gt(Carbon::parse($readAt));
+    }
+
+    /**
+     * Remember that the reader has seen the ticket as it is now.
+     */
+    public function markAsReadBy(User|Contact $reader): void
+    {
+        DB::table('ticket_reads')->upsert(
+            [['ticket_id' => $this->id, 'reader_type' => $reader->getMorphClass(), 'reader_id' => $reader->getKey(), 'read_at' => now()]],
+            ['ticket_id', 'reader_type', 'reader_id'],
+            ['read_at'],
+        );
+    }
+
+    private static function unreadColumn(User|Contact $reader): string
+    {
+        return $reader instanceof Contact ? 'team_replied_at' : 'customer_replied_at';
+    }
+
+    private static function readsOf(User|Contact $reader, \Illuminate\Database\Query\Builder $query): \Illuminate\Database\Query\Builder
+    {
+        return $query->from('ticket_reads')
+            ->where('ticket_reads.reader_type', $reader->getMorphClass())
+            ->where('ticket_reads.reader_id', $reader->getKey());
     }
 
     /**

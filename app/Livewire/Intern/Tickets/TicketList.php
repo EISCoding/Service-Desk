@@ -145,6 +145,7 @@ class TicketList extends Component
         };
 
         return $query
+            ->withReadState(auth()->user())
             ->with(['customer:id,company', 'contact:id,first_name,last_name', 'assignee:id,name'])
             ->orderByDesc('id')
             ->limit($this->limit + 1)

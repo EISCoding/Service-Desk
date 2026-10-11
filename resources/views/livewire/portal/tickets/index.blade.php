@@ -30,14 +30,21 @@
         @else
             <ul class="divide-y divide-separator transition-opacity" wire:loading.delay.class="opacity-50">
                 @foreach ($this->tickets as $ticket)
+                    @php($unread = $ticket->isUnreadFor($this->contact))
                     <li wire:key="ticket-{{ $ticket->id }}" class="relative flex items-center gap-4 px-5 py-3.5 hover:bg-surface-muted/60">
                         <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium">
+                            <p @class(['flex items-center gap-1.5 text-sm', 'font-semibold' => $unread, 'font-medium' => ! $unread])>
+                                @if ($unread)
+                                    <span class="size-2 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                                    <span class="sr-only">Neue Antwort:</span>
+                                @endif
+                                <span class="truncate">
                                 @if (Route::has('portal.tickets.show'))
                                     <a href="{{ route('portal.tickets.show', $ticket) }}" wire:navigate class="after:absolute after:inset-0">{{ $ticket->subject }}</a>
                                 @else
                                     {{ $ticket->subject }}
                                 @endif
+                                </span>
                             </p>
                             <p class="mt-0.5 truncate text-[12px] text-ink-muted">
                                 <span class="tabular-nums">{{ $ticket->reference() }}</span>

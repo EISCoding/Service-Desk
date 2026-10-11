@@ -60,6 +60,7 @@ class Index extends Component
             ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query
                 ->where('number', 'like', "%{$search}%")
                 ->orWhere('subject', 'like', "%{$search}%")))
+            ->withReadState($this->contact)
             ->with(['contact:id,first_name,last_name', 'appointments' => fn ($query) => $query->upcoming()->reorder('starts_at')])
             ->latest('last_activity_at')
             ->latest('id')

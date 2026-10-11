@@ -63,6 +63,7 @@
         <ul class="divide-y divide-separator transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
             @foreach ($items as $ticket)
                 @php($selected = $ticket->id === $selectedId)
+                @php($unread = ! $selected && $ticket->isUnreadFor(auth()->user()))
                 <li wire:key="ticket-{{ $ticket->id }}">
                     <a
                         href="{{ route('intern.tickets.show', $ticket) }}"
@@ -78,7 +79,13 @@
                             <span class="tabular-nums">{{ $ticket->reference() }}</span>
                             <time datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans(short: true) }}</time>
                         </div>
-                        <p class="mt-0.5 truncate text-sm font-medium text-ink">{{ $ticket->subject }}</p>
+                        <p class="mt-0.5 flex items-center gap-1.5 text-sm text-ink">
+                            @if ($unread)
+                                <span class="size-2 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                                <span class="sr-only">Neue Kundenantwort:</span>
+                            @endif
+                            <span @class(['truncate', 'font-semibold' => $unread, 'font-medium' => ! $unread])>{{ $ticket->subject }}</span>
+                        </p>
                         <p class="truncate text-[13px] text-ink-muted">
                             @if ($ticket->customer)
                                 {{ $ticket->customer->company }}@if ($ticket->contact) · {{ $ticket->contact->fullName() }}@endif

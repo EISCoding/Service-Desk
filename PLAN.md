@@ -132,7 +132,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Design-System hochwertiger: Flächen, Tiefe, Typografie, Komponenten, Layouts (intern und Portal)
 - [x] Chat-Verlauf: Nachrichten als Sprechblasen (Kunde/Team getrennt), Antwortfeld immer griffbereit
 - [ ] Startseiten: Team-Übersicht (meine offenen, fällige Wiedervorlagen, neue Kundenantworten), Portal-Start mit Begrüßung und „Wartet auf Ihre Antwort“
-- [ ] Ungelesen-Markierung: neue Kundenantworten intern, neue Team-Antworten im Portal
+- [x] Ungelesen-Markierung: neue Kundenantworten intern, neue Team-Antworten im Portal
 - [ ] Status-Fortschritt im Portal (Eingegangen → In Bearbeitung → Erledigt)
 - [ ] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit erneut prüfen
 

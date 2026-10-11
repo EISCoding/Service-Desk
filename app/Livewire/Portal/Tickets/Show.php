@@ -48,6 +48,7 @@ class Show extends Component
 
         $this->authorizeView($ticket);
         $this->ticket = $ticket->loadMissing('contact');
+        $ticket->markAsReadBy($this->contact());
     }
 
     #[Computed]
