@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SystemTemplate;
 use App\Models\MailTemplate;
 use Spatie\Permission\Models\Role;
 
@@ -10,7 +11,7 @@ it('prepares the application in one run', function () {
         ->expectsOutputToContain('Fertig.')
         ->assertSuccessful();
 
-    expect(MailTemplate::where('type', 'system')->count())->toBe(5)
+    expect(MailTemplate::where('type', 'system')->count())->toBe(count(SystemTemplate::cases()))
         ->and(Role::where('name', 'Admin')->exists())->toBeTrue();
 });
 

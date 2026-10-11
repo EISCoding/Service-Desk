@@ -2,7 +2,11 @@
 
 namespace App\Notifications\Portal;
 
+use App\Enums\SystemTemplate;
 use App\Models\Contact;
+use App\Models\MailTemplate;
+use App\Support\Html;
+use App\Support\Placeholders;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -32,12 +36,14 @@ class ResetPassword extends Notification implements ShouldQueue
 
     public function toMail(Contact $contact): MailMessage
     {
+        // Text from the system template "Portal: Passwort zurücksetzen"; the default
+        // applies when it is switched off (customers must always be able to reset).
+        $template = MailTemplate::system(SystemTemplate::PortalPasswordReset);
+        $placeholders = new Placeholders(contact: $contact, portalLink: $this->url($contact));
+        $body = $placeholders->html($template->body ?? SystemTemplate::PortalPasswordReset->defaultBody());
+
         return (new MailMessage)
-            ->subject('Passwort für das Kundenportal zurücksetzen')
-            ->greeting($contact->formalGreeting().',')
-            ->line('wir haben eine Anfrage zum Zurücksetzen Ihres Passworts für unser Kundenportal erhalten.')
-            ->action('Neues Passwort festlegen', $this->url($contact))
-            ->line('Der Link ist 60 Minuten gültig. Falls Sie die Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.')
-            ->salutation("Mit freundlichen Grüßen\n".config('app.name'));
+            ->subject($placeholders->text($template->subject ?? SystemTemplate::PortalPasswordReset->defaultSubject()))
+            ->view(['mail.template', 'mail.template-text'], ['body' => $body, 'text' => Html::toText($body)]);
     }
 }

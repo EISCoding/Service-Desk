@@ -47,7 +47,8 @@ class TicketNotification extends Notification implements ShouldQueue
             ->when($this->text !== '', fn (MailMessage $mail) => $mail->line('„'.$this->text.'“'))
             ->action('Ticket öffnen', route('intern.tickets.show', $this->ticket))
             ->line('Welche Benachrichtigungen du bekommst, stellst du unter Einstellungen → Benachrichtigungen ein.')
-            ->salutation(config('app.name'));
+            ->salutation(config('app.name'))
+            ->view(['mail.notification', 'mail.notification-text']);
     }
 
     /**

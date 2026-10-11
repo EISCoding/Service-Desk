@@ -3,6 +3,7 @@
 use App\Enums\Permission;
 use App\Http\Controllers\BrandingLogoController;
 use App\Http\Controllers\Intern\AttachmentController;
+use App\Http\Controllers\Intern\MailPreviewController;
 use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\Portal\AttachmentController as PortalAttachmentController;
@@ -84,6 +85,9 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         Route::livewire('einstellungen', AdminSettings::class)
             ->middleware('can:'.Permission::AdminSettings->value)
             ->name('settings');
+        Route::get('einstellungen/mail-vorschau', MailPreviewController::class)
+            ->middleware('can:'.Permission::AdminSettings->value)
+            ->name('settings.mail-preview');
 
         Route::livewire('postfaecher', MailboxIndex::class)
             ->middleware('can:viewAny,'.Mailbox::class)

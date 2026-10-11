@@ -19,6 +19,8 @@ class AppSettings
         'logo_version' => null, // cache busting for the logo URL
         'accent' => 'blue',
         'reopen_days' => null,
+        'mail_reply_hint' => null, // line below ticket mails
+        'mail_footer' => null,     // e.g. address, phone, legal details
     ];
 
     /** @var array<string, mixed>|null */

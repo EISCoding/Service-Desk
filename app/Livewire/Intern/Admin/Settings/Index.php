@@ -6,6 +6,7 @@ use App\Enums\Permission;
 use App\Livewire\Concerns\InteractsWithToasts;
 use App\Support\AccentColor;
 use App\Support\AppSettings;
+use App\Support\MailBranding;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -29,6 +30,10 @@ class Index extends Component
 
     public int $reopenDays = 14;
 
+    public string $mailReplyHint = '';
+
+    public string $mailFooter = '';
+
     public ?TemporaryUploadedFile $logo = null;
 
     public function mount(AppSettings $settings): void
@@ -38,6 +43,8 @@ class Index extends Component
         $this->companyName = (string) config('app.name');
         $this->accent = $settings->get('accent');
         $this->reopenDays = (int) config('servicedesk.mail.reopen_days');
+        $this->mailReplyHint = app(MailBranding::class)->replyHint();
+        $this->mailFooter = (string) $settings->get('mail_footer');
     }
 
     public function save(AppSettings $settings): void
@@ -49,11 +56,20 @@ class Index extends Component
             'accent' => ['required', Rule::in(array_keys(AccentColor::PALETTE))],
             'reopenDays' => ['required', 'integer', 'min:0', 'max:365'],
             'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:1024'],
+            'mailReplyHint' => ['nullable', 'string', 'max:300'],
+            'mailFooter' => ['nullable', 'string', 'max:1000'],
         ], attributes: [
             'companyName' => 'Firmenname', 'accent' => 'Akzentfarbe', 'reopenDays' => 'Wiedereröffnungsfrist', 'logo' => 'Logo',
+            'mailReplyHint' => 'Hinweis unter Ticket-Mails', 'mailFooter' => 'Fußzeile',
         ]);
 
-        $values = ['company_name' => trim($this->companyName), 'accent' => $this->accent, 'reopen_days' => $this->reopenDays];
+        $values = [
+            'company_name' => trim($this->companyName),
+            'accent' => $this->accent,
+            'reopen_days' => $this->reopenDays,
+            'mail_reply_hint' => trim($this->mailReplyHint) ?: null,
+            'mail_footer' => trim($this->mailFooter) ?: null,
+        ];
 
         if ($this->logo) {
             $this->deleteLogo($settings);

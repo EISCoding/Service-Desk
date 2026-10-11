@@ -13,6 +13,7 @@ enum SystemTemplate: string
     case AppointmentConfirmed = 'appointment_confirmed';
     case TicketClosed = 'ticket_closed';
     case PortalInvitation = 'portal_invitation';
+    case PortalPasswordReset = 'portal_password_reset';
 
     public function label(): string
     {
@@ -22,6 +23,7 @@ enum SystemTemplate: string
             self::AppointmentConfirmed => 'Termin bestätigt',
             self::TicketClosed => 'Ticket geschlossen',
             self::PortalInvitation => 'Portal-Einladung',
+            self::PortalPasswordReset => 'Portal: Passwort zurücksetzen',
         };
     }
 
@@ -33,6 +35,7 @@ enum SystemTemplate: string
             self::AppointmentConfirmed => 'Optional beim Planen eines VOS-Termins.',
             self::TicketClosed => 'Optional beim Schließen eines Tickets.',
             self::PortalInvitation => 'Einladung ins Kundenportal mit Link zum Festlegen des Passworts.',
+            self::PortalPasswordReset => 'Link zum Zurücksetzen, wenn ein Kunde im Portal „Passwort vergessen“ nutzt (60 Minuten gültig).',
         };
     }
 
@@ -44,6 +47,7 @@ enum SystemTemplate: string
             self::AppointmentConfirmed => 'Terminbestätigung für {termin.datum}',
             self::TicketClosed => 'Ihr Ticket wurde abgeschlossen: {ticket.betreff}',
             self::PortalInvitation => 'Ihr Zugang zum Kundenportal',
+            self::PortalPasswordReset => 'Passwort für das Kundenportal zurücksetzen',
         };
     }
 
@@ -60,10 +64,33 @@ enum SystemTemplate: string
             self::TicketClosed => 'wir haben Ihr Ticket Ticket#{ticket.nummer} „{ticket.betreff}“ abgeschlossen.<br><br>'
                 .'Falls noch etwas offen ist, antworten Sie einfach auf diese E-Mail.',
             self::PortalInvitation => 'für Sie wurde ein Zugang zu unserem Kundenportal eingerichtet. Dort können Sie Ihre Anfragen einsehen, neue Tickets erstellen und auf unsere Antworten reagieren.<br><br>'
-                .'Bitte legen Sie über den folgenden Link Ihr Passwort fest (7 Tage gültig):<br>{portal.link}<br><br>'
+                .'Bitte legen Sie über den folgenden Button Ihr Passwort fest (7 Tage gültig):<br><br>{portal.button}<br><br>'
                 .'Ihr Benutzername ist Ihre E-Mail-Adresse.',
+            self::PortalPasswordReset => 'wir haben eine Anfrage zum Zurücksetzen Ihres Passworts für unser Kundenportal erhalten.<br><br>'
+                .'{portal.button}<br><br>'
+                .'Der Link ist 60 Minuten gültig. Falls Sie die Anfrage nicht gestellt haben, können Sie diese E-Mail ignorieren.',
         };
 
-        return "<div>{kontakt.anrede},<br><br>{$text}<br><br>Mit freundlichen Grüßen<br>Ihr Service-Team</div>";
+        return "<div>{kontakt.anrede},<br><br>{$text}<br><br>Mit freundlichen Grüßen<br>Ihr Team von {firma.name}</div>";
+    }
+
+    /**
+     * Mails about a ticket (ticket number in the subject); the others go to a contact directly.
+     */
+    public function isTicketMail(): bool
+    {
+        return ! in_array($this, [self::PortalInvitation, self::PortalPasswordReset], true);
+    }
+
+    /**
+     * Default body of earlier versions; still unchanged templates get the new default.
+     */
+    public function previousDefaultBody(): string
+    {
+        return str_replace(
+            ['Ihr Team von {firma.name}', 'über den folgenden Button Ihr Passwort fest (7 Tage gültig):<br><br>{portal.button}<br><br>'],
+            ['Ihr Service-Team', 'über den folgenden Link Ihr Passwort fest (7 Tage gültig):<br>{portal.link}<br><br>'],
+            $this->defaultBody(),
+        );
     }
 }
