@@ -150,7 +150,7 @@
 
 /* Trix editor in the design system (unlayered, so it wins over trix.css) */
 trix-toolbar .trix-button-group--file-tools,
-trix-toolbar .trix-button-group--history,
+trix-toolbar .trix-button-group--history-tools,
 trix-toolbar .trix-button--icon-heading-1,
 trix-toolbar .trix-button--icon-decrease-nesting-level,
 trix-toolbar .trix-button--icon-increase-nesting-level {

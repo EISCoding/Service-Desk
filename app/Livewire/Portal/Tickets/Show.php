@@ -124,6 +124,7 @@ class Show extends Component
         $this->reset('body', 'files');
         $this->ticket->refresh();
         unset($this->messages);
+        $this->dispatch('composer-sent');
         $this->toast('Ihre Antwort wurde gesendet.');
     }
 

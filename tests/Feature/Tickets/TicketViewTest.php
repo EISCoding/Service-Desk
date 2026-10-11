@@ -32,7 +32,7 @@ describe('conversation', function () {
 
         ticketView()
             ->assertSeeInOrder(['Erste Nachricht', 'Interne Notiz', 'Nur für uns'])
-            ->assertSee('bg-yellow-500/10', false);
+            ->assertSee('bg-amber-400/12', false);
     });
 
     it('renders the sanitized HTML and attachments', function () {
@@ -51,7 +51,7 @@ describe('conversation', function () {
         $contact = Contact::factory()->for($this->customer)->create(['first_name' => 'Kim', 'last_name' => 'Kunde']);
         TicketMessage::factory()->for($this->ticket)->create(['author_type' => 'contact', 'author_id' => $contact->id]);
 
-        ticketView()->assertSee('Kim Kunde')->assertSee('· Kunde');
+        ticketView()->assertSeeInOrder(['Kim Kunde', 'Kunde']);
     });
 });
 

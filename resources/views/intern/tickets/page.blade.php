@@ -5,7 +5,7 @@
             x-data
             x-init="$el.scrollTop = Number(sessionStorage.getItem('ticket-list-scroll') || 0)"
             x-on:scroll.debounce.100ms="sessionStorage.setItem('ticket-list-scroll', $el.scrollTop)"
-            @class(['relative lg:block lg:overflow-y-auto lg:border-r lg:border-separator', 'hidden' => $ticket])
+            @class(['relative lg:block lg:overflow-y-auto lg:border-r lg:border-hairline', 'hidden' => $ticket])
             aria-label="Ticketliste"
         >
             <livewire:intern.tickets.ticket-list :selected-id="$ticket?->id" />

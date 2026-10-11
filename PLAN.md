@@ -130,7 +130,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 - [x] Portal- und System-Mails über das Standard-Postfach senden (keine separate SMTP-Einstellung nötig)
 - [x] Design-System hochwertiger: Flächen, Tiefe, Typografie, Komponenten, Layouts (intern und Portal)
-- [ ] Chat-Verlauf: Nachrichten als Sprechblasen (Kunde/Team getrennt), Antwortfeld immer griffbereit
+- [x] Chat-Verlauf: Nachrichten als Sprechblasen (Kunde/Team getrennt), Antwortfeld immer griffbereit
 - [ ] Startseiten: Team-Übersicht (meine offenen, fällige Wiedervorlagen, neue Kundenantworten), Portal-Start mit Begrüßung und „Wartet auf Ihre Antwort“
 - [ ] Ungelesen-Markierung: neue Kundenantworten intern, neue Team-Antworten im Portal
 - [ ] Status-Fortschritt im Portal (Eingegangen → In Bearbeitung → Erledigt)

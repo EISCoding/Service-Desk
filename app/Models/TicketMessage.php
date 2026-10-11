@@ -71,6 +71,15 @@ class TicketMessage extends Model
         return $this->type === MessageType::Internal;
     }
 
+    /**
+     * Written by the customer side: a contact, or an incoming mail (also from unknown senders).
+     */
+    public function isFromCustomer(): bool
+    {
+        return $this->author instanceof Contact
+            || ($this->type === MessageType::MailIn && ! $this->author instanceof User);
+    }
+
     public function authorName(): string
     {
         return match (true) {
