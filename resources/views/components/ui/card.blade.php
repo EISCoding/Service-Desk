@@ -4,9 +4,9 @@
     'padding' => true,
 ])
 
-<section {{ $attributes->class('overflow-hidden rounded-card bg-surface shadow-[0_1px_3px_rgb(0_0_0/0.04)] ring-1 ring-separator/80') }}>
+<section {{ $attributes->class('overflow-hidden rounded-card bg-surface shadow-card') }}>
     @if ($title || isset($actions))
-        <header class="flex items-start justify-between gap-4 px-5 pt-4 pb-1">
+        <header class="flex items-start justify-between gap-4 px-5 pt-5 pb-1">
             <div class="min-w-0">
                 @if ($title)
                     <h2 class="text-[15px] font-semibold text-ink">{{ $title }}</h2>
@@ -26,7 +26,7 @@
     </div>
 
     @isset($footer)
-        <footer class="flex items-center justify-end gap-2 border-t border-separator bg-surface-muted/50 px-5 py-3">
+        <footer class="flex items-center justify-end gap-2 border-t border-hairline bg-surface-muted/40 px-5 py-3">
             {{ $footer }}
         </footer>
     @endisset

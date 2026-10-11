@@ -27,6 +27,9 @@
     --ink: #1d1d1f;
     --ink-muted: #636366;
     --ink-faint: #6e6e73;
+    /* hairlines and shadows of raised surfaces (cards, popovers) */
+    --hairline: rgb(0 0 0 / 0.06);
+    --shadow-color: rgb(0 0 0 / 0.05);
     color-scheme: light;
 }
 
@@ -43,6 +46,8 @@
     --ink: #f5f5f7;
     --ink-muted: #a1a1a6;
     --ink-faint: #939398;
+    --hairline: rgb(255 255 255 / 0.08);
+    --shadow-color: rgb(0 0 0 / 0.4);
     color-scheme: dark;
 }
 
@@ -63,7 +68,15 @@
     --color-ink-muted: var(--ink-muted);
     --color-ink-faint: var(--ink-faint);
 
-    --radius-card: 14px;
+    --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+    --color-hairline: var(--hairline);
+
+    --radius-card: 16px;
+
+    /* Apple-like depth: a hairline plus a soft, short shadow */
+    --shadow-card: 0 0 0 1px var(--hairline), 0 1px 2px var(--shadow-color), 0 4px 14px -6px var(--shadow-color);
+    --shadow-pop: 0 0 0 1px var(--hairline), 0 12px 32px -8px rgb(0 0 0 / 0.22), 0 2px 6px -2px rgb(0 0 0 / 0.08);
 }
 
 @layer base {
@@ -81,6 +94,10 @@
 
     body {
         @apply bg-canvas text-ink;
+    }
+
+    ::selection {
+        background: color-mix(in srgb, var(--accent) 22%, transparent);
     }
 
     [x-cloak] {
@@ -133,24 +150,39 @@
 
 /* Trix editor in the design system (unlayered, so it wins over trix.css) */
 trix-toolbar .trix-button-group--file-tools,
-trix-toolbar .trix-button--icon-heading-1 {
+trix-toolbar .trix-button-group--history,
+trix-toolbar .trix-button--icon-heading-1,
+trix-toolbar .trix-button--icon-decrease-nesting-level,
+trix-toolbar .trix-button--icon-increase-nesting-level {
     display: none;
 }
 
 trix-toolbar .trix-button-row {
-    @apply gap-1;
+    @apply mb-1.5 flex-wrap gap-0.5;
 }
 
 trix-toolbar .trix-button-group {
-    @apply mb-2 rounded-lg border-separator;
+    @apply m-0 border-0 bg-transparent;
+}
+
+trix-toolbar .trix-button-group:not(:first-child) {
+    @apply ml-1 border-l border-hairline pl-1;
 }
 
 trix-toolbar .trix-button {
-    @apply border-separator bg-surface;
+    @apply size-8 rounded-lg border-0 bg-transparent opacity-60 transition hover:bg-ink/[0.06] hover:opacity-100;
+}
+
+trix-toolbar .trix-button:not(:first-child) {
+    @apply border-0;
 }
 
 trix-toolbar .trix-button.trix-active {
-    @apply bg-accent/15;
+    @apply bg-accent/12 opacity-100;
+}
+
+trix-toolbar .trix-button--icon::before {
+    @apply bg-size-[1.1rem];
 }
 
 .dark trix-toolbar .trix-button--icon::before {
@@ -158,7 +190,7 @@ trix-toolbar .trix-button.trix-active {
 }
 
 trix-toolbar .trix-dialog {
-    @apply rounded-xl border-separator bg-surface text-ink shadow-lg;
+    @apply rounded-xl border-0 bg-surface text-ink shadow-pop;
 }
 
 trix-toolbar .trix-input {
@@ -166,9 +198,14 @@ trix-toolbar .trix-input {
 }
 
 trix-editor {
-    @apply min-h-32 rounded-[10px] border-0 bg-surface px-3 py-2 text-sm text-ink shadow-xs ring-1 ring-separator ring-inset focus:ring-2 focus:ring-accent focus:outline-none;
+    @apply min-h-32 rounded-xl border-0 bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-ink ring-1 ring-hairline ring-inset transition focus:ring-2 focus:ring-accent/60 focus:outline-none;
 }
 
 trix-editor:empty:not(:focus)::before {
     @apply text-ink-faint;
+}
+
+/* Ticket numbers and other references: tabular sans instead of a typewriter font */
+.ref {
+    @apply font-sans text-[12px] font-medium tracking-tight tabular-nums;
 }

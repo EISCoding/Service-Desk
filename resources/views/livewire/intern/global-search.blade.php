@@ -41,7 +41,7 @@
     <kbd class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-separator px-1.5 font-sans text-[11px] text-ink-muted sm:block">⌘K</kbd>
 
     @if (mb_strlen(trim($query)) >= 2)
-        <div x-show="open" x-cloak x-ref="results" id="global-search-results" class="absolute inset-x-0 top-full z-40 mt-1 max-h-[70vh] overflow-y-auto rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+        <div x-show="open" x-cloak x-ref="results" id="global-search-results" class="absolute inset-x-0 top-full z-40 mt-1 max-h-[70vh] overflow-y-auto rounded-xl bg-surface p-1 shadow-pop">
             @forelse ($this->groups as $group)
                 <p class="px-3 pt-2 pb-1 text-[11px] font-semibold tracking-wide text-ink-faint uppercase">{{ $group['label'] }}</p>
                 @foreach ($group['items'] as $item)

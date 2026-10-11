@@ -75,7 +75,7 @@
                         ])
                     >
                         <div class="flex items-center justify-between gap-2 text-[12px] text-ink-muted">
-                            <span class="font-mono">{{ $ticket->reference() }}</span>
+                            <span class="tabular-nums">{{ $ticket->reference() }}</span>
                             <time datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans(short: true) }}</time>
                         </div>
                         <p class="mt-0.5 truncate text-sm font-medium text-ink">{{ $ticket->subject }}</p>

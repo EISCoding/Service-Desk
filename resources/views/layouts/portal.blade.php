@@ -17,7 +17,7 @@
 
 <x-layouts::base :title="$title">
     <div x-data class="min-h-full">
-        <header class="sticky top-0 z-20 border-b border-separator bg-canvas/80 backdrop-blur-xl backdrop-saturate-150">
+        <header class="sticky top-0 z-20 border-b border-hairline bg-canvas/75 backdrop-blur-2xl backdrop-saturate-150">
             <div class="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4 sm:px-6">
                 <a href="{{ route('portal.home') }}" wire:navigate class="flex items-center gap-2.5">
                     <x-brand-mark size="sm" />
@@ -32,8 +32,8 @@
                             <li>
                                 <a href="{{ route($item['route']) }}" wire:navigate @if ($active) aria-current="page" @endif
                                     @class([
-                                        'rounded-lg px-3 py-1.5 text-sm transition-colors',
-                                        'bg-ink/[0.07] font-medium text-ink' => $active,
+                                        'rounded-full px-3.5 py-1.5 text-sm transition-colors',
+                                        'bg-ink/[0.07] font-semibold text-ink' => $active,
                                         'text-ink-muted hover:bg-ink/[0.04] hover:text-ink' => ! $active,
                                     ])>{{ $item['label'] }}</a>
                             </li>
@@ -47,7 +47,7 @@
                         <span class="hidden max-w-40 truncate font-medium sm:block">{{ $contact->fullName() }}</span>
                         <x-heroicon-m-chevron-down class="size-4 text-ink-faint" aria-hidden="true" />
                     </button>
-                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-64 rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-64 rounded-xl bg-surface p-1 shadow-pop">
                         <div class="px-3 py-2">
                             <p class="truncate text-sm font-medium">{{ $contact->fullName() }}</p>
                             <p class="truncate text-[12px] text-ink-muted">{{ $contact->loadMissing('customer')->customer->company }}</p>
@@ -80,7 +80,7 @@
         </main>
 
         {{-- Tab bar (mobile) --}}
-        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-separator bg-surface/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 md:hidden" aria-label="Hauptnavigation">
+        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-surface/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl backdrop-saturate-150 md:hidden" aria-label="Hauptnavigation">
             <ul class="mx-auto flex max-w-lg">
                 @foreach ($nav as $item)
                     @php($active = request()->routeIs(...explode('|', $item['active'])))

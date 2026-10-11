@@ -22,7 +22,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <a href="{{ route('intern.tickets.show', $appointment->ticket) }}" wire:navigate class="text-sm font-medium hover:text-accent">
-                                    <span class="font-mono text-[12px] text-ink-muted">{{ $appointment->ticket->reference() }}</span>
+                                    <span class="tabular-nums text-[12px] text-ink-muted">{{ $appointment->ticket->reference() }}</span>
                                     {{ $appointment->ticket->subject }}
                                 </a>
                                 <p class="text-[13px] text-ink-muted">{{ $appointment->ticket->customer?->company ?? 'Ohne Kunde' }}</p>

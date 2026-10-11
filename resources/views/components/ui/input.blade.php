@@ -20,8 +20,8 @@
         @if ($error) aria-invalid="true" aria-describedby="{{ $id }}-error" @elseif ($hint) aria-describedby="{{ $id }}-hint" @endif
         {{ $attributes->except('class')->class([
             'block h-9 w-full rounded-[10px] bg-surface px-3 text-sm text-ink shadow-xs placeholder:text-ink-faint',
-            'ring-1 ring-inset focus:outline-none focus:ring-2 disabled:opacity-60',
-            'ring-separator focus:ring-accent' => ! $error,
+            'ring-1 ring-inset transition focus:outline-none focus:ring-2 disabled:opacity-60',
+            'ring-ink/15 hover:ring-ink/25 focus:ring-accent' => ! $error,
             'ring-red-500 focus:ring-red-500' => $error,
         ]) }}
     >

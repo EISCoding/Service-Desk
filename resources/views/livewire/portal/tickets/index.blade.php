@@ -40,7 +40,7 @@
                                 @endif
                             </p>
                             <p class="mt-0.5 truncate text-[12px] text-ink-muted">
-                                <span class="font-mono">{{ $ticket->reference() }}</span>
+                                <span class="tabular-nums">{{ $ticket->reference() }}</span>
                                 · aktualisiert <time datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans() }}</time>
                                 @if ($this->contact->is_primary && $ticket->contact)
                                     · {{ $ticket->contact->fullName() }}

@@ -22,10 +22,10 @@
             default => 'h-9 rounded-[10px] px-4 text-sm',
         },
         match ($variant) {
-            'secondary' => 'bg-surface text-ink ring-1 ring-inset ring-separator shadow-xs hover:bg-surface-muted',
+            'secondary' => 'bg-surface text-ink ring-1 ring-inset ring-ink/12 shadow-[0_1px_2px_rgb(0_0_0/0.05)] hover:bg-surface-muted',
             'ghost' => 'text-ink-muted hover:bg-surface-muted hover:text-ink',
             'danger' => 'bg-red-600 text-white shadow-xs hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600',
-            default => 'bg-accent-fill text-on-accent shadow-xs hover:bg-accent-fill-hover',
+            default => 'bg-accent-fill text-on-accent shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_1px_2px_rgb(0_0_0/0.12)] hover:bg-accent-fill-hover',
         },
     ]);
 @endphp

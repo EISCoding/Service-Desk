@@ -33,7 +33,7 @@
 
                 @foreach ($this->customers as $customer)
                     <x-ui.table.row wire:key="customer-{{ $customer->id }}" @class(['opacity-60' => $customer->isArchived()])>
-                        <x-ui.table.cell class="font-mono text-[13px] text-ink-muted">{{ $customer->number }}</x-ui.table.cell>
+                        <x-ui.table.cell class="tabular-nums text-[13px] text-ink-muted">{{ $customer->number }}</x-ui.table.cell>
                         <x-ui.table.cell>
                             <a href="{{ route('intern.customers.show', $customer) }}" wire:navigate class="font-medium hover:text-accent">{{ $customer->company }}</a>
                             @if ($customer->isArchived())

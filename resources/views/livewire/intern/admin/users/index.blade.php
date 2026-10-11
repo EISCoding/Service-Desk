@@ -76,7 +76,7 @@
                                             <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
                                             <span class="sr-only">Weitere Aktionen für {{ $user->name }}</span>
                                         </button>
-                                        <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-60 rounded-xl bg-surface p-1 text-left shadow-lg ring-1 ring-separator">
+                                        <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-60 rounded-xl bg-surface p-1 text-left shadow-pop">
                                             @can('deactivate', $user)
                                                 <button type="button" x-on:click="open = false" wire:click="toggleActive({{ $user->id }})"
                                                     @if ($user->is_active) wire:confirm="{{ $user->name }} deaktivieren? Die Person kann sich danach nicht mehr anmelden." @endif

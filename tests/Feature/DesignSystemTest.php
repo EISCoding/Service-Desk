@@ -16,7 +16,7 @@ describe('button', function () {
         $this->blade('<x-ui.button href="/intern" variant="secondary">Zurück</x-ui.button>')
             ->assertSee('<a href="/intern"', false)
             ->assertDontSee('<button', false)
-            ->assertSee('ring-separator', false);
+            ->assertSee('ring-ink/12', false);
     });
 
     it('renders the danger variant and an icon', function () {
@@ -161,4 +161,26 @@ it('dispatches toasts from Livewire components', function () {
 
 it('only exposes the styleguide locally', function () {
     $this->get('/intern/styleguide')->assertNotFound();
+});
+
+it('renders a segmented control bound to a property or an action', function () {
+    $this->blade('<x-ui.segmented model="state" current="open" :options="[\'open\' => \'Offen\', \'all\' => [\'Alle\', 12]]" label="Status" />')
+        ->assertSee('role="tablist"', false)
+        ->assertSee('aria-label="Status"', false)
+        ->assertSee('aria-selected="true"', false)
+        ->assertSee("\$set('state', 'open')")
+        ->assertSee("\$set('state', 'all')")
+        ->assertSee('12');
+
+    $this->blade('<x-ui.segmented action="setView(\'%s\')" current="mine" :options="[\'mine\' => \'Meine\']" />')
+        ->assertSee("setView('mine')");
+});
+
+it('gives avatars a stable color per name', function () {
+    $first = (string) $this->blade('<x-ui.avatar name="Anna Berg" />');
+
+    expect($first)->toBe((string) $this->blade('<x-ui.avatar name="Anna Berg" />'))
+        ->toContain('AB')
+        ->toContain('bg-gradient-to-b')
+        ->toMatch('/ from-[a-z]+-400 to-[a-z]+-[56]00 /');
 });

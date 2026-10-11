@@ -9,7 +9,7 @@
 
     <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0">
-            <p class="font-mono text-[13px] text-ink-muted">{{ $ticket->reference() }}</p>
+            <p class="tabular-nums text-[13px] text-ink-muted">{{ $ticket->reference() }}</p>
             <h2 class="mt-0.5 text-[22px] leading-tight font-semibold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h2>
             <div class="mt-2 flex flex-wrap gap-1.5">
                 <x-ui.badge :color="$ticket->status->color()" dot :title="$ticket->status->description()">{{ $ticket->status->label() }}</x-ui.badge>
@@ -32,7 +32,7 @@
                         <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
                         <span class="sr-only">Weitere Aktionen</span>
                     </x-ui.button>
-                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-pop">
                         @if (! $ticket->merged_into_id)
                             @can('merge', $ticket)
                                 <button type="button" x-on:click="open = false; $dispatch('open-modal', { name: 'merge' })" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
@@ -68,7 +68,7 @@
                             <div class="flex items-start justify-between gap-2" x-show="! editing">
                                 <a href="{{ route('intern.customers.show', $ticket->customer) }}" wire:navigate class="min-w-0 text-sm text-accent hover:underline">
                                     <span class="block truncate font-medium">{{ $ticket->customer->company }}</span>
-                                    <span class="font-mono text-[12px] text-ink-muted">{{ $ticket->customer->number }}</span>
+                                    <span class="tabular-nums text-[12px] text-ink-muted">{{ $ticket->customer->number }}</span>
                                 </a>
                                 @if ($canUpdate)
                                     <button type="button" x-on:click="editing = true; $nextTick(() => $refs.search.focus())" class="text-[12px] text-ink-muted hover:text-ink">Ändern</button>
@@ -87,7 +87,7 @@
                                 <input x-ref="search" type="search" wire:model.live.debounce.250ms="customerSearch" placeholder="Firma oder Nummer …" aria-label="Kunde suchen"
                                     class="block h-9 w-full rounded-[10px] bg-surface px-3 text-sm shadow-xs ring-1 ring-separator ring-inset placeholder:text-ink-faint focus:ring-2 focus:ring-accent focus:outline-none">
                                 @if ($this->customerResults->isNotEmpty())
-                                    <ul class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl bg-surface shadow-lg ring-1 ring-separator">
+                                    <ul class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl bg-surface shadow-pop">
                                         @foreach ($this->customerResults as $result)
                                             <li>
                                                 <button type="button" wire:click="setCustomer({{ $result->id }})" x-on:click="editing = false" class="block w-full px-3 py-2 text-left text-sm hover:bg-surface-muted">
@@ -281,7 +281,7 @@
                 @foreach ($this->mergeResults as $target)
                     <li wire:key="merge-{{ $target->id }}" class="flex items-center justify-between gap-3 py-2.5">
                         <div class="min-w-0 text-sm">
-                            <p class="truncate"><span class="font-mono text-[12px] text-ink-muted">{{ $target->reference() }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
+                            <p class="truncate"><span class="tabular-nums text-[12px] text-ink-muted">{{ $target->reference() }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
                             <p class="text-[12px] text-ink-muted">{{ $target->customer?->company ?? 'Ohne Kunde' }} · {{ $target->status->label() }}</p>
                         </div>
                         <x-ui.button size="sm" variant="secondary" wire:click="merge({{ $target->id }})" wire:confirm="{{ $ticket->reference() }} in {{ $target->reference() }} zusammenführen? Das lässt sich nicht rückgängig machen.">Hierhin</x-ui.button>

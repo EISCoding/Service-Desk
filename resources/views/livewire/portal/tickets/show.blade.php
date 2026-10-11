@@ -6,7 +6,7 @@
     </a>
 
     <header class="mb-6">
-        <p class="font-mono text-[13px] text-ink-muted">{{ $ticket->reference() }}</p>
+        <p class="tabular-nums text-[13px] text-ink-muted">{{ $ticket->reference() }}</p>
         <h1 class="mt-0.5 text-[22px] leading-tight font-semibold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h1>
         <div class="mt-2 flex flex-wrap items-center gap-1.5">
             <x-ui.badge :color="$ticket->status->portalColor()" dot>{{ $ticket->status->portalLabel() }}</x-ui.badge>

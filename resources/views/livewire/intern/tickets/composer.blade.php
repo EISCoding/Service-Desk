@@ -88,7 +88,7 @@
                         <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink-muted hover:text-ink">
                             <x-heroicon-o-document-duplicate class="size-4" aria-hidden="true" /> Textbaustein
                         </button>
-                        <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute bottom-full left-0 z-20 mb-1 max-h-64 w-64 overflow-y-auto rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+                        <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute bottom-full left-0 z-20 mb-1 max-h-64 w-64 overflow-y-auto rounded-xl bg-surface p-1 shadow-pop">
                             @foreach ($this->snippets as $snippet)
                                 <button type="button" wire:key="snippet-{{ $snippet->id }}" class="block w-full truncate rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted"
                                     x-on:click="open = false; $wire.snippet({{ $snippet->id }}).then(html => $root.closest('section').querySelector('trix-editor').editor.insertHTML(html))">{{ $snippet->name }}</button>
