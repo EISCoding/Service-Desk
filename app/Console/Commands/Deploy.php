@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Database\Seeders\MailTemplateSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Console\Command;
+use Illuminate\Encryption\Encrypter;
 
 /**
  * Everything deploy.sh does after composer install, as one artisan command.
@@ -20,8 +21,8 @@ class Deploy extends Command
 
     public function handle(): int
     {
-        if (! config('app.key')) {
-            $this->components->task('Generate the application key', fn () => $this->callSilently('key:generate', ['--force' => true]) === 0);
+        if (! $this->hasValidKey()) {
+            $this->components->task('Generate the application key', fn () => $this->writeNewKey());
         }
 
         $this->components->info('Database migrations');
@@ -48,5 +49,33 @@ class Deploy extends Command
         $this->components->info('Fertig.');
 
         return self::SUCCESS;
+    }
+
+    private function hasValidKey(): bool
+    {
+        $key = (string) config('app.key');
+        $raw = str_starts_with($key, 'base64:') ? base64_decode(substr($key, 7), true) : $key;
+
+        return is_string($raw) && Encrypter::supported($raw, config('app.cipher'));
+    }
+
+    /**
+     * Replaces a missing or broken APP_KEY in .env (whatever it contains, even
+     * with a cached config) and uses it for the rest of this run.
+     */
+    private function writeNewKey(): bool
+    {
+        $key = 'base64:'.base64_encode(Encrypter::generateKey(config('app.cipher')));
+        $path = $this->laravel->environmentFilePath();
+        $env = is_file($path) ? file_get_contents($path) : '';
+
+        $env = preg_match('/^APP_KEY=.*$/m', $env)
+            ? preg_replace('/^APP_KEY=.*$/m', 'APP_KEY='.$key, $env, 1)
+            : rtrim($env).PHP_EOL.'APP_KEY='.$key.PHP_EOL;
+
+        file_put_contents($path, $env);
+        config(['app.key' => $key]);
+
+        return true;
     }
 }
