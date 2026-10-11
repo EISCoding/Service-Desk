@@ -243,7 +243,8 @@ DB_PASSWORD=…
 
 SESSION_SECURE_COOKIE=true
 
-# System-Mails (Passwort vergessen, Benachrichtigungen an Mitarbeiter, Portal-Einladungen)
+# Nur nötig, solange kein Postfach aktiv ist: Portal- und System-Mails gehen sonst über
+# das Standard-Postfach (Admin → Postfächer)
 MAIL_MAILER=smtp
 MAIL_SCHEME=smtps            # Port 465, bei 587 mit STARTTLS: smtp
 MAIL_HOST=…
