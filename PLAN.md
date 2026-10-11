@@ -134,7 +134,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Startseiten: Team-Übersicht (meine offenen, fällige Wiedervorlagen, neue Kundenantworten), Portal-Start mit Begrüßung und „Wartet auf Ihre Antwort“
 - [x] Ungelesen-Markierung: neue Kundenantworten intern, neue Team-Antworten im Portal
 - [x] Status-Fortschritt im Portal (Eingegangen → In Bearbeitung → Erledigt)
-- [ ] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit erneut prüfen
+- [x] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit erneut prüfen
 
 **Fertig wenn:** Kunden bekommen Portal-Mails, alle Seiten im neuen Design, Tests und Audit grün.
 

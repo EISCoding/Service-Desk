@@ -13,7 +13,7 @@
         'teal' => 'bg-teal-500/10 text-teal-700 dark:bg-teal-400/15 dark:text-teal-300',
         'green' => 'bg-green-500/10 text-green-700 dark:bg-green-400/15 dark:text-green-300',
         'yellow' => 'bg-yellow-500/15 text-yellow-800 dark:bg-yellow-400/15 dark:text-yellow-300',
-        'orange' => 'bg-orange-500/10 text-orange-700 dark:bg-orange-400/15 dark:text-orange-300',
+        'orange' => 'bg-orange-500/10 text-orange-800 dark:bg-orange-400/15 dark:text-orange-300',
         'red' => 'bg-red-500/10 text-red-700 dark:bg-red-400/15 dark:text-red-300',
     ];
     $dots = [

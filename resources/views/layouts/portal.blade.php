@@ -80,7 +80,7 @@
         </main>
 
         {{-- Tab bar (mobile) --}}
-        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-surface/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl backdrop-saturate-150 md:hidden" aria-label="Hauptnavigation">
+        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl backdrop-saturate-150 md:hidden" aria-label="Hauptnavigation">
             <ul class="mx-auto flex max-w-lg">
                 @foreach ($nav as $item)
                     @php($active = request()->routeIs(...explode('|', $item['active'])))
