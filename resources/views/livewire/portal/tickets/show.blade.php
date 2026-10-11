@@ -13,6 +13,9 @@
         </div>
     </header>
 
+    {{-- Phones: progress above the ticket data; desktop: at the top of the conversation --}}
+    <x-ticket.progress :status="$ticket->status" class="mb-6 rounded-card bg-surface px-4 py-5 shadow-card lg:hidden" />
+
     <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
         <aside class="space-y-4 lg:order-last" aria-label="Ticketdaten">
             @foreach ($this->appointments as $appointment)
@@ -44,6 +47,8 @@
         </aside>
 
         <div class="min-w-0">
+            <x-ticket.progress :status="$ticket->status" class="mb-8 hidden rounded-card bg-surface px-4 py-5 shadow-card lg:block" />
+
             <div class="space-y-4">
                 @php($day = null)
                 @foreach ($this->messages as $message)
@@ -61,7 +66,7 @@
                     x-data="{ expanded: false, open() { this.expanded = true; this.$nextTick(() => this.$root.querySelector('trix-editor')?.focus()) } }"
                     x-on:composer-sent.window="expanded = false"
                     x-on:keydown.escape="expanded = false"
-                    class="sticky bottom-[calc(57px+env(safe-area-inset-bottom))] z-10 -mx-4 mt-6 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:mx-0 sm:rounded-2xl sm:border-0 sm:bg-surface/85 sm:p-3 sm:shadow-pop md:bottom-4"
+                    class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 -mx-4 mt-6 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:mx-0 sm:rounded-2xl sm:border-0 sm:bg-surface/85 sm:p-3 sm:shadow-pop md:bottom-4"
                 >
                     @if ($ticket->isClosed())
                         <p class="mb-2 flex items-center gap-1.5 text-[12px] text-ink-muted">

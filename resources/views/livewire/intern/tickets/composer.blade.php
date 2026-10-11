@@ -14,7 +14,7 @@
     x-on:composer-focus.window="open($event.detail.mode)"
     x-on:composer-sent.window="expanded = false"
     x-on:keydown.escape="expanded = false"
-    class="sticky bottom-[calc(57px+env(safe-area-inset-bottom))] z-10 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:px-6 lg:bottom-0 lg:px-8"
+    class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:px-6 lg:bottom-0 lg:px-8"
 >
     {{-- Collapsed --}}
     <div x-show="! expanded" class="flex items-center gap-2">

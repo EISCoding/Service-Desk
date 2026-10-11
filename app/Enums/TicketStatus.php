@@ -53,6 +53,32 @@ enum TicketStatus: string
         };
     }
 
+    /**
+     * Step of the portal progress: 1 Eingegangen, 2 In Bearbeitung, 3 Erledigt.
+     */
+    public function portalStep(): int
+    {
+        return match ($this) {
+            self::New => 1,
+            self::Closed => 3,
+            default => 2,
+        };
+    }
+
+    /**
+     * One sentence for customers about what happens next.
+     */
+    public function portalHint(): string
+    {
+        return match ($this) {
+            self::New => 'Wir haben Ihre Anfrage erhalten und kümmern uns in Kürze darum.',
+            self::WaitingCustomer => 'Wir benötigen eine Rückmeldung von Ihnen, damit wir weitermachen können.',
+            self::OnSite => 'Für Ihre Anfrage ist ein Vor-Ort-Termin geplant.',
+            self::Closed => 'Ihre Anfrage ist erledigt.',
+            default => 'Wir arbeiten an Ihrer Anfrage.',
+        };
+    }
+
     public function portalColor(): string
     {
         return match ($this) {
