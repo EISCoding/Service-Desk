@@ -18,7 +18,7 @@ Der Arbeitsplan steht in `PLAN.md` – arbeite ihn Phase für Phase ab.
 - Document Root zeigt auf `/public`
 - Kein Supervisor, kein Websocket-Server, kein dauerhafter Node-Prozess
 - Cron: Plesk-Aufgabe jede Minute `php artisan schedule:run`
-- Queue läuft über den Scheduler: `queue:work --stop-when-empty --max-time=50`
+- Queue läuft über den Scheduler: `queue:work --max-time=55 --sleep=3` (jede Minute, endet nach 55 s); Web-Anfragen arbeiten ihre Jobs zusätzlich direkt nach der Antwort ab; Postfach-Abruf alle 20 s
 - Queue-Treiber `database`, Cache/Session `database` oder `file`
 - Anhänge nur in `storage/app/private`, Auslieferung über Controller mit Rechteprüfung
 - Kompilierte Assets (`public/build`) werden beim Deploy gebaut oder mit eingecheckt

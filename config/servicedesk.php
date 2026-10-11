@@ -36,6 +36,12 @@ return [
         'mailer' => env('MAILBOX_MAILER') ?: null,
     ],
 
+    'queue' => [
+        // Work off jobs queued by a web request right after its response
+        // (mails leave within seconds instead of up to a minute).
+        'after_response' => (bool) env('QUEUE_AFTER_RESPONSE', true),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Attachments

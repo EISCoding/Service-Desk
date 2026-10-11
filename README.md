@@ -142,13 +142,16 @@ lokale Datenbank verändert.
 Es gibt keinen dauerhaft laufenden Queue-Worker. Stattdessen:
 
 1. Eine Cron-Aufgabe ruft jede Minute `php artisan schedule:run` auf.
-2. Der Scheduler startet `queue:work --stop-when-empty --max-time=50` (mit `withoutOverlapping`).
-   Der Worker arbeitet die anstehenden Jobs ab und beendet sich spätestens nach 50 Sekunden.
+2. Der Scheduler startet `queue:work --max-time=55 --sleep=3` (mit `withoutOverlapping`). Der Worker
+   schaut alle 3 Sekunden nach neuen Jobs und beendet sich nach 55 Sekunden – es bleibt kein Prozess stehen.
+3. Zusätzlich arbeitet jede Web-Anfrage, die Jobs einreiht (z. B. eine Antwort-Mail), die Queue direkt
+   nach dem Senden der Seite kurz ab. Mails gehen so nach wenigen Sekunden raus
+   (abschaltbar mit `QUEUE_AFTER_RESPONSE=false`).
 
 Queue, Cache und Sessions nutzen den Treiber `database`.
 
-Täglich um 06:00 markiert der Scheduler Tickets mit fälliger Wiedervorlage. Jede Minute startet
-er außerdem `servicedesk:fetch-mail`, das für jedes aktive Postfach einen Abruf-Job einreiht.
+Täglich um 06:00 markiert der Scheduler Tickets mit fälliger Wiedervorlage. Die Postfächer ruft er
+alle 20 Sekunden direkt ab (`servicedesk:fetch-mail --now`, im Scheduler-Prozess selbst).
 
 ## Anhänge
 
@@ -294,8 +297,8 @@ Plesk → **Geplante Aufgaben** → **Aufgabe hinzufügen**:
 - Befehl: `cd /var/www/vhosts/servicedesk.example.de/httpdocs && /opt/plesk/php/8.3/bin/php artisan schedule:run >> /dev/null 2>&1`
 - Ausführen: **Jede Minute** (`* * * * *`)
 
-Der Scheduler startet jede Minute `queue:work --stop-when-empty --max-time=50` (Mails, Benachrichtigungen),
-ruft die Postfächer ab und markiert täglich um 06:00 fällige Wiedervorlagen.
+Der Scheduler startet jede Minute `queue:work --max-time=55 --sleep=3` (Mails, Benachrichtigungen),
+ruft die Postfächer alle 20 Sekunden ab und markiert täglich um 06:00 fällige Wiedervorlagen.
 
 ### 8. Einrichtung in der Anwendung
 

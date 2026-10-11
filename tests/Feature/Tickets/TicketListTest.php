@@ -98,7 +98,8 @@ describe('filters', function () {
     it('filters by priority, group, assignee and customer', function () {
         $customer = Customer::factory()->create(['company' => 'Müller GmbH']);
         Ticket::factory()->create(['subject' => 'Dringend', 'priority' => TicketPriority::Urgent, 'group_id' => $this->group->id, 'assignee_id' => $this->me->id, 'customer_id' => $customer->id]);
-        Ticket::factory()->create(['subject' => 'Normal']);
+        // Fixed company: a random German one is sometimes "Müller …" as well.
+        Ticket::factory()->create(['subject' => 'Normal', 'customer_id' => Customer::factory()->create(['company' => 'Schmidt AG'])->id]);
 
         expect(listed(freshList()->set('priority', 'urgent')))->toBe(['Dringend'])
             ->and(listed(freshList()->set('group', (string) $this->group->id)))->toBe(['Dringend'])

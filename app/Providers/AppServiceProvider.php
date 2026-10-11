@@ -19,10 +19,13 @@ use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
 use App\Support\AppSettings;
+use App\Support\QueueAfterResponse;
 use Illuminate\Auth\Middleware\RequirePassword;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
@@ -33,11 +36,17 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(AppSettings::class);
+        $this->app->singleton(QueueAfterResponse::class);
         $this->app->bind(MailboxConnector::class, ImapMailboxConnector::class);
     }
 
     public function boot(): void
     {
+        // Mails and notifications queued by a web request go out right after its response.
+        if (! $this->app->runningInConsole() && config('servicedesk.queue.after_response')) {
+            Event::listen(JobQueued::class, fn () => $this->app->make(QueueAfterResponse::class)->schedule());
+        }
+
         // Company name and reopen period from the admin settings.
         $this->app->make(AppSettings::class)->apply();
 

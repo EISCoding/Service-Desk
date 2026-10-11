@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\CallbackEvent;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 
@@ -9,14 +10,22 @@ function queueWorkerEvent(): ?Event
         ->first(fn (Event $event) => str_contains($event->command, 'queue:work'));
 }
 
-it('starts a short-lived queue worker every minute', function () {
+it('starts a worker every minute that ends before the next one', function () {
     $event = queueWorkerEvent();
 
     expect($event)->not->toBeNull()
         ->and($event->expression)->toBe('* * * * *')
         ->and($event->command)
-        ->toContain('--stop-when-empty')
-        ->toContain('--max-time=50');
+        ->toContain('--max-time=55')
+        ->toContain('--sleep=3');
+});
+
+it('fetches the mailboxes every 20 seconds without starting a process', function () {
+    $event = collect(app(Schedule::class)->events())->first(fn (Event $event) => $event->description === 'fetch-mail');
+
+    expect($event)->toBeInstanceOf(CallbackEvent::class)
+        ->and($event->repeatSeconds)->toBe(20)
+        ->and($event->withoutOverlapping)->toBeTrue();
 });
 
 it('never runs two queue workers at the same time', function () {
