@@ -131,7 +131,8 @@ describe('portal invitation', function () {
             return str_contains($url, '/portal/einladung/')
                 && $mail->subject === 'Ihr Zugang zum Kundenportal'
                 && str_starts_with($mail->viewData['body'], '<div>'.e($contact->formalGreeting()).',')
-                && str_contains($mail->viewData['body'], '<a href="'.e($url).'">')
+                && str_contains($mail->viewData['body'], 'href="'.e($url).'"')
+                && str_contains($mail->viewData['body'], 'Passwort festlegen</a>')
                 && str_contains($mail->viewData['text'], $url);
         });
     });

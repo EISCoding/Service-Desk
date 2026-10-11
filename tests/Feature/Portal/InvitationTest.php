@@ -35,25 +35,26 @@ it('sets the password and logs it', function () {
         'email' => 'anna@example.com',
         'password' => 'Kundenportal2026',
         'password_confirmation' => 'Kundenportal2026',
-    ])->assertRedirect('/portal/willkommen');
+    ])->assertRedirect('/portal/login');
 
     $this->contact->refresh();
     expect(Hash::check('Kundenportal2026', $this->contact->password))->toBeTrue()
         ->and($this->contact->portalStatus())->toBe('active')
-        ->and(Auth::guard('contact')->attempt(['email' => 'anna@example.com', 'password' => 'Kundenportal2026']))->toBeTrue();
+        ->and(Auth::guard('contact')->validate(['email' => 'anna@example.com', 'password' => 'Kundenportal2026']))->toBeTrue();
 
     $activity = Activity::forHistoryOf($this->contact->customer)->latest('id')->first();
     expect($activity->action)->toBe('portal_password_set')
         ->and($activity->causer->is($this->contact))->toBeTrue()
         ->and(json_encode($activity))->not->toContain('Kundenportal2026');
 
-    $this->get('/portal/willkommen')->assertOk()->assertSee('Passwort gespeichert');
+    $this->get('/portal/login')->assertOk()->assertSee('Ihr Zugang ist eingerichtet.');
+    expect(Auth::guard('contact')->check())->toBeFalse();
 });
 
 it('works only once', function () {
     $data = ['token' => $this->token, 'email' => 'anna@example.com', 'password' => 'Kundenportal2026', 'password_confirmation' => 'Kundenportal2026'];
 
-    $this->post('/portal/einladung', $data)->assertRedirect('/portal/willkommen');
+    $this->post('/portal/einladung', $data)->assertRedirect('/portal/login');
     $this->post('/portal/einladung', $data)->assertSessionHasErrors('email');
 });
 

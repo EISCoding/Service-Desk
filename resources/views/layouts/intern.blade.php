@@ -19,9 +19,7 @@
         {{-- Sidebar (desktop) --}}
         <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-separator bg-surface/70 backdrop-blur-xl backdrop-saturate-150 lg:flex">
             <a href="{{ route('intern.dashboard') }}" wire:navigate class="flex h-14 items-center gap-2.5 px-5">
-                <span class="grid size-7 place-items-center rounded-lg bg-gradient-to-b from-accent to-accent-hover text-white shadow-sm">
-                    <x-heroicon-o-lifebuoy class="size-4.5" aria-hidden="true" />
-                </span>
+                <x-brand-mark size="sm" />
                 <span class="text-[15px] font-semibold tracking-tight">{{ config('app.name') }}</span>
             </a>
 
@@ -78,33 +76,15 @@
         <div class="lg:pl-60">
             {{-- Topbar --}}
             <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-separator bg-canvas/80 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6">
-                <a href="{{ route('intern.dashboard') }}" wire:navigate class="grid size-8 shrink-0 place-items-center rounded-lg bg-gradient-to-b from-accent to-accent-hover text-white lg:hidden">
-                    <x-heroicon-o-lifebuoy class="size-5" aria-hidden="true" />
+                <a href="{{ route('intern.dashboard') }}" wire:navigate class="shrink-0 lg:hidden">
+                    <x-brand-mark />
                     <span class="sr-only">{{ config('app.name') }}</span>
                 </a>
 
-                {{-- Global search (functional in Phase 6, ⌘K / Strg+K focuses the field) --}}
-                <form
-                    role="search"
-                    x-on:submit.prevent
-                    x-on:keydown.window.meta.k.prevent="$refs.search.focus()"
-                    x-on:keydown.window.ctrl.k.prevent="$refs.search.focus()"
-                    class="relative w-full max-w-md"
-                >
-                    <label for="global-search" class="sr-only">Suchen</label>
-                    <x-heroicon-m-magnifying-glass class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
-                    <input
-                        id="global-search"
-                        x-ref="search"
-                        type="search"
-                        placeholder="Suchen …"
-                        autocomplete="off"
-                        class="block h-9 w-full rounded-[10px] bg-ink/[0.05] pr-14 pl-9 text-sm text-ink placeholder:text-ink-faint focus:bg-surface focus:ring-2 focus:ring-accent focus:outline-none"
-                    >
-                    <kbd class="pointer-events-none absolute top-1/2 right-2.5 hidden -translate-y-1/2 rounded-md border border-separator px-1.5 font-sans text-[11px] text-ink-faint sm:block">⌘K</kbd>
-                </form>
+                <livewire:intern.global-search />
 
-                <div class="ml-auto">
+                <div class="ml-auto flex items-center gap-1">
+                    <livewire:intern.notification-bell />
                     <x-user-menu />
                 </div>
             </header>

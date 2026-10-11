@@ -29,7 +29,9 @@ final class Placeholders
         'termin.datum' => 'Datum des VOS-Termins, z. B. „Donnerstag, 15. Oktober 2026“',
         'termin.zeit' => 'Uhrzeit des VOS-Termins, z. B. „09:00–10:30 Uhr“',
         'mitarbeiter.name' => 'Name des Mitarbeiters (sonst des Bearbeiters)',
-        'portal.link' => 'Link zum Kundenportal (in der Portal-Einladung: Link zum Festlegen des Passworts)',
+        'firma.name' => 'Ihr Firmenname aus den Systemeinstellungen',
+        'portal.link' => 'Link zum Kundenportal (in Einladung und Passwort-Mail: Link zum Festlegen des Passworts)',
+        'portal.button' => 'Wie {portal.link}, aber als Button (nur in Einladung und Passwort-Mail als Button gestaltet)',
     ];
 
     private ?Contact $contact;
@@ -70,7 +72,9 @@ final class Placeholders
                 ? $this->appointment->starts_at->format('H:i').'–'.$this->appointment->ends_at->format('H:i').' Uhr'
                 : '',
             'mitarbeiter.name' => $this->staff?->name ?? '',
+            'firma.name' => (string) config('app.name'),
             'portal.link' => $this->portalLink ?? url('/portal'),
+            'portal.button' => $this->portalLink ?? url('/portal'),
         ];
     }
 
@@ -79,9 +83,23 @@ final class Placeholders
      */
     public function html(?string $html): string
     {
-        return $this->replace((string) $html, fn (string $value, string $key) => $key === 'portal.link'
-            ? '<a href="'.e($value).'">'.e($value).'</a>'
-            : e($value));
+        return $this->replace((string) $html, fn (string $value, string $key) => match ($key) {
+            'portal.link' => '<a href="'.e($value).'">'.e($value).'</a>',
+            'portal.button' => $this->button($value),
+            default => e($value),
+        });
+    }
+
+    /**
+     * Button for mails (inline styles; stored ticket messages keep only the link).
+     */
+    private function button(string $url): string
+    {
+        $label = $this->portalLink ? 'Passwort festlegen' : 'Zum Kundenportal';
+        $accent = app(MailBranding::class)->accent();
+
+        return '<a href="'.e($url).'" style="display:inline-block;padding:11px 22px;border-radius:10px;background-color:'.$accent
+            .';color:#ffffff;font-weight:600;text-decoration:none;">'.$label.'</a>';
     }
 
     /**

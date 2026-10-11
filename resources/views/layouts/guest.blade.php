@@ -9,9 +9,7 @@
     <main class="flex min-h-full flex-col items-center justify-center px-4 py-12 sm:py-20">
         <div class="w-full max-w-[380px]">
             <div class="mb-8 text-center">
-                <div class="mx-auto grid size-14 place-items-center rounded-[16px] bg-gradient-to-b from-accent to-accent-hover text-white shadow-md shadow-accent/20">
-                    <x-heroicon-o-lifebuoy class="size-8" aria-hidden="true" />
-                </div>
+                <x-brand-mark size="lg" class="mx-auto shadow-md" />
                 <p class="mt-3 text-[13px] font-medium text-ink-muted">{{ config('app.name') }}</p>
                 @if ($heading)
                     <h1 class="mt-1 text-[22px] font-semibold tracking-tight text-ink">{{ $heading }}</h1>

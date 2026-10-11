@@ -149,6 +149,20 @@ class Ticket extends Model
     }
 
     /**
+     * Tickets a contact sees in the portal (same rules as TicketPolicy::viewInPortal):
+     * own tickets, main contacts all tickets of their company. Merged tickets are hidden.
+     */
+    #[Scope]
+    protected function visibleToContact(Builder $query, Contact $contact): void
+    {
+        $query->where('customer_id', $contact->customer_id)->whereNull('merged_into_id');
+
+        if (! $contact->is_primary) {
+            $query->where('contact_id', $contact->id);
+        }
+    }
+
+    /**
      * How tickets are named everywhere in the UI: "Ticket#2026-00123".
      */
     public function reference(): string
@@ -215,6 +229,15 @@ class Ticket extends Model
     public function isClosed(): bool
     {
         return $this->status === TicketStatus::Closed;
+    }
+
+    /**
+     * A customer reply may reopen the ticket: not closed, or closed within the reopen period.
+     */
+    public function canBeReopened(): bool
+    {
+        return $this->closed_at === null
+            || $this->closed_at->gte(now()->subDays((int) config('servicedesk.mail.reopen_days')));
     }
 
     /**

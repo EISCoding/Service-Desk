@@ -7,11 +7,16 @@ use Illuminate\Support\Facades\Process;
  * Runs deploy.sh in a temporary directory with stubbed php/composer/npm binaries
  * that only record how they were called.
  */
-function runDeployScript(array $env = [], bool $withEnvFile = true, ?string $failingTool = null): array
+function runDeployScript(array $env = [], bool $withEnvFile = true, ?string $failingTool = null, bool $firstDeploy = false): array
 {
     $dir = sys_get_temp_dir().'/deploy-test-'.uniqid();
     File::makeDirectory($dir.'/bin', recursive: true);
     File::copy(base_path('deploy.sh'), $dir.'/deploy.sh');
+
+    if (! $firstDeploy) {
+        File::makeDirectory($dir.'/vendor');
+        File::put($dir.'/vendor/autoload.php', '<?php');
+    }
 
     if ($withEnvFile) {
         File::put($dir.'/.env', 'APP_ENV=production');
@@ -89,4 +94,12 @@ it('leaves maintenance mode when a step fails', function () {
             'npm ci --include=dev --no-audit --no-fund',
             'php artisan up',
         ]);
+});
+
+it('skips the maintenance mode on the very first deployment', function () {
+    [$result, $calls] = runDeployScript(firstDeploy: true);
+
+    expect($result->successful())->toBeTrue($result->errorOutput())
+        ->and($calls)->not->toContain('php artisan down --retry=30')
+        ->and($calls)->toContain('php artisan migrate --force');
 });

@@ -43,8 +43,8 @@ class Attachment extends Model
         return Number::fileSize($this->size, precision: 1);
     }
 
-    public function url(bool $inline = false): string
+    public function url(bool $inline = false, bool $portal = false): string
     {
-        return route('intern.attachments.show', ['attachment' => $this, 'inline' => $inline ? 1 : null]);
+        return route($portal ? 'portal.attachments.show' : 'intern.attachments.show', ['attachment' => $this, 'inline' => $inline ? 1 : null]);
     }
 }

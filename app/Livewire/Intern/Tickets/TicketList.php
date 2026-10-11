@@ -34,7 +34,10 @@ class TicketList extends Component
     #[Locked]
     public ?int $selectedId = null;
 
-    #[Session]
+    /** Session key of the chosen view; without it the list opens with the user's default view. */
+    public const VIEW_SESSION_KEY = 'tickets.view';
+
+    #[Session(key: self::VIEW_SESSION_KEY)]
     public string $view = 'all';
 
     #[Session]
@@ -75,6 +78,10 @@ class TicketList extends Component
         $this->authorize('viewAny', Ticket::class);
 
         $this->selectedId = $selectedId;
+
+        if (! session()->exists(self::VIEW_SESSION_KEY)) {
+            $this->view = auth()->user()->ticket_view ?? 'all';
+        }
 
         if (! array_key_exists($this->view, self::VIEWS)) {
             $this->view = 'all';

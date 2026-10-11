@@ -95,15 +95,15 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 5 – Kundenportal
 
-- [ ] Guard `contact`, Login `/portal/login`, Passwort setzen über Einladungslink, Passwort vergessen
-- [ ] Ticketliste: Ansprechpartner sieht eigene Tickets, Hauptansprechpartner alle Tickets seiner Firma
-- [ ] Ticket erstellen: Betreff, Beschreibung, Priorität (optional), Anhänge
-- [ ] Ticketansicht: nur öffentliche Nachrichten und Mails, niemals interne Notizen oder Kundennotizen
-- [ ] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
-- [ ] VOS-Termin im Portal anzeigen
-- [ ] Profil: Name, Telefon, Passwort, Darkmode
-- [ ] Gleiches Design-System, reduzierte Navigation
-- [ ] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte
+- [x] Guard `contact`, Login `/portal/login`, Passwort setzen über Einladungslink, Passwort vergessen
+- [x] Ticketliste: Ansprechpartner sieht eigene Tickets, Hauptansprechpartner alle Tickets seiner Firma
+- [x] Ticket erstellen: Betreff, Beschreibung, Priorität (optional), Anhänge
+- [x] Ticketansicht: nur öffentliche Nachrichten und Mails, niemals interne Notizen oder Kundennotizen
+- [x] Antworten im Portal (setzt „Warte auf Kunden“ → „In Arbeit“)
+- [x] VOS-Termin im Portal anzeigen
+- [x] Profil: Name, Telefon, Passwort, Darkmode
+- [x] Gleiches Design-System, reduzierte Navigation
+- [x] Tests: Portal-Nutzer sieht keine fremden Tickets und keine internen Inhalte
 
 **Fertig wenn:** Kunden können Tickets anlegen, einsehen und beantworten; Isolationstests grün.
 
@@ -111,15 +111,15 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 6 – Feinschliff
 
-- [ ] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
-- [ ] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
-- [ ] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
-- [ ] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
-- [ ] Activity-Log im Ticket und beim Kunden als Tab anzeigen
-- [ ] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
-- [ ] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
-- [ ] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
-- [ ] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
-- [ ] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
+- [x] Benutzereinstellungen `/intern/einstellungen`: Darstellung, Signatur, Benachrichtigungen (neues Ticket in Gruppe, Zuweisung, Kundenantwort), Standard-Ansicht der Ticketliste, Passwort, 2FA
+- [x] Benachrichtigungen per Mail und im Glockensymbol (Laravel Notifications, Datenbank-Kanal)
+- [x] Globale Suche mit `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner)
+- [x] Tastenkürzel in `/intern`: `J`/`K` durch die Liste, `R` antworten, `N` interne Notiz, `E` Status
+- [x] Activity-Log im Ticket und beim Kunden als Tab anzeigen
+- [x] Systemeinstellungen im Admin: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
+- [x] Leerzustände, Ladezustände, Fehlerseiten (403, 404, 500) im Design
+- [x] Barrierefreiheit prüfen (Kontraste in Hell und Dunkel, Fokus-Rahmen, Labels)
+- [x] Performance: Eager Loading in Listen, Indizes auf Status, Kunde, Bearbeiter, Nummer
+- [x] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
 
 **Fertig wenn:** Alle Tests grün, Deployment auf Plesk nach README in einem Durchgang möglich.

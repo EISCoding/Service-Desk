@@ -12,7 +12,7 @@
         <x-ui.select wire:model.live="status" aria-label="Status" class="w-40" :options="['active' => 'Aktive', 'archived' => 'Archivierte', 'all' => 'Alle']" />
     </div>
 
-    <x-ui.card :padding="false">
+    <x-ui.card :padding="false" class="transition-opacity" wire:loading.delay.class="opacity-50">
         @if ($this->customers->isEmpty())
             @if ($search !== '' || $status !== 'active')
                 <x-ui.empty-state icon="magnifying-glass" title="Keine Treffer" description="Kein Kunde passt zu Suche und Filter." />

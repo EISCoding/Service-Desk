@@ -19,6 +19,9 @@
     <title>{{ $title ? $title.' · ' : '' }}{{ config('app.name') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @if ($accentCss = \App\Support\AccentColor::css(app(\App\Support\AppSettings::class)->get('accent')))
+        <style>{!! $accentCss !!}</style>
+    @endif
     @livewireStyles
 </head>
 <body {{ $attributes->class('h-full min-h-full bg-canvas text-ink antialiased') }}>

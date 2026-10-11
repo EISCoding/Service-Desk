@@ -16,12 +16,12 @@
                     wire:click="setView('{{ $key }}')"
                     @class([
                         'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[13px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
-                        'bg-accent text-white' => $view === $key,
+                        'bg-accent-fill text-on-accent' => $view === $key,
                         'bg-ink/[0.05] text-ink-muted hover:text-ink' => $view !== $key,
                     ])
                 >
                     {{ $label }}
-                    <span @class(['text-[12px] tabular-nums', 'text-white/80' => $view === $key, 'text-ink-faint' => $view !== $key])>{{ $this->counts[$key] }}</span>
+                    <span @class(['text-[12px] tabular-nums', 'text-on-accent' => $view === $key, 'text-ink-muted' => $view !== $key])>{{ $this->counts[$key] }}</span>
                 </button>
             @endforeach
         </div>
@@ -34,7 +34,7 @@
                 <x-heroicon-m-adjustments-horizontal class="size-4" aria-hidden="true" />
                 <span class="sr-only sm:not-sr-only">Filter</span>
                 @if ($count = $this->activeFilterCount())
-                    <span class="rounded-full bg-accent px-1.5 text-[11px] text-white">{{ $count }}</span>
+                    <span class="rounded-full bg-accent-fill px-1.5 text-[11px] text-on-accent">{{ $count }}</span>
                 @endif
             </x-ui.button>
 
@@ -60,7 +60,7 @@
     @if ($items->isEmpty())
         <x-ui.empty-state icon="inbox" title="Keine Tickets" :description="$search !== '' || $this->activeFilterCount() ? 'Kein Ticket passt zu Suche und Filtern.' : 'In dieser Ansicht ist gerade nichts offen.'" />
     @else
-        <ul class="divide-y divide-separator" aria-label="Tickets">
+        <ul class="divide-y divide-separator transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
             @foreach ($items as $ticket)
                 @php($selected = $ticket->id === $selectedId)
                 <li wire:key="ticket-{{ $ticket->id }}">

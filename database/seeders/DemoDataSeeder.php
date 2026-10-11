@@ -27,6 +27,22 @@ class DemoDataSeeder extends Seeder
         $this->mailbox();
         $this->tickets();
         $this->snippets();
+        $this->portalLogin();
+    }
+
+    /**
+     * Portal login for local testing: main contact of the first customer.
+     */
+    private function portalLogin(): void
+    {
+        if (Contact::where('email', 'kunde@servicedesk.test')->exists()) {
+            return;
+        }
+
+        $contact = Customer::active()->orderBy('id')->first()?->contacts()->where('is_primary', true)->first();
+        $contact?->forceFill(['email' => 'kunde@servicedesk.test', 'portal_access' => true, 'password' => 'password'])->save();
+
+        $this->command?->info('Portal-Login: kunde@servicedesk.test / password');
     }
 
     /**

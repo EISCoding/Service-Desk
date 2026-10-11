@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\MessageType;
 use App\Enums\TicketStatus;
 use App\Models\Ticket;
+use App\Models\TicketMessage;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
@@ -37,6 +39,35 @@ class TicketStatusService
 
         $ticket->save();
         $ticket->touchActivity();
+    }
+
+    /**
+     * A customer reply (mail or portal) puts closed and "Warte auf Kunden"
+     * tickets back to "In Arbeit"; other statuses stay.
+     */
+    public function afterCustomerReply(Ticket $ticket): void
+    {
+        if (in_array($ticket->status, [TicketStatus::Closed, TicketStatus::WaitingCustomer], true)) {
+            $this->change($ticket, TicketStatus::InProgress);
+        } else {
+            $ticket->touchActivity();
+        }
+    }
+
+    /**
+     * Internal notes that connect a follow-up ticket with the closed one.
+     */
+    public function linkFollowUp(Ticket $previous, Ticket $ticket, string $reason): void
+    {
+        $this->note($ticket, "Folgeticket zu {$previous->reference()}: {$reason}");
+        $this->note($previous, "Weiter in {$ticket->reference()}.");
+    }
+
+    private function note(Ticket $ticket, string $text): void
+    {
+        $note = new TicketMessage(['type' => MessageType::Internal, 'body' => '<p>'.e($text).'</p>']);
+        $note->ticket()->associate($ticket);
+        $note->save();
     }
 
     /**

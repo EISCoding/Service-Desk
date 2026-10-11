@@ -47,6 +47,14 @@ final class Html
      */
     public static function toText(?string $html): string
     {
+        // Links keep their address when the link text differs from it ("Passwort festlegen (https://…)").
+        $html = preg_replace_callback('#<a\s[^>]*href="([^"]+)"[^>]*>(.*?)</a>#is', function (array $m) {
+            $url = html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            $label = trim(html_entity_decode(strip_tags($m[2]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+            return $label === '' || $label === $url || str_starts_with($url, 'mailto:') ? $m[2] : $m[2].' ('.e($url).')';
+        }, (string) $html);
+
         $text = preg_replace('#<(br|/p|/div|/li|/h[1-6]|/blockquote)[^>]*>#i', "\n", (string) $html);
         $text = html_entity_decode(strip_tags((string) $text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 

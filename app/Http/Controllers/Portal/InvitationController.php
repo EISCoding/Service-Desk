@@ -54,7 +54,7 @@ class InvitationController extends Controller
         );
 
         return $status === Password::PASSWORD_RESET
-            ? redirect()->route('portal.invitation.done')
+            ? redirect()->route('portal.login')->with('status', 'Ihr Zugang ist eingerichtet. Bitte melden Sie sich mit Ihrer E-Mail-Adresse und dem neuen Passwort an.')
             : $this->invalid($request);
     }
 

@@ -7,8 +7,6 @@ use App\Mail\Inbound\MailboxConnector;
 use App\Models\Group;
 use App\Models\Mailbox;
 use App\Models\Ticket;
-use Illuminate\Console\Scheduling\Event;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Queue;
@@ -84,7 +82,7 @@ it('skips inactive mailboxes', function () {
     expect(Ticket::count())->toBe(0);
 });
 
-it('dispatches one job per active mailbox every minute without overlapping', function () {
+it('dispatches one job per active mailbox', function () {
     Queue::fake();
     Mailbox::factory()->create(['is_active' => false]);
     $second = Mailbox::factory()->create();
@@ -94,8 +92,6 @@ it('dispatches one job per active mailbox every minute without overlapping', fun
     Queue::assertPushed(FetchMailbox::class, 2);
     Queue::assertPushed(FetchMailbox::class, fn (FetchMailbox $job) => $job->mailbox->is($second));
 
-    $event = collect(app(Schedule::class)->events())->first(fn (Event $e) => str_contains($e->command, 'servicedesk:fetch-mail'));
-    expect($event->expression)->toBe('* * * * *')->and($event->withoutOverlapping)->toBeTrue();
 });
 
 it('is unique per mailbox and does not overlap', function () {

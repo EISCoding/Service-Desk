@@ -3,10 +3,17 @@
 namespace App\Support;
 
 use App\Enums\Salutation;
+use App\Enums\TicketPriority;
+use App\Enums\TicketStatus;
 use App\Models\Activity;
 use App\Models\Contact;
+use App\Models\Customer;
+use App\Models\Group;
+use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
@@ -21,7 +28,30 @@ final class ActivityPresenter
         'position' => 'Position', 'is_primary' => 'Hauptansprechpartner', 'portal_access' => 'Portal-Zugang',
         'password' => 'Passwort', 'body' => 'Text', 'is_pinned' => 'Angeheftet', 'name' => 'Name',
         'is_active' => 'Aktiv', 'description' => 'Beschreibung',
+        'subject' => 'Betreff', 'status' => 'Status', 'priority' => 'Priorität', 'group_id' => 'Gruppe',
+        'assignee_id' => 'Bearbeiter', 'customer_id' => 'Kunde', 'contact_id' => 'Ansprechpartner',
+        'follow_up_at' => 'Wiedervorlage', 'closed_at' => 'Geschlossen am', 'mailbox_id' => 'Postfach',
+        'merged_into_id' => 'Zusammengeführt in', 'starts_at' => 'Beginn', 'ends_at' => 'Ende', 'location' => 'Einsatzort',
+        'technician_id' => 'Techniker', 'note' => 'Notiz',
     ];
+
+    /**
+     * Fields holding ids, shown with the name of the referenced record.
+     *
+     * @var array<string, array{0: class-string<Model>, 1: string}>
+     */
+    private const REFERENCES = [
+        'group_id' => [Group::class, 'name'],
+        'assignee_id' => [User::class, 'name'],
+        'technician_id' => [User::class, 'name'],
+        'customer_id' => [Customer::class, 'company'],
+        'contact_id' => [Contact::class, 'contact'],
+        'mailbox_id' => [Mailbox::class, 'name'],
+        'merged_into_id' => [Ticket::class, 'number'],
+    ];
+
+    /** @var array<string, ?string> */
+    private static array $names = [];
 
     public static function causer(Activity $activity): string
     {
@@ -56,6 +86,14 @@ final class ActivityPresenter
                 default => 'hat eine Notiz bearbeitet',
             },
             'customer_note.deleted' => 'hat eine Notiz gelöscht',
+            'ticket.created' => 'hat das Ticket angelegt',
+            'ticket.updated' => match (true) {
+                isset($changes['status']) => 'hat den Status geändert',
+                isset($changes['assignee_id']) => 'hat den Bearbeiter geändert',
+                default => 'hat das Ticket geändert',
+            },
+            'ticket.deleted' => 'hat das Ticket gelöscht',
+            'appointment.updated' => 'hat einen VOS-Termin geändert',
             'ticket.reply_added' => 'hat geantwortet',
             'appointment.created' => 'hat einen VOS-Termin geplant',
             'appointment.deleted' => 'hat einen VOS-Termin gelöscht',
@@ -97,9 +135,35 @@ final class ActivityPresenter
             is_bool($value) => $value ? 'Ja' : 'Nein',
             $field === 'salutation' => Salutation::tryFrom($value)?->label() ?? (string) $value,
             $field === 'country' => config("servicedesk.countries.{$value}", $value),
+            $field === 'status' => TicketStatus::tryFrom($value)?->label() ?? (string) $value,
+            $field === 'priority' => TicketPriority::tryFrom($value)?->label() ?? (string) $value,
+            isset(self::REFERENCES[$field]) => self::name($field, $value),
+            $field === 'follow_up_at' => Carbon::parse($value)->isoFormat('D. MMM YYYY'),
+            str_ends_with($field, '_at') => Carbon::parse($value)->isoFormat('D. MMM YYYY, HH:mm'),
             is_array($value) => implode(', ', $value),
             default => Str::limit((string) $value, 80),
         };
+    }
+
+    /**
+     * Name of a referenced record (cached per request, deleted records keep their id).
+     */
+    private static function name(string $field, mixed $id): string
+    {
+        [$class, $attribute] = self::REFERENCES[$field];
+        $key = $class.':'.$id;
+
+        if (! array_key_exists($key, self::$names)) {
+            $record = $class::find($id);
+            self::$names[$key] = match (true) {
+                $record === null => null,
+                $record instanceof Contact => $record->fullName(),
+                $record instanceof Ticket => $record->reference(),
+                default => $record->{$attribute},
+            };
+        }
+
+        return self::$names[$key] ?? "#{$id} (gelöscht)";
     }
 
     private static function contactName(Activity $activity): string

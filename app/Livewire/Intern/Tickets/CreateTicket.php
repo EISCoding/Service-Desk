@@ -13,6 +13,7 @@ use App\Models\Group;
 use App\Models\Mailbox;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
+use App\Services\StaffNotifier;
 use App\Support\Html;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -156,6 +157,8 @@ class CreateTicket extends Component
             $message->ticket()->associate($ticket);
             $message->author()->associate(auth()->user());
             $message->save();
+
+            app(StaffNotifier::class)->newTicket($ticket, auth()->user());
 
             return $ticket;
         });

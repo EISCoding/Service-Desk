@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\MarkDueFollowUps;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -9,16 +10,17 @@ use Illuminate\Support\Facades\Schedule;
 |--------------------------------------------------------------------------
 |
 | Plesk runs `php artisan schedule:run` every minute via cron. There is no
-| Supervisor, so the queue is processed here: a short-lived worker starts every
-| minute, works through pending jobs and exits when the queue is empty or after
-| 50 seconds at the latest. It runs in the background so other scheduled tasks
-| are not delayed by it.
+| Supervisor, so the queue is processed here: a worker starts every minute,
+| checks for jobs every 3 seconds and exits after 55 seconds, so there is never
+| a permanent process. It runs in the background so other tasks are not delayed.
+| Web requests additionally work off their own jobs right after the response
+| (App\Support\QueueAfterResponse).
 |
 */
 
 Schedule::command('queue:work', [
-    '--stop-when-empty',
-    '--max-time=50',
+    '--max-time=55',
+    '--sleep=3',
     '--tries=3',
     '--timeout=60',
 ])
@@ -33,7 +35,9 @@ Schedule::job(new MarkDueFollowUps)
     ->name('mark-due-follow-ups')
     ->dailyAt('06:00');
 
-// Mail: one FetchMailbox job per active mailbox every minute (unique per mailbox).
-Schedule::command('servicedesk:fetch-mail')
-    ->everyMinute()
+// Mail: fetch every 20 seconds, in the scheduler process itself (schedule:run
+// keeps running for the minute; no extra process is started for this).
+Schedule::call(fn () => Artisan::call('servicedesk:fetch-mail', ['--now' => true]))
+    ->name('fetch-mail')
+    ->everyTwentySeconds()
     ->withoutOverlapping(5);

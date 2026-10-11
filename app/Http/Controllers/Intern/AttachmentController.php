@@ -15,6 +15,14 @@ class AttachmentController extends Controller
     {
         Gate::authorize('view', $attachment);
 
+        return $this->stream($request, $attachment);
+    }
+
+    /**
+     * Download (or show inline images/PDFs) with headers that prevent script execution.
+     */
+    protected function stream(Request $request, Attachment $attachment): StreamedResponse
+    {
         $inline = $request->boolean('inline') && $attachment->canBeShownInline();
         $disposition = $inline ? 'inline' : 'attachment';
 

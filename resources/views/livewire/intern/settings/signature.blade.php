@@ -1,7 +1,7 @@
-<div class="max-w-2xl space-y-6">
-    <x-ui.page-header title="Signatur" description="Wird automatisch unter deine Antworten an Kunden gesetzt (nicht unter interne Notizen)." class="mb-0!" />
+<div class="max-w-2xl">
+    <x-settings-nav />
 
-    <x-ui.card>
+    <x-ui.card title="Signatur" description="Wird automatisch unter deine Antworten an Kunden gesetzt (nicht unter interne Notizen).">
         <form wire:submit="save" id="signature-form">
             <x-ui.rich-editor label="Signatur" wire:model="signature" placeholder="z. B. Viele Grüße, Name, Telefon …" />
         </form>
