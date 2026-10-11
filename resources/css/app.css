@@ -1,0 +1,174 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import 'trix/dist/trix.css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/* Dark mode is driven by a `dark` class on <html> (System/Hell/Dunkel switch). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Semantic design tokens. Components use these instead of raw palette colors,
+ * so light and dark mode (and later a configurable accent color) live in one place.
+ */
+:root {
+    /* text, links and rings */
+    --accent: #0066cc;
+    --accent-hover: #0071e3;
+    /* solid backgrounds with text on them (buttons): keep 4.5:1 with --on-accent */
+    --accent-fill: #0066cc;
+    --accent-fill-hover: #0071e3;
+    --on-accent: #ffffff;
+    --canvas: #f5f5f7;
+    --surface: #ffffff;
+    --surface-muted: #f5f5f7;
+    --separator: #e5e5ea;
+    --ink: #1d1d1f;
+    --ink-muted: #636366;
+    --ink-faint: #6e6e73;
+    color-scheme: light;
+}
+
+.dark {
+    --accent: #2997ff;
+    --accent-hover: #5aadff;
+    --accent-fill: #0066cc;
+    --accent-fill-hover: #0071e3;
+    --on-accent: #ffffff;
+    --canvas: #000000;
+    --surface: #1c1c1e;
+    --surface-muted: #2c2c2e;
+    --separator: #38383a;
+    --ink: #f5f5f7;
+    --ink-muted: #a1a1a6;
+    --ink-faint: #939398;
+    color-scheme: dark;
+}
+
+@theme inline {
+    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter Variable', Inter,
+        'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+
+    --color-accent: var(--accent);
+    --color-accent-hover: var(--accent-hover);
+    --color-accent-fill: var(--accent-fill);
+    --color-accent-fill-hover: var(--accent-fill-hover);
+    --color-on-accent: var(--on-accent);
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-surface-muted: var(--surface-muted);
+    --color-separator: var(--separator);
+    --color-ink: var(--ink);
+    --color-ink-muted: var(--ink-muted);
+    --color-ink-faint: var(--ink-faint);
+
+    --radius-card: 14px;
+}
+
+@layer base {
+    html {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Visible keyboard focus everywhere (components may refine it). */
+    :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+    }
+
+    body {
+        @apply bg-canvas text-ink;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+/* HTML of ticket messages (sanitized on save). */
+@layer components {
+    .message-body {
+        @apply text-sm leading-relaxed text-ink [overflow-wrap:anywhere];
+    }
+
+    .message-body :where(p, ul, ol, blockquote, pre, h1, h2, h3, table) {
+        @apply my-2 first:mt-0 last:mb-0;
+    }
+
+    .message-body :where(ul) {
+        @apply list-disc pl-5;
+    }
+
+    .message-body :where(ol) {
+        @apply list-decimal pl-5;
+    }
+
+    .message-body :where(a) {
+        @apply text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent;
+    }
+
+    .message-body :where(blockquote) {
+        @apply border-l-2 border-separator pl-3 text-ink-muted;
+    }
+
+    .message-body :where(pre, code) {
+        @apply rounded-md bg-surface-muted px-1.5 py-0.5 font-mono text-[13px];
+    }
+
+    .message-body :where(h1, h2, h3) {
+        @apply font-semibold;
+    }
+
+    .message-body :where(table) {
+        @apply block max-w-full overflow-x-auto;
+    }
+
+    .message-body :where(img) {
+        @apply inline-block h-auto max-w-full rounded-md;
+    }
+}
+
+/* Trix editor in the design system (unlayered, so it wins over trix.css) */
+trix-toolbar .trix-button-group--file-tools,
+trix-toolbar .trix-button--icon-heading-1 {
+    display: none;
+}
+
+trix-toolbar .trix-button-row {
+    @apply gap-1;
+}
+
+trix-toolbar .trix-button-group {
+    @apply mb-2 rounded-lg border-separator;
+}
+
+trix-toolbar .trix-button {
+    @apply border-separator bg-surface;
+}
+
+trix-toolbar .trix-button.trix-active {
+    @apply bg-accent/15;
+}
+
+.dark trix-toolbar .trix-button--icon::before {
+    filter: invert(1);
+}
+
+trix-toolbar .trix-dialog {
+    @apply rounded-xl border-separator bg-surface text-ink shadow-lg;
+}
+
+trix-toolbar .trix-input {
+    @apply rounded-lg border-separator bg-surface text-ink;
+}
+
+trix-editor {
+    @apply min-h-32 rounded-[10px] border-0 bg-surface px-3 py-2 text-sm text-ink shadow-xs ring-1 ring-separator ring-inset focus:ring-2 focus:ring-accent focus:outline-none;
+}
+
+trix-editor:empty:not(:focus)::before {
+    @apply text-ink-faint;
+}
