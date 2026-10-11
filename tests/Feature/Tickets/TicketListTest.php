@@ -43,8 +43,8 @@ it('is forbidden without any ticket view permission', function () {
     $this->actingAs(User::factory()->create())->get('/intern/tickets')->assertForbidden();
 });
 
-it('starts the staff area on the first allowed page', function () {
-    $this->get('/intern')->assertRedirect(route('intern.tickets.index'));
+it('starts the staff area on the overview or the first allowed page', function () {
+    $this->get('/intern')->assertOk()->assertSee('Übersicht');
 
     $this->actingAs(User::factory()->create())->get('/intern')->assertRedirect(route('intern.settings.general'));
 });

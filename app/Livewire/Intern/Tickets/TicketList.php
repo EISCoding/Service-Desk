@@ -67,13 +67,19 @@ class TicketList extends Component
     #[Session]
     public bool $dueOnly = false;
 
+    #[Session]
+    public bool $unreadOnly = false;
+
     /** activity | priority | created */
     #[Session]
     public string $sort = 'activity';
 
     public int $limit = self::PAGE_SIZE;
 
-    public function mount(?int $selectedId = null): void
+    /**
+     * @param  string|null  $preset  start from a dashboard figure: mine | unread | due | unassigned
+     */
+    public function mount(?int $selectedId = null, ?string $preset = null): void
     {
         $this->authorize('viewAny', Ticket::class);
 
@@ -81,6 +87,13 @@ class TicketList extends Component
 
         if (! session()->exists(self::VIEW_SESSION_KEY)) {
             $this->view = auth()->user()->ticket_view ?? 'all';
+        }
+
+        if (in_array($preset, ['mine', 'unread', 'due', 'unassigned'], true)) {
+            $this->resetFilters();
+            $this->view = in_array($preset, ['mine', 'unassigned'], true) ? $preset : 'all';
+            $this->unreadOnly = $preset === 'unread';
+            $this->dueOnly = $preset === 'due';
         }
 
         if (! array_key_exists($this->view, self::VIEWS)) {
@@ -101,7 +114,7 @@ class TicketList extends Component
 
     public function resetFilters(): void
     {
-        $this->reset('search', 'status', 'priority', 'group', 'assignee', 'customer', 'withoutCustomer', 'dueOnly', 'sort');
+        $this->reset('search', 'status', 'priority', 'group', 'assignee', 'customer', 'withoutCustomer', 'dueOnly', 'unreadOnly', 'sort');
         $this->limit = self::PAGE_SIZE;
     }
 
@@ -125,7 +138,7 @@ class TicketList extends Component
     {
         return count(array_filter([
             $this->status !== 'open', $this->priority !== '', $this->group !== '', $this->assignee !== '',
-            trim($this->customer) !== '', $this->withoutCustomer, $this->dueOnly, $this->sort !== 'activity',
+            trim($this->customer) !== '', $this->withoutCustomer, $this->dueOnly, $this->unreadOnly, $this->sort !== 'activity',
         ]));
     }
 
@@ -214,7 +227,8 @@ class TicketList extends Component
                 ->where('company', 'like', "%{$customer}%")
                 ->orWhere('number', 'like', "%{$customer}%")))
             ->when($this->withoutCustomer, fn ($query) => $query->whereNull('customer_id'))
-            ->when($this->dueOnly, fn ($query) => $query->where('follow_up_due', true));
+            ->when($this->dueOnly, fn ($query) => $query->where('follow_up_due', true))
+            ->when($this->unreadOnly, fn ($query) => $query->unreadBy(auth()->user()));
     }
 
     public function render()

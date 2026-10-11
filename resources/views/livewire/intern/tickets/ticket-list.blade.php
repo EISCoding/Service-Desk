@@ -49,8 +49,9 @@
                         <x-ui.input label="Kunde" wire:model.live.debounce.300ms="customer" placeholder="Firma oder Nr." class="col-span-2" />
                         <x-ui.checkbox label="Ohne Kunde" wire:model.live="withoutCustomer" />
                         <x-ui.checkbox label="Wiedervorlage fällig" wire:model.live="dueOnly" />
+                        <x-ui.checkbox label="Nur ungelesene" wire:model.live="unreadOnly" />
                         <x-ui.select label="Sortierung" wire:model.live="sort" :options="['activity' => 'Letzte Aktivität', 'priority' => 'Priorität', 'created' => 'Neueste zuerst']" />
-                        <div class="flex items-end justify-end">
+                        <div class="col-span-2 flex items-end justify-end">
                             <x-ui.button variant="ghost" size="sm" wire:click="resetFilters">Zurücksetzen</x-ui.button>
                         </div>
                     </div>

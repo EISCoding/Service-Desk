@@ -19,6 +19,7 @@ final class Navigation
     public static function main(User $user): array
     {
         return self::visible($user, [
+            ['label' => 'Übersicht', 'route' => 'intern.dashboard', 'icon' => 'home', 'active' => 'intern.dashboard', 'ability' => ['viewAny', Ticket::class]],
             ['label' => 'Tickets', 'route' => 'intern.tickets.index', 'icon' => 'inbox-stack', 'active' => 'intern.tickets.*', 'ability' => ['viewAny', Ticket::class]],
             ['label' => 'Kunden', 'route' => 'intern.customers.index', 'icon' => 'building-office-2', 'active' => 'intern.customers.*', 'ability' => Permission::CustomersManage->value],
             ['label' => 'Termine', 'route' => 'intern.appointments.index', 'icon' => 'calendar-days', 'active' => 'intern.appointments.*', 'ability' => ['viewAny', Ticket::class]],

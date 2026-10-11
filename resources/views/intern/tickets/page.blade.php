@@ -8,7 +8,7 @@
             @class(['relative lg:block lg:overflow-y-auto lg:border-r lg:border-hairline', 'hidden' => $ticket])
             aria-label="Ticketliste"
         >
-            <livewire:intern.tickets.ticket-list :selected-id="$ticket?->id" />
+            <livewire:intern.tickets.ticket-list :selected-id="$ticket?->id" :preset="$ticket ? null : request()->query('ansicht')" />
         </aside>
 
         <section @class(['relative lg:block lg:overflow-y-auto', 'hidden' => ! $ticket]) aria-label="Ticket">
