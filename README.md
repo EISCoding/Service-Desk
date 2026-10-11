@@ -305,6 +305,39 @@ ruft die Postfächer ab und markiert täglich um 06:00 fällige Wiedervorlagen.
 4. **Vorlagen**: Texte der Systemvorlagen prüfen, Textbausteine anlegen
 5. **Kunden** anlegen und Ansprechpartner ins Portal einladen (`/portal`)
 
+### Ohne SSH-Zugriff
+
+Ohne SSH laufen die Git-Bereitstellungsaktionen in einer abgeschotteten Umgebung (chroot), in der weder
+PHP noch Composer noch Node verfügbar sind. Dann geht alles über die Plesk-Oberfläche:
+
+- `public/build` ist eingecheckt, auf dem Server wird kein Node.js gebraucht.
+- Alle Artisan-Befehle laufen als **geplante Aufgabe vom Typ „PHP-Skript ausführen“**. Der Skriptpfad
+  ist relativ zum Abonnement (`httpdocs/artisan`), die Argumente sind der Befehl, PHP-Version 8.3.
+  Mit **„Jetzt ausführen“** startet die Aufgabe sofort und zeigt die Ausgabe.
+
+Einmalig:
+
+1. Schritte 1 und 2 oben (Domain, PHP, Datenbank). Bei **Git** keine zusätzlichen
+   Bereitstellungsaktionen eintragen.
+2. **Dateimanager** → `httpdocs/.env.example` kopieren als `.env` und wie in Schritt 4 ausfüllen,
+   `APP_KEY=` dabei **leer lassen** (wird gleich erzeugt).
+3. **PHP Composer** (Websites & Domains → Dev Tools → PHP Composer, oder im **Laravel Toolkit**):
+   `httpdocs/composer.json` wählen, Umgebung **Produktion**, „Abhängigkeiten installieren“.
+4. **Geplante Aufgaben** → neue Aufgabe „Einrichtung“: Typ **PHP-Skript ausführen**, Skript
+   `httpdocs/artisan`, Argumente `servicedesk:deploy`, Ausführen z. B. jährlich (sie wird nur von Hand
+   gestartet) → **Jetzt ausführen**. Der Befehl erzeugt den `APP_KEY` in der `.env`, migriert, legt Rollen
+   und Systemvorlagen an und baut die Caches.
+5. In derselben Aufgabe die Argumente auf
+   `servicedesk:create-admin --name="Vorname Nachname" --email=du@firma.de --password="SicheresPasswort2026"`
+   ändern → **Jetzt ausführen** → Argumente wieder auf `servicedesk:deploy` zurückstellen (das Passwort
+   soll nicht in der Aufgabe stehen bleiben).
+6. Zweite Aufgabe „Scheduler“: Typ **PHP-Skript ausführen**, Skript `httpdocs/artisan`, Argumente
+   `schedule:run`, Ausführen **jede Minute** (statt Schritt 7 oben).
+
+Bei Updates zieht Plesk den neuen Stand per Git. Danach bei geänderter `composer.lock` erneut
+„Abhängigkeiten installieren“ und immer die Aufgabe **„Einrichtung“** einmal ausführen. Auch nach jeder
+Änderung an der `.env` die Aufgabe ausführen (sie baut den Config-Cache neu).
+
 ### Prüfen
 
 - `https://servicedesk.example.de/up` antwortet mit „Application up“.
@@ -327,3 +360,4 @@ Plesk → Git → **Jetzt bereitstellen**.
 | Mails werden nicht abgeholt/verschickt | Läuft die Cron-Aufgabe jede Minute? Fehlermeldung am Postfach im Admin prüfen |
 | Uploads brechen ab | `upload_max_filesize`/`post_max_size` in den PHP-Einstellungen erhöhen |
 | Seite hängt im Wartungsmodus | `php artisan up` |
+| Ohne SSH: Scheduler startet keine Queue | In den PHP-Einstellungen darf `proc_open` nicht in `disable_functions` stehen |
