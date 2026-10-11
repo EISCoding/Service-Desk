@@ -11,7 +11,7 @@ it('explains the state of mail sending', function () {
     $message->forceFill(['mail_status' => 'failed', 'mail_error' => 'Connection could not be established with host smtp.firma.de'])->save();
 
     $this->artisan('servicedesk:status')
-        ->expectsOutputToContain('log – Mails werden NICHT verschickt')
+        ->expectsOutputToContain('über das Standard-Postfach support@firma.de')
         ->expectsOutputToContain('Ticket-Mails gehen NICHT raus')
         ->expectsOutputToContain('IMAP: Login failed')
         ->expectsOutputToContain('Connection could not be established')
