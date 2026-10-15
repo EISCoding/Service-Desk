@@ -23,7 +23,7 @@
         x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="ease-in duration-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute right-0 z-40 mt-2 w-72 origin-top-right rounded-2xl bg-surface/95 p-1.5 shadow-pop backdrop-blur-xl"
+        class="absolute right-0 z-40 mt-2 w-72 origin-top-right rounded-xl bg-surface/95 p-1.5 shadow-pop backdrop-blur-xl"
     >
         <div class="px-3 pt-2 pb-3">
             <p class="truncate text-sm font-semibold">{{ $user->name }}</p>

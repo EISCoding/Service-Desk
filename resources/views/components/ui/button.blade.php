@@ -17,15 +17,15 @@
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
         'disabled:opacity-50 disabled:pointer-events-none data-loading:opacity-60 data-loading:pointer-events-none in-data-loading:opacity-60 in-data-loading:pointer-events-none',
         match ($size) {
-            'sm' => 'h-8 rounded-lg px-3 text-[13px]',
-            'lg' => 'h-11 rounded-xl px-5 text-[15px]',
-            default => 'h-9 rounded-[10px] px-4 text-sm',
+            'sm' => 'h-8 rounded-lg px-2.5 text-[13px]',
+            'lg' => 'h-11 rounded-[10px] px-5 text-[15px]',
+            default => 'h-9 rounded-lg px-3.5 text-sm',
         },
         match ($variant) {
-            'secondary' => 'bg-surface text-ink ring-1 ring-inset ring-ink/12 shadow-[0_1px_2px_rgb(0_0_0/0.05)] hover:bg-surface-muted',
+            'secondary' => 'bg-surface text-ink ring-1 ring-inset ring-separator hover:bg-surface-muted',
             'ghost' => 'text-ink-muted hover:bg-surface-muted hover:text-ink',
             'danger' => 'bg-red-600 text-white shadow-xs hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600',
-            default => 'bg-accent-fill text-on-accent shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_1px_2px_rgb(0_0_0/0.12)] hover:bg-accent-fill-hover',
+            default => 'bg-accent-fill text-on-accent shadow-[0_1px_2px_rgb(16_24_40/0.12)] hover:bg-accent-fill-hover',
         },
     ]);
 @endphp

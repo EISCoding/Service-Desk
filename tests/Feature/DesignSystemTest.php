@@ -16,7 +16,7 @@ describe('button', function () {
         $this->blade('<x-ui.button href="/intern" variant="secondary">Zurück</x-ui.button>')
             ->assertSee('<a href="/intern"', false)
             ->assertDontSee('<button', false)
-            ->assertSee('ring-ink/12', false);
+            ->assertSee('ring-separator', false);
     });
 
     it('renders the danger variant and an icon', function () {

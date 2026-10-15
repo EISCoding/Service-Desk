@@ -5,7 +5,7 @@
 ])
 
 <div {{ $attributes->class('flex flex-col items-center justify-center px-6 py-16 text-center') }}>
-    <div class="grid size-14 place-items-center rounded-2xl bg-accent/10 text-accent">
+    <div class="grid size-12 place-items-center rounded-xl bg-accent/10 text-accent">
         <x-dynamic-component :component="\App\Support\Icon::component($icon)" class="size-7" aria-hidden="true" />
     </div>
     <h3 class="mt-4 text-[15px] font-semibold text-ink">{{ $title }}</h3>

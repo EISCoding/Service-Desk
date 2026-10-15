@@ -19,7 +19,7 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl bg-surface/90 px-4 py-3 shadow-pop backdrop-blur-xl"
+            class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl bg-surface/90 px-4 py-3 shadow-pop backdrop-blur-xl"
             role="status"
         >
             <span x-show="toast.type === 'success'" class="text-green-600 dark:text-green-400"><x-bxs-check-circle class="size-5" aria-hidden="true" /></span>

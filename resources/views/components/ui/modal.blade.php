@@ -53,7 +53,7 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100 sm:scale-100"
             x-transition:leave-end="opacity-0 sm:scale-95"
-            class="relative w-full {{ $width }} rounded-t-[22px] bg-surface shadow-pop sm:rounded-[20px]"
+            class="relative w-full {{ $width }} rounded-t-2xl bg-surface shadow-pop sm:rounded-2xl"
         >
             @if ($title)
                 <div class="flex items-start justify-between gap-4 px-6 pt-5">
