@@ -71,6 +71,17 @@ describe('create', function () {
 });
 
 describe('edit', function () {
+    it('opens customers with empty fields', function () {
+        $customer = Customer::factory()->create(['company' => 'Leer GmbH', 'website' => null, 'street' => null, 'phone' => null, 'email' => null]);
+
+        Livewire::test(CustomerForm::class)
+            ->dispatch('edit-customer', id: $customer->id)
+            ->assertSet('show', true)
+            ->assertSet('website', '')
+            ->call('save')
+            ->assertHasNoErrors();
+    });
+
     it('edits a customer and keeps its own number valid', function () {
         $customer = Customer::factory()->create(['company' => 'Alt GmbH']);
 

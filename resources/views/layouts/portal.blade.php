@@ -50,7 +50,9 @@
                     <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-64 rounded-xl bg-surface p-1 shadow-pop">
                         <div class="px-3 py-2">
                             <p class="truncate text-sm font-medium">{{ $contact->fullName() }}</p>
-                            <p class="truncate text-[12px] text-ink-muted">{{ $contact->loadMissing('customer')->customer->company }}</p>
+                            @unless ($contact->loadMissing('customer')->customer->isPrivate())
+                                <p class="truncate text-[12px] text-ink-muted">{{ $contact->customer->company }}</p>
+                            @endunless
                         </div>
                         <div class="px-3 pt-1 pb-2">
                             <p class="mb-1.5 text-[12px] font-medium text-ink-muted">Darstellung</p>

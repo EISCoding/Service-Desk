@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Intern\Customers;
 
+use App\Enums\CustomerType;
 use App\Livewire\Concerns\InteractsWithToasts;
 use App\Models\Customer;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -27,6 +28,10 @@ class Index extends Component
     #[Url(except: 'active')]
     public string $status = 'active';
 
+    /** '' (all) | company | private */
+    #[Url(except: '')]
+    public string $type = '';
+
     #[Url(except: 'company')]
     public string $sortBy = 'company';
 
@@ -44,6 +49,11 @@ class Index extends Component
     }
 
     public function updatedStatus(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedType(): void
     {
         $this->resetPage();
     }
@@ -79,6 +89,7 @@ class Index extends Component
                     ->orWhere('email', 'like', "%{$search}%"))))
             ->when($this->status === 'active', fn ($query) => $query->active())
             ->when($this->status === 'archived', fn ($query) => $query->archived())
+            ->when(CustomerType::tryFrom($this->type), fn ($query, $type) => $query->where('type', $type->value))
             ->orderBy(in_array($this->sortBy, self::SORTABLE, true) ? $this->sortBy : 'company', $this->sortDirection === 'desc' ? 'desc' : 'asc')
             ->orderBy('id')
             ->paginate(25);

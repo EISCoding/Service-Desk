@@ -1,9 +1,13 @@
 <div>
-    @can('create', \App\Models\Contact::class)
-        <div class="mb-4 flex justify-end">
-            <x-ui.button icon="plus" wire:click="create">Neuer Ansprechpartner</x-ui.button>
-        </div>
-    @endcan
+    @if ($customer->isPrivate())
+        <p class="mb-4 text-[13px] text-ink-muted">Bei Privatpersonen ist die Person selbst der Ansprechpartner. Name, E-Mail und Telefon änderst du über „Bearbeiten“ beim Kunden.</p>
+    @else
+        @can('create', \App\Models\Contact::class)
+            <div class="mb-4 flex justify-end">
+                <x-ui.button icon="plus" wire:click="create">Neuer Ansprechpartner</x-ui.button>
+            </div>
+        @endcan
+    @endif
 
     <x-ui.card :padding="false">
         @if ($this->contacts->isEmpty())

@@ -77,6 +77,7 @@ class Contacts extends Component
     public function create(): void
     {
         $this->authorize('create', Contact::class);
+        abort_if($this->customer->isPrivate(), 403, 'Privatpersonen haben keine weiteren Ansprechpartner.');
 
         $this->resetForm();
         // The first contact of a customer is its primary contact.

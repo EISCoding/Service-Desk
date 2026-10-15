@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CustomerType;
 use App\Models\Concerns\LogsActivity;
 use App\Services\CustomerNumberGenerator;
 use Database\Factories\CustomerFactory;
@@ -17,11 +18,12 @@ class Customer extends Model
     use HasFactory, LogsActivity;
 
     protected $fillable = [
-        'number', 'company', 'street', 'postal_code', 'city', 'country', 'email', 'phone', 'website', 'archived_at',
+        'number', 'type', 'company', 'street', 'postal_code', 'city', 'country', 'email', 'phone', 'website', 'archived_at',
     ];
 
     protected $attributes = [
         'country' => 'DE',
+        'type' => 'company',
     ];
 
     protected static function booted(): void
@@ -37,6 +39,7 @@ class Customer extends Model
     protected function casts(): array
     {
         return [
+            'type' => CustomerType::class,
             'archived_at' => 'datetime',
         ];
     }
@@ -72,6 +75,19 @@ class Customer extends Model
     public function tickets(): HasMany
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function isPrivate(): bool
+    {
+        return $this->type === CustomerType::Private;
+    }
+
+    /**
+     * The person behind a private customer (their main contact).
+     */
+    public function person(): ?Contact
+    {
+        return $this->contacts()->first();
     }
 
     public function hasTickets(): bool
