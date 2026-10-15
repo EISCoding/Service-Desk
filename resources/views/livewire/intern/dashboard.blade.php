@@ -1,6 +1,6 @@
 @php($counts = $this->counts)
 
-<div class="mx-auto max-w-6xl">
+<div wire:poll.30s="checkForChanges" class="mx-auto max-w-6xl">
     <header class="mb-6">
         <p class="text-[13px] font-medium text-ink-muted">{{ now()->isoFormat('dddd, D. MMMM') }}</p>
         <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>

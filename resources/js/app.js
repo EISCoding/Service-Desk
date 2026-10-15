@@ -3,6 +3,81 @@ import 'trix';
 
 // Alpine.js ships with Livewire; register Alpine extensions in the `alpine:init` hook.
 
+// A record deleted meanwhile (e.g. a ticket open while a colleague deletes it) makes live
+// updates fail with 404: reload instead of showing the error page in a modal. The page
+// routes send missing tickets back to the list.
+document.addEventListener('livewire:init', () => {
+    window.Livewire.hook('request', ({ fail }) => {
+        fail(({ status, preventDefault }) => {
+            if (status === 404) {
+                preventDefault();
+                window.location.reload();
+            }
+        });
+    });
+});
+
+// Web push: service worker for notifications (staff area) and the "enable on this device" switch.
+const pushSupported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+
+if (pushSupported && location.pathname.startsWith('/intern')) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+function base64ToBytes(base64) {
+    const padded = (base64 + '='.repeat((4 - (base64.length % 4)) % 4)).replace(/-/g, '+').replace(/_/g, '/');
+    return Uint8Array.from(atob(padded), (char) => char.charCodeAt(0));
+}
+
+document.addEventListener('alpine:init', () => {
+    window.Alpine.data('webPush', (publicKey) => ({
+        supported: pushSupported,
+        ios: /iPhone|iPad/.test(navigator.userAgent),
+        permission: pushSupported ? Notification.permission : 'default',
+        subscribed: false,
+        busy: false,
+        error: '',
+
+        async init() {
+            if (! this.supported) return;
+            const registration = await navigator.serviceWorker.register('/sw.js');
+            this.subscribed = Boolean(await registration.pushManager.getSubscription());
+        },
+
+        async enable() {
+            this.busy = true;
+            this.error = '';
+            try {
+                this.permission = await Notification.requestPermission();
+                if (this.permission !== 'granted') return;
+                const registration = await navigator.serviceWorker.ready;
+                const subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: base64ToBytes(publicKey) });
+                await this.$wire.subscribe(subscription.toJSON(), navigator.userAgent);
+                this.subscribed = true;
+            } catch (error) {
+                this.error = 'Aktivieren hat nicht geklappt: ' + (error?.message || error);
+            } finally {
+                this.busy = false;
+            }
+        },
+
+        async disable() {
+            this.busy = true;
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                const subscription = await registration.pushManager.getSubscription();
+                if (subscription) {
+                    await this.$wire.unsubscribe(subscription.endpoint);
+                    await subscription.unsubscribe();
+                }
+                this.subscribed = false;
+            } finally {
+                this.busy = false;
+            }
+        },
+    }));
+});
+
 // Uploads in the editor are not used (attachments have their own field).
 document.addEventListener('trix-file-accept', (event) => event.preventDefault());
 
@@ -29,6 +104,9 @@ document.addEventListener('keydown', (event) => {
     } else if ((key === 'r' || key === 'n') && document.querySelector('[data-composer]')) {
         event.preventDefault();
         window.dispatchEvent(new CustomEvent('composer-focus', { detail: { mode: key === 'r' ? 'reply' : 'note' } }));
+    } else if (key === 'f' && /^\/intern\/tickets\/\d+/.test(location.pathname)) {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent('toggle-ticket-focus'));
     } else if (key === 'e') {
         const status = document.querySelector('[data-shortcut="status"]:not([disabled])');
         if (! status) return;

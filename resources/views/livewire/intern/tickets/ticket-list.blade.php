@@ -1,10 +1,15 @@
-<div class="flex min-h-full flex-col">
+@php($dots = ['blue' => 'bg-blue-500', 'indigo' => 'bg-indigo-500', 'yellow' => 'bg-yellow-500', 'orange' => 'bg-orange-500', 'purple' => 'bg-purple-500', 'teal' => 'bg-teal-500', 'gray' => 'bg-zinc-400'])
+
+<div wire:poll.15s="checkForChanges" class="flex min-h-full flex-col">
     <div x-data="{ filters: {{ $this->activeFilterCount() > 0 ? 'true' : 'false' }} }" class="sticky top-0 z-10 space-y-3 border-b border-separator bg-canvas/90 px-4 pt-4 pb-3 backdrop-blur-xl">
         <div class="flex items-center justify-between gap-3">
             <h1 class="text-[22px] font-semibold tracking-tight">Tickets</h1>
-            @can('create', \App\Models\Ticket::class)
-                <x-ui.button size="sm" icon="plus" x-on:click="$dispatch('create-ticket')">Neu</x-ui.button>
-            @endcan
+            <div class="flex items-center gap-2">
+                <x-ticket.layout-switch current="list" compact />
+                @can('create', \App\Models\Ticket::class)
+                    <x-ui.button size="sm" icon="plus" x-on:click="$dispatch('create-ticket')">Neu</x-ui.button>
+                @endcan
+            </div>
         </div>
 
         <div role="tablist" aria-label="Ansicht" class="flex flex-wrap gap-1.5">
@@ -61,7 +66,7 @@
     @if ($items->isEmpty())
         <x-ui.empty-state icon="inbox" title="Keine Tickets" :description="$search !== '' || $this->activeFilterCount() ? 'Kein Ticket passt zu Suche und Filtern.' : 'In dieser Ansicht ist gerade nichts offen.'" />
     @else
-        <ul class="divide-y divide-separator transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
+        <ul class="divide-y divide-hairline transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
             @foreach ($items as $ticket)
                 @php($selected = $ticket->id === $selectedId)
                 @php($unread = ! $selected && $ticket->isUnreadFor(auth()->user()))
@@ -71,45 +76,44 @@
                         wire:navigate
                         @if ($selected) aria-current="page" @endif
                         @class([
-                            'block px-4 py-3 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent',
+                            'block px-4 py-2.5 transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent',
                             'bg-accent/10' => $selected,
                             'hover:bg-ink/[0.03]' => ! $selected,
                         ])
                     >
-                        <div class="flex items-center justify-between gap-2 text-[12px] text-ink-muted">
-                            <span class="tabular-nums">{{ $ticket->reference() }}</span>
-                            <time datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans(short: true) }}</time>
-                        </div>
-                        <p class="mt-0.5 flex items-center gap-1.5 text-sm text-ink">
+                        <div class="flex items-center gap-1.5">
                             @if ($unread)
                                 <span class="size-2 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
                                 <span class="sr-only">Neue Kundenantwort:</span>
                             @endif
-                            <span @class(['truncate', 'font-semibold' => $unread, 'font-medium' => ! $unread])>{{ $ticket->subject }}</span>
-                        </p>
-                        <p class="truncate text-[13px] text-ink-muted">
-                            @if ($ticket->customer)
-                                {{ $ticket->customer->company }}@if ($ticket->contact) · {{ $ticket->contact->fullName() }}@endif
-                            @else
-                                <span class="italic">Ohne Kunde</span>
-                            @endif
-                        </p>
-                        <div class="mt-1.5 flex flex-wrap items-center gap-1">
-                            <x-ui.badge :color="$ticket->status->color()" dot>{{ $ticket->status->label() }}</x-ui.badge>
-                            @if ($ticket->priority->isHighlighted())
-                                <x-ui.badge :color="$ticket->priority->color()">{{ $ticket->priority->label() }}</x-ui.badge>
-                            @endif
-                            @if ($ticket->follow_up_due)
-                                <x-ui.badge color="orange">
-                                    <x-heroicon-m-bell-alert class="size-3" aria-hidden="true" /> Wiedervorlage fällig
-                                </x-ui.badge>
-                            @endif
-                            <span class="ml-auto">
-                                @if ($ticket->assignee)
-                                    <x-ui.avatar :name="$ticket->assignee->name" size="sm" />
+                            <p @class(['min-w-0 flex-1 truncate text-sm text-ink', 'font-semibold' => $unread, 'font-medium' => ! $unread])>{{ $ticket->subject }}</p>
+                            <time class="shrink-0 text-[12px] text-ink-muted" datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans(short: true) }}</time>
+                        </div>
+                        <div class="mt-0.5 flex items-center gap-1.5 text-[12px] text-ink-muted">
+                            <span class="size-1.5 shrink-0 rounded-full {{ $dots[$ticket->status->color()] ?? 'bg-zinc-400' }}" aria-hidden="true"></span>
+                            <span class="min-w-0 flex-1 truncate">
+                                {{ $ticket->status->label() }} · <span class="tabular-nums">{{ $ticket->reference() }}</span> ·
+                                @if ($ticket->customer)
+                                    {{ $ticket->customer->company }}@if ($ticket->contact) · {{ $ticket->contact->fullName() }}@endif
+                                @else
+                                    <span class="italic">Ohne Kunde</span>
                                 @endif
                             </span>
+                            @if ($ticket->priority->isHighlighted())
+                                <x-ui.badge :color="$ticket->priority->color()" class="shrink-0 py-0! text-[11px]!">{{ $ticket->priority->label() }}</x-ui.badge>
+                            @endif
+                            @if ($ticket->assignee)
+                                <x-ui.avatar :name="$ticket->assignee->name" size="xs" />
+                            @endif
                         </div>
+                        @if ($ticket->preview)
+                            <p class="mt-0.5 truncate text-[12px] text-ink-muted">{{ $ticket->preview }}</p>
+                        @endif
+                        @if ($ticket->follow_up_due)
+                            <x-ui.badge color="orange" class="mt-1.5 py-0! text-[11px]!">
+                                <x-heroicon-m-bell-alert class="size-3" aria-hidden="true" /> Wiedervorlage fällig
+                            </x-ui.badge>
+                        @endif
                     </a>
                 </li>
             @endforeach

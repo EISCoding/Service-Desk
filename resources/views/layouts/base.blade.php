@@ -18,6 +18,18 @@
 
     <title>{{ $title ? $title.' · ' : '' }}{{ config('app.name') }}</title>
 
+    {{-- Installable as an app ("Zum Home-Bildschirm"), required for push on iPhones --}}
+    <link rel="manifest" href="{{ route('manifest', request()->is('portal', 'portal/*') ? ['start' => 'portal'] : []) }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('icons/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('icons/icon-any-192.png') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="{{ config('app.name') }}">
+    <meta name="application-name" content="{{ config('app.name') }}">
+    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @if ($accentCss = \App\Support\AccentColor::css(app(\App\Support\AppSettings::class)->get('accent')))
         <style>{!! $accentCss !!}</style>

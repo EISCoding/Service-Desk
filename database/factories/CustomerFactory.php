@@ -30,4 +30,9 @@ class CustomerFactory extends Factory
     {
         return $this->state(fn () => ['archived_at' => now()]);
     }
+
+    public function private(): static
+    {
+        return $this->state(fn () => ['type' => 'private', 'company' => fake()->firstName().' '.fake()->lastName(), 'website' => null]);
+    }
 }

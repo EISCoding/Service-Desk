@@ -37,6 +37,19 @@ class Contact extends Authenticatable
         'theme' => 'system',
     ];
 
+    protected static function booted(): void
+    {
+        // A private customer is named after the person (their main contact).
+        static::saved(function (Contact $contact) {
+            $customer = $contact->loadMissing('customer')->customer;
+            $name = $contact->fullName();
+
+            if ($customer?->isPrivate() && $contact->is_primary && $name !== '' && $customer->company !== $name) {
+                $customer->update(['company' => $name]);
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [

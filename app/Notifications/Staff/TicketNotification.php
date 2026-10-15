@@ -10,9 +10,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 /**
- * Bell and/or mail for staff about a ticket (new ticket, assignment, customer reply).
+ * Bell, mail and/or web push for staff about a ticket (new ticket, assignment, customer reply).
  * The channels follow the user's notification settings.
  */
 class TicketNotification extends Notification implements ShouldQueue
@@ -35,7 +36,9 @@ class TicketNotification extends Notification implements ShouldQueue
     {
         return array_values(array_filter(
             array_keys(NotificationEvent::CHANNELS),
-            fn (string $channel) => $user->wantsNotification($this->event, $channel),
+            fn (string $channel) => $user->wantsNotification($this->event, $channel)
+                // Push only to users who enabled it on a device.
+                && ($channel !== 'push' || $user->pushSubscriptions()->exists()),
         ));
     }
 
@@ -50,6 +53,19 @@ class TicketNotification extends Notification implements ShouldQueue
             ->line('Welche Benachrichtigungen du bekommst, stellst du unter Einstellungen → Benachrichtigungen ein.')
             ->salutation(config('app.name'))
             ->view(['mail.notification', 'mail.notification-text']);
+    }
+
+    /**
+     * @return array{title: string, body: string, url: string, tag: string}
+     */
+    public function toWebPush(User $user): array
+    {
+        return [
+            'title' => "{$this->title} · {$this->ticket->reference()}",
+            'body' => $this->ticket->subject.($this->text !== '' ? "\n„".Str::limit($this->text, 120).'“' : ''),
+            'url' => route('intern.tickets.show', $this->ticket),
+            'tag' => 'ticket-'.$this->ticket->id,
+        ];
     }
 
     /**

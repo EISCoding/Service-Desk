@@ -3,7 +3,7 @@
 namespace App\Enums;
 
 /**
- * Events staff can be notified about, each via bell (database) and/or mail.
+ * Events staff can be notified about, each via bell (database), mail and/or web push.
  */
 enum NotificationEvent: string
 {
@@ -11,7 +11,7 @@ enum NotificationEvent: string
     case Assigned = 'assigned';
     case CustomerReply = 'customer_reply';
 
-    public const CHANNELS = ['database' => 'Glocke', 'mail' => 'E-Mail'];
+    public const CHANNELS = ['database' => 'Glocke', 'mail' => 'E-Mail', 'push' => 'Push'];
 
     public function label(): string
     {
@@ -31,6 +31,9 @@ enum NotificationEvent: string
         };
     }
 
+    /**
+     * Bell: everything. Mail and push: what concerns the user directly.
+     */
     public function defaultFor(string $channel): bool
     {
         return $channel === 'database' || $this !== self::NewTicket;

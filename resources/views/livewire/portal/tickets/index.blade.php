@@ -1,9 +1,11 @@
 @php($summary = $this->summary)
 
-<div>
+<div wire:poll.30s="checkForChanges">
     <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div class="min-w-0">
-            <p class="text-[13px] font-medium text-ink-muted">{{ $this->contact->customer->company }}</p>
+            @unless ($this->contact->customer->isPrivate())
+                <p class="text-[13px] font-medium text-ink-muted">{{ $this->contact->customer->company }}</p>
+            @endunless
             <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>
             <p class="mt-1 text-[15px] text-ink-muted">{{ $this->summaryText() }}</p>
         </div>
@@ -42,11 +44,11 @@
         </section>
     @endif
 
-    <h2 class="mb-3 text-[15px] font-semibold">{{ $this->contact->is_primary ? 'Anfragen von '.$this->contact->customer->company : 'Ihre Anfragen' }}</h2>
+    <h2 class="mb-3 text-[15px] font-semibold">{{ $this->contact->is_primary && ! $this->contact->customer->isPrivate() ? 'Anfragen von '.$this->contact->customer->company : 'Ihre Anfragen' }}</h2>
 
     <div class="mb-4 flex flex-wrap items-center gap-3">
         <x-ui.segmented model="state" :current="$state" :options="['open' => 'Offen', 'closed' => 'Geschlossen', 'all' => 'Alle']" label="Status" />
-        @if ($this->contact->is_primary)
+        @if ($this->contact->is_primary && ! $this->contact->customer->isPrivate())
             <x-ui.select wire:model.live="scope" aria-label="Tickets von" class="w-48" :options="['company' => 'Ganze Firma', 'mine' => 'Nur meine']" />
         @endif
         <x-ui.input wire:model.live.debounce.300ms="search" type="search" placeholder="Betreff oder Nummer …" aria-label="Tickets durchsuchen" class="w-full sm:ml-auto sm:w-64" />

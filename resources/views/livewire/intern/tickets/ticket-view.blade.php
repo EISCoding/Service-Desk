@@ -1,11 +1,15 @@
 @php($canUpdate = auth()->user()->can('update', $ticket))
 @php($pill = 'h-8 appearance-none rounded-full bg-transparent pr-7 text-[13px] font-medium text-ink focus:outline-none disabled:opacity-70')
 
-<div class="flex min-h-full flex-col">
+<div wire:poll.10s="checkForChanges" class="@container/ticket flex min-h-full flex-col">
     <div class="flex-1 px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-6">
         <a href="{{ route('intern.tickets.index') }}" wire:navigate class="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-accent lg:hidden">
             <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /> Tickets
         </a>
+
+        {{-- Wide panes: details become a sidebar next to the conversation --}}
+        <div class="grid items-start gap-x-8 @4xl/ticket:grid-cols-[minmax(0,1fr)_19rem]">
+        <div class="min-w-0">
 
         {{-- Header --}}
         <header class="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
@@ -31,6 +35,17 @@
             </div>
 
             <div class="flex shrink-0 items-center gap-2">
+                <button type="button" x-on:click="$dispatch('toggle-ticket-focus')" class="hidden rounded-full p-2 text-ink-muted hover:bg-ink/[0.06] hover:text-ink lg:inline-flex"
+                    x-bind:title="typeof focus !== 'undefined' && focus ? 'Ticketliste einblenden (F)' : 'Ticketliste ausblenden (F)'">
+                    <x-heroicon-m-arrows-pointing-out class="size-5" aria-hidden="true" x-show="typeof focus === 'undefined' || ! focus" />
+                    <x-heroicon-m-arrows-pointing-in class="size-5" aria-hidden="true" x-show="typeof focus !== 'undefined' && focus" x-cloak />
+                    <span class="sr-only">Ticketliste aus- oder einblenden</span>
+                </button>
+                @if ($canUpdate && $ticket->status !== \App\Enums\TicketStatus::Closed)
+                    <x-ui.button variant="secondary" icon="check-circle" wire:click="setStatus('closed')">Erledigt</x-ui.button>
+                @elseif ($canUpdate)
+                    <x-ui.button variant="secondary" icon="arrow-uturn-left" wire:click="setStatus('in_progress')">Wieder öffnen</x-ui.button>
+                @endif
                 @if ($canUpdate && $ticket->assignee_id !== auth()->id())
                     <x-ui.button icon="hand-raised" wire:click="take">Übernehmen</x-ui.button>
                 @endif
@@ -102,9 +117,12 @@
             @endif
         </div>
 
-        {{-- Details: customer, contact, appointments, info --}}
-        <div x-data="{ open: {{ $ticket->customer_id ? 'false' : 'true' }} }" class="mt-4 overflow-hidden rounded-card bg-surface shadow-card">
-            <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="flex w-full items-center gap-3 px-4 py-3 text-left text-[13px] hover:bg-surface-muted/50">
+        </div>
+
+        <aside aria-label="Details" class="mt-4 min-w-0 @4xl/ticket:col-start-2 @4xl/ticket:row-span-2 @4xl/ticket:row-start-1 @4xl/ticket:mt-0">
+        {{-- Details: customer, contact, appointments, info; collapsible in narrow panes --}}
+        <div x-data="{ open: {{ $ticket->customer_id ? 'false' : 'true' }} }" class="@container/details overflow-hidden rounded-card bg-surface shadow-card">
+            <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="flex w-full items-center gap-3 px-4 py-3 text-left text-[13px] hover:bg-surface-muted/50 @4xl/ticket:hidden">
                 <span class="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-1 text-ink-muted">
                     <span class="inline-flex items-center gap-1.5">
                         <x-heroicon-m-building-office-2 class="size-4" aria-hidden="true" />
@@ -122,8 +140,8 @@
                 <span class="text-[12px] font-medium text-accent" x-text="open ? 'Weniger' : 'Details'">Details</span>
             </button>
 
-            <div x-show="open" x-collapse x-cloak class="border-t border-hairline">
-                <div class="grid gap-x-6 gap-y-4 p-4 md:grid-cols-2">
+            <div x-show="open" x-cloak class="border-t border-hairline @4xl/ticket:!block @4xl/ticket:border-t-0">
+                <div class="grid grid-cols-1 gap-x-6 gap-y-5 p-4 @xl/details:grid-cols-2">
                     {{-- Customer with search --}}
                     <div x-data="{ editing: false }">
                         <p class="mb-1.5 text-[13px] font-medium">Kunde</p>
@@ -222,10 +240,59 @@
                             <div class="flex justify-between gap-2"><dt>Geschlossen</dt><dd class="text-ink">{{ $ticket->closed_at->isoFormat('D. MMM YYYY, HH:mm') }}</dd></div>
                         @endif
                     </dl>
+
+                    @if ($ticket->customer)
+                        {{-- Customer context: notes and other tickets --}}
+                        <div class="space-y-5 border-t border-hairline pt-4 @xl/details:col-span-2">
+                            @if ($this->customerNotes->isNotEmpty())
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-[13px] font-medium">Kundennotizen</p>
+                                        @can('view', $ticket->customer)
+                                        <a href="{{ route('intern.customers.show', ['customer' => $ticket->customer, 'tab' => 'notizen']) }}" wire:navigate class="text-[12px] font-medium text-accent hover:underline">Alle</a>
+                                        @endcan
+                                    </div>
+                                    <ul class="mt-2 space-y-2">
+                                        @foreach ($this->customerNotes as $note)
+                                            <li wire:key="note-{{ $note->id }}" @class(['rounded-xl px-3 py-2 text-[12px]', 'bg-yellow-400/15' => $note->is_pinned, 'bg-ink/[0.04]' => ! $note->is_pinned])>
+                                                <div class="line-clamp-4 text-ink [&_p]:inline">{!! $note->body !!}</div>
+                                                <p class="mt-1 text-ink-muted">
+                                                    @if ($note->is_pinned)<x-heroicon-m-bookmark class="inline size-3" aria-hidden="true" /> Angeheftet · @endif
+                                                    {{ $note->created_at->isoFormat('D. MMM YYYY') }}
+                                                </p>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <p class="text-[13px] font-medium">Weitere Tickets</p>
+                                    @can('view', $ticket->customer)
+                                        <a href="{{ route('intern.customers.show', ['customer' => $ticket->customer, 'tab' => 'tickets']) }}" wire:navigate class="text-[12px] font-medium text-accent hover:underline">Alle</a>
+                                        @endcan
+                                </div>
+                                @forelse ($this->otherTickets as $other)
+                                    <a wire:key="other-{{ $other->id }}" href="{{ route('intern.tickets.show', $other) }}" wire:navigate class="-mx-2 mt-1 flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-ink/[0.04]">
+                                        <span class="min-w-0 flex-1">
+                                            <span class="block truncate text-[13px] font-medium">{{ $other->subject }}</span>
+                                            <span class="block text-[11px] text-ink-muted tabular-nums">{{ $other->reference() }} · {{ $other->last_activity_at?->diffForHumans(short: true) }}</span>
+                                        </span>
+                                        <x-ui.badge :color="$other->status->color()" dot class="shrink-0">{{ $other->status->label() }}</x-ui.badge>
+                                    </a>
+                                @empty
+                                    <p class="mt-1 text-[12px] text-ink-muted">Keine weiteren Tickets.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
+        </aside>
 
+        <div class="min-w-0 @4xl/ticket:col-start-1">
         {{-- Conversation / activity log --}}
         <div class="mt-6 flex items-center justify-between gap-3">
             <x-ui.segmented model="tab" :current="$tab" :options="['messages' => 'Nachrichten', 'activity' => 'Aktivität']" label="Ansicht" />
@@ -249,6 +316,8 @@
                 @endforelse
             </div>
         @endif
+        </div>
+        </div>
     </div>
 
     @if ($tab !== 'activity' && (auth()->user()->can('reply', $ticket) || auth()->user()->can('addNote', $ticket)))

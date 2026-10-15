@@ -21,6 +21,7 @@ class AppSettings
         'reopen_days' => null,
         'mail_reply_hint' => null, // line below ticket mails
         'mail_footer' => null,     // e.g. address, phone, legal details
+        'push_vapid' => null,      // web push key pair (private key encrypted)
     ];
 
     /** @var array<string, mixed>|null */

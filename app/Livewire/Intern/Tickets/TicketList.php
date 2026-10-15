@@ -4,6 +4,7 @@ namespace App\Livewire\Intern\Tickets;
 
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\User;
@@ -22,6 +23,8 @@ use Livewire\Component;
  */
 class TicketList extends Component
 {
+    use PollsForChanges;
+
     public const VIEWS = [
         'mine' => 'Meine',
         'groups' => 'Meine Gruppen',
@@ -131,6 +134,16 @@ class TicketList extends Component
         unset($this->tickets, $this->counts);
     }
 
+    protected function changeToken(): string
+    {
+        return Ticket::fingerprintOf(Ticket::query()->visibleTo(auth()->user()));
+    }
+
+    protected function changesDetected(): void
+    {
+        $this->refreshList();
+    }
+
     /**
      * Number of active filters (shown on the filter button).
      */
@@ -196,7 +209,14 @@ class TicketList extends Component
 
     private function viewQuery(string $view): Builder
     {
-        $user = auth()->user();
+        return self::queryFor($view, auth()->user());
+    }
+
+    /**
+     * Tickets of a view (Meine / Meine Gruppen / Alle / Nicht zugeordnet), shared with the board.
+     */
+    public static function queryFor(string $view, User $user): Builder
+    {
         $query = Ticket::query()->visibleTo($user);
 
         return match ($view) {

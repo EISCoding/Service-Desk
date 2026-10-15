@@ -138,3 +138,18 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 **Fertig wenn:** Kunden bekommen Portal-Mails, alle Seiten im neuen Design, Tests und Audit grün.
 
+
+---
+
+## Phase 8 – Live, Kanban, Installation und Benachrichtigungen
+
+- [x] Live-Updates: Ticketverlauf (intern und Portal), Ticketliste, Übersicht und Glocke aktualisieren sich automatisch (Polling, nur sichtbarer Tab)
+- [x] Kanban-Ansicht: Board als zweite Ansicht der Tickets, Spalten nach Status, Drag & Drop ändert den Status, aktualisiert sich laufend
+- [x] Ticketansicht: Kunden-Seitenleiste (Kontakt, Notizen, weitere Tickets), Schnellaktionen, Vollbild-Editor, kompaktere Liste mit Vorschau
+- [x] Kundentyp Firma oder Privatperson (Privatperson ist selbst der Ansprechpartner)
+- [x] Logs im Admin-Bereich: Systemfehler, Mail-Protokoll, Aktivitäten, Hintergrund-Jobs
+- [x] Web-Push: Benachrichtigungen im Browser und aufs Handy (Service Worker, App-Manifest), pro Benutzer aktivierbar
+- [x] Installations-Assistent: Datenbank, Admin-Konto, Firma und Logo, Postfach (SMTP/IMAP); danach gesperrt
+- [x] Sichtprüfung, Barrierefreiheit, README (Installation über den Assistenten)
+
+**Fertig wenn:** Neue Antworten erscheinen ohne Neuladen, Board funktioniert per Drag & Drop, eine frische Plesk-Installation lässt sich komplett im Browser einrichten, Push kommt aufs Handy, Tests und Audit grün.

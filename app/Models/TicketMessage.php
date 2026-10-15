@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Entry in a ticket's conversation: public reply, internal note or mail.
@@ -37,14 +38,20 @@ class TicketMessage extends Model
 
     protected static function booted(): void
     {
-        // Unread markers: remember when the customer or the team last wrote (people, not auto-replies).
+        // List preview and unread markers: remember the latest message and when the customer
+        // or the team last wrote (people, not auto-replies).
         static::created(function (TicketMessage $message) {
-            if ($message->isInternal() || $message->is_automatic) {
+            if ($message->is_automatic) {
                 return;
             }
 
-            Ticket::whereKey($message->ticket_id)->toBase()
-                ->update([$message->isFromCustomer() ? 'customer_replied_at' : 'team_replied_at' => now()]);
+            $columns = ['preview' => $message->loadMissing('author')->preview()];
+
+            if (! $message->isInternal()) {
+                $columns[$message->isFromCustomer() ? 'customer_replied_at' : 'team_replied_at'] = now();
+            }
+
+            Ticket::whereKey($message->ticket_id)->toBase()->update($columns);
         });
     }
 
@@ -140,6 +147,20 @@ class TicketMessage extends Model
     public function listedAttachments(): Collection
     {
         return $this->attachments->reject(fn (Attachment $a) => $a->content_id && str_contains($this->body, 'cid:'.$a->content_id))->values();
+    }
+
+    /**
+     * One line for the ticket list, e.g. "Anna Becker: Danke, ich teste das morgen …".
+     */
+    public function preview(): string
+    {
+        $html = in_array($this->type, [MessageType::MailIn, MessageType::MailOut], true)
+            ? QuotedText::split((string) $this->body)[0]
+            : (string) $this->body;
+        $text = preg_replace('/\s+/u', ' ', Html::toText($html));
+        $prefix = ($this->isInternal() ? 'Notiz · ' : '').$this->authorName().': ';
+
+        return Str::limit($prefix.trim((string) $text), 195);
     }
 
     public function plainText(): string

@@ -19,6 +19,7 @@ use App\Models\MailTemplate;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
+use App\Notifications\Channels\WebPushChannel;
 use App\Support\AppSettings;
 use App\Support\QueueAfterResponse;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -30,6 +31,7 @@ use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Livewire;
@@ -89,6 +91,9 @@ class AppServiceProvider extends ServiceProvider
         Password::defaults(fn () => Password::min(10)->letters()->numbers());
 
         // Access to /intern/admin: any of the admin.* permissions.
+        // Notification channel "push" (web push to the staff member's devices).
+        Notification::extend('push', fn ($app) => $app->make(WebPushChannel::class));
+
         Gate::define('access-admin', fn (User $user) => $user->hasAnyPermission(
             array_map(fn (Permission $permission) => $permission->value, Permission::admin())
         ));

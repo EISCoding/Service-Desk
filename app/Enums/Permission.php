@@ -22,6 +22,7 @@ enum Permission: string
     case AdminGroups = 'admin.groups';
     case AdminMailboxes = 'admin.mailboxes';
     case AdminSettings = 'admin.settings';
+    case AdminLogs = 'admin.logs';
 
     public function label(): string
     {
@@ -40,6 +41,7 @@ enum Permission: string
             self::AdminGroups => 'Gruppen verwalten',
             self::AdminMailboxes => 'Postfächer verwalten',
             self::AdminSettings => 'Systemeinstellungen verwalten',
+            self::AdminLogs => 'Protokolle einsehen',
         };
     }
 
@@ -50,7 +52,7 @@ enum Permission: string
      */
     public static function admin(): array
     {
-        return [self::AdminUsers, self::AdminGroups, self::AdminMailboxes, self::AdminSettings];
+        return [self::AdminUsers, self::AdminGroups, self::AdminMailboxes, self::AdminSettings, self::AdminLogs];
     }
 
     /**

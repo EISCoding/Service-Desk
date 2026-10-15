@@ -13,6 +13,7 @@
 <span title="{{ $name }}" {{ $attributes->class([
     'inline-grid shrink-0 place-items-center rounded-full bg-gradient-to-b font-semibold text-white shadow-[inset_0_0_0_0.5px_rgb(0_0_0/0.08)]',
     $gradient,
+    'size-5 text-[9px]' => $size === 'xs',
     'size-6 text-[10px]' => $size === 'sm',
     'size-8 text-[12px]' => $size === 'md',
     'size-10 text-[14px]' => $size === 'lg',

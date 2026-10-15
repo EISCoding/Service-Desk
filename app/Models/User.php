@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -58,6 +59,11 @@ class User extends Authenticatable
     /**
      * Whether the user wants to be notified about the event on the channel (database | mail).
      */
+    public function pushSubscriptions(): HasMany
+    {
+        return $this->hasMany(PushSubscription::class);
+    }
+
     public function wantsNotification(NotificationEvent $event, string $channel): bool
     {
         return (bool) ($this->notification_settings[$event->value][$channel] ?? $event->defaultFor($channel));

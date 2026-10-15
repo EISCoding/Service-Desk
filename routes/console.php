@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\MarkDueFollowUps;
+use App\Support\SchedulerHeartbeat;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
@@ -41,3 +42,8 @@ Schedule::call(fn () => Artisan::call('servicedesk:fetch-mail', ['--now' => true
     ->name('fetch-mail')
     ->everyTwentySeconds()
     ->withoutOverlapping(5);
+
+// Heartbeat: the admin area shows whether the Plesk cron task (schedule:run) is running.
+Schedule::call(fn () => SchedulerHeartbeat::beat())
+    ->name('heartbeat')
+    ->everyMinute();

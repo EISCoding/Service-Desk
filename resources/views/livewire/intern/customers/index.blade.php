@@ -1,5 +1,5 @@
 <div>
-    <x-ui.page-header title="Kunden" description="Firmen, Ansprechpartner und Notizen.">
+    <x-ui.page-header title="Kunden" description="Firmen, Privatpersonen, Ansprechpartner und Notizen.">
         <x-slot:actions>
             @can('create', \App\Models\Customer::class)
                 <x-ui.button icon="plus" x-on:click="$dispatch('create-customer')">Neuer Kunde</x-ui.button>
@@ -9,12 +9,13 @@
 
     <div class="mb-4 flex flex-wrap items-center gap-3">
         <x-ui.input wire:model.live.debounce.300ms="search" type="search" placeholder="Firma, Nummer, Ort, Ansprechpartner …" aria-label="Kunden durchsuchen" class="w-full sm:w-80" />
+        <x-ui.segmented model="type" :current="$type" :options="['' => 'Alle', 'company' => 'Firmen', 'private' => 'Privat']" label="Kundentyp" />
         <x-ui.select wire:model.live="status" aria-label="Status" class="w-40" :options="['active' => 'Aktive', 'archived' => 'Archivierte', 'all' => 'Alle']" />
     </div>
 
     <x-ui.card :padding="false" class="transition-opacity" wire:loading.delay.class="opacity-50">
         @if ($this->customers->isEmpty())
-            @if ($search !== '' || $status !== 'active')
+            @if ($search !== '' || $status !== 'active' || $type !== '')
                 <x-ui.empty-state icon="magnifying-glass" title="Keine Treffer" description="Kein Kunde passt zu Suche und Filter." />
             @else
                 <x-ui.empty-state icon="building-office-2" title="Noch keine Kunden" description="Lege den ersten Kunden an.">
@@ -25,7 +26,7 @@
             <x-ui.table>
                 <x-slot:head>
                     <x-ui.table.heading sortable :direction="$sortBy === 'number' ? $sortDirection : null" wire:click="sort('number')" class="w-32">Nr.</x-ui.table.heading>
-                    <x-ui.table.heading sortable :direction="$sortBy === 'company' ? $sortDirection : null" wire:click="sort('company')">Firma</x-ui.table.heading>
+                    <x-ui.table.heading sortable :direction="$sortBy === 'company' ? $sortDirection : null" wire:click="sort('company')">Name</x-ui.table.heading>
                     <x-ui.table.heading sortable :direction="$sortBy === 'city' ? $sortDirection : null" wire:click="sort('city')" class="hidden md:table-cell">Ort</x-ui.table.heading>
                     <x-ui.table.heading class="hidden lg:table-cell">Kontakt</x-ui.table.heading>
                     <x-ui.table.heading class="hidden sm:table-cell">Ansprechpartner</x-ui.table.heading>
@@ -36,6 +37,9 @@
                         <x-ui.table.cell class="tabular-nums text-[13px] text-ink-muted">{{ $customer->number }}</x-ui.table.cell>
                         <x-ui.table.cell>
                             <a href="{{ route('intern.customers.show', $customer) }}" wire:navigate class="font-medium hover:text-accent">{{ $customer->company }}</a>
+                            @if ($customer->isPrivate())
+                                <x-ui.badge color="purple" class="ml-1.5">Privat</x-ui.badge>
+                            @endif
                             @if ($customer->isArchived())
                                 <x-ui.badge class="ml-1.5">Archiviert</x-ui.badge>
                             @endif

@@ -44,5 +44,5 @@ it('refuses tickets the user may not see', function () {
     $hidden = Ticket::factory()->create(['group_id' => Group::factory()->create()->id]);
 
     $this->get("/intern/tickets/{$hidden->id}")->assertForbidden();
-    $this->get('/intern/tickets/999999')->assertNotFound();
+    $this->get('/intern/tickets/999999')->assertRedirect(route('intern.tickets.index'));
 });

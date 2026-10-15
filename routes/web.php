@@ -2,15 +2,19 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\BrandingLogoController;
+use App\Http\Controllers\Intern\Admin\LogDownloadController;
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\MailPreviewController;
 use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
+use App\Http\Controllers\ManifestController;
 use App\Http\Controllers\Portal\AttachmentController as PortalAttachmentController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Http\Controllers\Portal\LoginController;
 use App\Http\Controllers\Portal\PasswordResetController;
+use App\Livewire\Install\Wizard;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
+use App\Livewire\Intern\Admin\Logs\Index as LogIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
 use App\Livewire\Intern\Admin\Settings\Index as AdminSettings;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
@@ -23,6 +27,7 @@ use App\Livewire\Intern\Settings\Notifications as NotificationSettings;
 use App\Livewire\Intern\Settings\Security;
 use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
+use App\Livewire\Intern\Tickets\Board;
 use App\Livewire\Portal\Profile as PortalProfile;
 use App\Livewire\Portal\Tickets\Create as PortalCreateTicket;
 use App\Livewire\Portal\Tickets\Index as PortalTickets;
@@ -36,6 +41,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
 
+// Web app manifest: "Zum Home-Bildschirm" turns the site into an app (iPhone, Android).
+Route::get('manifest.json', ManifestController::class)->name('manifest');
+
+// Browser installer of a fresh deployment (gone once installed, see RedirectToInstaller).
+Route::livewire('install', Wizard::class)->name('install');
+
 /*
 | Staff area. Login, logout, password reset and the two-factor challenge
 | are registered by Fortify under the same /intern prefix.
@@ -46,7 +57,11 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
 
     // Areas built in later phases (placeholders until then).
     Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');
-    Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])->name('tickets.show');
+    Route::livewire('tickets/board', Board::class)->name('tickets.board');
+    Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])
+        ->whereNumber('ticket')
+        ->missing(fn () => redirect()->route('intern.tickets.index')->with('toast', ['message' => 'Dieses Ticket gibt es nicht mehr.', 'type' => 'info']))
+        ->name('tickets.show');
 
     Route::livewire('termine', AppointmentIndex::class)->name('appointments.index');
 
@@ -80,6 +95,14 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         Route::livewire('benutzer', UserIndex::class)
             ->middleware('can:viewAny,'.User::class)
             ->name('users.index');
+
+        Route::livewire('protokolle', LogIndex::class)
+            ->middleware('can:'.Permission::AdminLogs->value)
+            ->name('logs');
+        Route::get('protokolle/datei/{file}', LogDownloadController::class)
+            ->middleware('can:'.Permission::AdminLogs->value)
+            ->where('file', '[A-Za-z0-9._-]+\\.log')
+            ->name('logs.download');
 
         Route::livewire('einstellungen', AdminSettings::class)
             ->middleware('can:'.Permission::AdminSettings->value)
@@ -122,7 +145,9 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::livewire('profil', PortalProfile::class)->name('profile');
         Route::livewire('/', PortalTickets::class)->name('home');
         Route::livewire('tickets/neu', PortalCreateTicket::class)->name('tickets.create');
-        Route::livewire('tickets/{ticket}', PortalTicket::class)->name('tickets.show');
+        Route::livewire('tickets/{ticket}', PortalTicket::class)
+            ->missing(fn () => redirect()->route('portal.home'))
+            ->name('tickets.show');
         Route::get('anhaenge/{attachment}', [PortalAttachmentController::class, 'show'])->name('attachments.show');
     });
 });

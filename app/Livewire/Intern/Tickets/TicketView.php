@@ -6,9 +6,11 @@ use App\Enums\SystemTemplate;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
 use App\Livewire\Concerns\InteractsWithToasts;
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Appointment;
 use App\Models\Contact;
 use App\Models\Customer;
+use App\Models\CustomerNote;
 use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
@@ -35,7 +37,7 @@ use Livewire\Component;
  */
 class TicketView extends Component
 {
-    use InteractsWithToasts;
+    use InteractsWithToasts, PollsForChanges;
 
     #[Locked]
     public Ticket $ticket;
@@ -82,6 +84,39 @@ class TicketView extends Component
         $this->authorize('view', $ticket);
         $this->ticket = $ticket;
         $ticket->markAsReadBy(auth()->user());
+    }
+
+    /**
+     * Notes of the customer, pinned ones first.
+     *
+     * @return Collection<int, CustomerNote>
+     */
+    #[Computed]
+    public function customerNotes(): Collection
+    {
+        return $this->ticket->customer?->notes()->reorder()->orderByDesc('is_pinned')->latest()->limit(3)->get() ?? new Collection;
+    }
+
+    /**
+     * Other tickets of the customer the user may see, open ones first.
+     *
+     * @return Collection<int, Ticket>
+     */
+    #[Computed]
+    public function otherTickets(): Collection
+    {
+        if (! $this->ticket->customer_id) {
+            return new Collection;
+        }
+
+        return Ticket::query()
+            ->visibleTo(auth()->user())
+            ->where('customer_id', $this->ticket->customer_id)
+            ->whereKeyNot($this->ticket->id)
+            ->orderByRaw("CASE WHEN status = 'closed' THEN 1 ELSE 0 END")
+            ->latest('last_activity_at')
+            ->limit(5)
+            ->get();
     }
 
     /**
@@ -465,6 +500,32 @@ class TicketView extends Component
 
         $this->flashToast("{$reference} gelöscht.");
         $this->redirectRoute('intern.tickets.index', navigate: true);
+    }
+
+    protected function changeToken(): string
+    {
+        return $this->ticket->fingerprint();
+    }
+
+    /**
+     * Someone else changed the ticket or a new message arrived.
+     */
+    protected function changesDetected(): void
+    {
+        // A deleted ticket fails earlier (404 while loading the component); the page then reloads.
+        $this->ticket->refresh();
+
+        if (! auth()->user()->can('view', $this->ticket)) {
+            $this->flashToast("{$this->ticket->reference()} ist für dich nicht mehr sichtbar.", 'info');
+            $this->redirectRoute('intern.tickets.index', navigate: true);
+
+            return;
+        }
+
+        unset($this->messages, $this->contactOptions, $this->assigneeOptions, $this->customerNotes, $this->otherTickets);
+        $this->statusVersion++;
+        $this->ticket->markAsReadBy(auth()->user());
+        $this->dispatch('ticket-updated');
     }
 
     #[On('ticket-changed')]

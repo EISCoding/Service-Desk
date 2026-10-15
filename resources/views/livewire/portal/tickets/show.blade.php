@@ -1,6 +1,6 @@
 @php($contact = $this->contact)
 
-<div>
+<div wire:poll.10s="checkForChanges">
     <a href="{{ route('portal.home') }}" wire:navigate class="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-ink-muted hover:text-ink">
         <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /> Alle Tickets
     </a>

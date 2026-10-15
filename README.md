@@ -137,6 +137,13 @@ php artisan test
 Die Tests laufen gegen eine SQLite-In-Memory-Datenbank (siehe `phpunit.xml`), es wird keine
 lokale Datenbank verändert.
 
+Vor einem Deployment zusätzlich gegen MariaDB testen: SQLite ist großzügiger (z. B. bei `ORDER BY`
+zusammen mit `count()`/`max()`, was MariaDB im strikten Modus ablehnt). Mit einer leeren Testdatenbank:
+
+```bash
+DB_CONNECTION=mariadb DB_HOST=127.0.0.1 DB_DATABASE=servicedesk_test DB_USERNAME=sd DB_PASSWORD=sd php artisan test
+```
+
 ## Queue und Scheduler (Plesk-Prinzip)
 
 Es gibt keinen dauerhaft laufenden Queue-Worker. Stattdessen:
@@ -164,6 +171,33 @@ müssen `upload_max_filesize` und `post_max_size` (PHP-Einstellungen) mindestens
 Die Anwendung läuft auf einem normalen Plesk-Webspace: kein Docker, kein Supervisor, kein dauerhaft
 laufender Node- oder Queue-Prozess. Alles Zeitgesteuerte (Queue, Mailabruf, Wiedervorlagen) startet
 eine einzige Cron-Aufgabe pro Minute.
+
+### Schnellstart mit dem Einrichtungsassistenten (ohne SSH, empfohlen)
+
+1. **Domain und PHP** wie in Schritt 1 unten (Dokumentstamm `httpdocs/public`, PHP 8.3, SSL).
+2. **Datenbank** in Plesk anlegen (Schritt 2) und die Zugangsdaten bereithalten.
+3. **Git**: Repository hinzufügen (Branch `main`), keine zusätzlichen Bereitstellungsaktionen.
+4. **PHP Composer** (Websites & Domains → Dev Tools → PHP Composer, oder im Laravel Toolkit):
+   `httpdocs/composer.json` wählen, Umgebung **Produktion**, **Abhängigkeiten installieren**.
+   Bis dahin zeigt die Seite einen Hinweis auf genau diesen Schritt.
+5. Die Domain im Browser öffnen: Der **Einrichtungsassistent** startet von selbst und führt durch
+   Systemprüfung, Datenbank (testet die Verbindung, legt Tabellen, Rollen und Vorlagen an), Firmenname,
+   Logo und Farbe, das erste Admin-Konto und das Support-Postfach (IMAP/SMTP mit Verbindungstest,
+   optional). Eine `.env` und den `APP_KEY` legt er selbst an. Danach ist `/install` gesperrt.
+6. **Geplante Aufgabe** „Scheduler“: Typ **PHP-Skript ausführen**, Skript `httpdocs/artisan`,
+   Argumente `schedule:run`, **jede Minute**. Ob sie läuft, zeigt Admin → Protokolle → Hintergrund-Jobs.
+7. **Geplante Aufgabe** „Einrichtung“ für spätere Updates: wie oben, Argumente `servicedesk:deploy`,
+   Ausführen z. B. jährlich (wird nur von Hand mit „Jetzt ausführen“ gestartet).
+
+**Updates:** Plesk → Git → **Jetzt bereitstellen**; bei geänderter `composer.lock` unter PHP Composer
+erneut **Abhängigkeiten installieren**; dann die Aufgabe **„Einrichtung“** einmal ausführen (migriert die
+Datenbank und baut die Caches neu).
+
+**Push aufs Handy:** Jeder Mitarbeiter aktiviert Push unter Einstellungen → Benachrichtigungen auf dem
+jeweiligen Gerät. Auf dem iPhone (ab iOS 16.4) die Seite vorher in Safari über **Teilen → Zum
+Home-Bildschirm** hinzufügen und von dort öffnen. Push braucht HTTPS.
+
+Die folgenden Abschnitte beschreiben die Einrichtung von Hand bzw. mit SSH.
 
 ### Voraussetzungen
 
@@ -319,7 +353,7 @@ PHP noch Composer noch Node verfügbar sind. Dann geht alles über die Plesk-Obe
   ist relativ zum Abonnement (`httpdocs/artisan`), die Argumente sind der Befehl, PHP-Version 8.3.
   Mit **„Jetzt ausführen“** startet die Aufgabe sofort und zeigt die Ausgabe.
 
-Einmalig:
+Am einfachsten mit dem **Einrichtungsassistenten** (siehe Schnellstart oben). Von Hand, einmalig:
 
 1. Schritte 1 und 2 oben (Domain, PHP, Datenbank). Bei **Git** keine zusätzlichen
    Bereitstellungsaktionen eintragen.
@@ -347,8 +381,9 @@ Bei Updates zieht Plesk den neuen Stand per Git. Danach bei geänderter `compose
 - `https://servicedesk.example.de/up` antwortet mit „Application up“.
 - Nach einer Minute zeigt `php artisan schedule:list` die Aufgaben; eine Testmail an ein Postfach wird
   zum Ticket.
-- Fehler stehen in `storage/logs/laravel-JJJJ-MM-TT.log`. Fehlgeschlagene Jobs zeigt
-  `php artisan queue:failed`, erneut einreihen mit `php artisan queue:retry all`.
+- **Admin → Protokolle** zeigt Systemfehler (aus `storage/logs`), das Mail-Protokoll mit dem Abrufstatus
+  der Postfächer, alle Änderungen sowie wartende und fehlgeschlagene Jobs („Erneut“, „Löschen“) und ob
+  die Cron-Aufgabe läuft. Ohne Browser: `php artisan queue:failed` und `php artisan queue:retry all`.
 
 ### Updates
 
@@ -365,3 +400,6 @@ Plesk → Git → **Jetzt bereitstellen**.
 | Uploads brechen ab | `upload_max_filesize`/`post_max_size` in den PHP-Einstellungen erhöhen |
 | Seite hängt im Wartungsmodus | `php artisan up` |
 | Ohne SSH: Scheduler startet keine Queue | In den PHP-Einstellungen darf `proc_open` nicht in `disable_functions` stehen |
+| Seite zeigt „Fast geschafft“ | Composer-Abhängigkeiten fehlen: PHP Composer → Abhängigkeiten installieren |
+| Assistent: „läuft bereits in einem anderen Browser“ | Im ursprünglichen Browser weitermachen oder `storage/app/install.lock` löschen |
+| Push kommt nicht an | Nur über HTTPS; Push auf dem Gerät unter Einstellungen → Benachrichtigungen aktivieren und „Test senden“ |

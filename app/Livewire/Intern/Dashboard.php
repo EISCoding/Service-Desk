@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Intern;
 
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Appointment;
 use App\Models\Ticket;
 use App\Models\User;
@@ -21,6 +22,8 @@ use Livewire\Component;
 #[Title('Übersicht')]
 class Dashboard extends Component
 {
+    use PollsForChanges;
+
     private const LIMIT = 6;
 
     public function mount(): void
@@ -88,6 +91,19 @@ class Dashboard extends Component
             ->with('ticket:id,number,subject')
             ->limit(3)
             ->get();
+    }
+
+    protected function changeToken(): string
+    {
+        $appointments = Appointment::query()->where('technician_id', $this->user()->id)->toBase()
+            ->reorder()->selectRaw('count(*) as total, max(updated_at) as changed')->first();
+
+        return Ticket::fingerprintOf(Ticket::query()->visibleTo($this->user())).md5(json_encode($appointments));
+    }
+
+    protected function changesDetected(): void
+    {
+        unset($this->counts, $this->unread, $this->due, $this->mine, $this->appointments);
     }
 
     public function greeting(): string

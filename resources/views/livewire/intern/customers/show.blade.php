@@ -7,6 +7,9 @@
         <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
                 <h1 class="text-[26px] leading-tight font-semibold tracking-tight">{{ $customer->company }}</h1>
+                @if ($customer->isPrivate())
+                    <x-ui.badge color="purple">Privatperson</x-ui.badge>
+                @endif
                 @if ($customer->isArchived())
                     <x-ui.badge dot>Archiviert</x-ui.badge>
                 @endif

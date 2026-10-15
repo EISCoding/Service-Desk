@@ -43,6 +43,8 @@ class TemplateMailer
             $ticket,
             $placeholders->html($mailTemplate->body),
             $author,
+            // Same audience as the replies: whoever is in CC gets status mails too.
+            cc: $this->mail->suggestedCc($ticket),
             subject: $placeholders->text($mailTemplate->subject),
             templateKey: $template->value,
         );
