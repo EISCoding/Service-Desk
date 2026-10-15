@@ -150,6 +150,6 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Logs im Admin-Bereich: Systemfehler, Mail-Protokoll, Aktivitäten, Hintergrund-Jobs
 - [x] Web-Push: Benachrichtigungen im Browser und aufs Handy (Service Worker, App-Manifest), pro Benutzer aktivierbar
 - [x] Installations-Assistent: Datenbank, Admin-Konto, Firma und Logo, Postfach (SMTP/IMAP); danach gesperrt
-- [ ] Sichtprüfung, Barrierefreiheit, README (Installation über den Assistenten)
+- [x] Sichtprüfung, Barrierefreiheit, README (Installation über den Assistenten)
 
 **Fertig wenn:** Neue Antworten erscheinen ohne Neuladen, Board funktioniert per Drag & Drop, eine frische Plesk-Installation lässt sich komplett im Browser einrichten, Push kommt aufs Handy, Tests und Audit grün.

@@ -107,7 +107,7 @@
                             @endif
                         </div>
                         @if ($ticket->preview)
-                            <p class="mt-0.5 truncate text-[12px] text-ink-faint">{{ $ticket->preview }}</p>
+                            <p class="mt-0.5 truncate text-[12px] text-ink-muted">{{ $ticket->preview }}</p>
                         @endif
                         @if ($ticket->follow_up_due)
                             <x-ui.badge color="orange" class="mt-1.5 py-0! text-[11px]!">

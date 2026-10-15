@@ -80,7 +80,7 @@
                                 <p class="truncate text-[12px] text-ink-muted">
                                     {{ $out ? 'An '.collect($mail->to)->pluck('email')->join(', ') : 'Von '.($mail->from_name ? "{$mail->from_name} <{$mail->from_email}>" : $mail->from_email) }}
                                     @if ($mail->ticket)
-                                        · <a href="{{ route('intern.tickets.show', $mail->ticket) }}" wire:navigate class="tabular-nums text-accent hover:underline">{{ $mail->ticket->reference() }}</a>
+                                        · <a href="{{ route('intern.tickets.show', $mail->ticket) }}" wire:navigate class="tabular-nums text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent">{{ $mail->ticket->reference() }}</a>
                                     @endif
                                     · {{ $mail->created_at->isoFormat('D. MMM, HH:mm') }}
                                 </p>
@@ -124,7 +124,7 @@
                             </p>
                             <p class="mt-0.5 truncate text-[12px] text-ink-muted">
                                 @if ($url)
-                                    <a href="{{ $url }}" wire:navigate class="text-accent hover:underline">{{ $label }}</a>
+                                    <a href="{{ $url }}" wire:navigate class="text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent">{{ $label }}</a>
                                 @else
                                     {{ $label }}
                                 @endif
