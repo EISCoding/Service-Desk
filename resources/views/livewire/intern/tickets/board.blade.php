@@ -19,7 +19,7 @@
         <x-ui.input wire:model.live.debounce.300ms="search" type="search" placeholder="Betreff oder Nummer …" aria-label="Tickets durchsuchen" class="w-full sm:ml-auto sm:w-64" />
     </div>
 
-    <p class="sr-only">Karten lassen sich per Drag & Drop in eine andere Spalte ziehen, um den Status zu ändern. Alternativ den Status im Ticket ändern.</p>
+    <p class="sr-only">Karten lassen sich per Drag &amp; Drop in eine andere Spalte ziehen, um den Status zu ändern. Alternativ den Status im Ticket ändern.</p>
 
     <div class="-mx-4 flex snap-x snap-mandatory scroll-px-4 items-start gap-3 overflow-x-auto px-4 pb-6 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:snap-none lg:px-8" wire:loading.class.delay="opacity-60" wire:target="view,search">
         @foreach ($this->columns as $value => $tickets)

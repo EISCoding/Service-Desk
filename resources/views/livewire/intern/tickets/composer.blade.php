@@ -10,10 +10,11 @@
     the full editor (click, or the shortcuts R / N).
 --}}
 <section aria-label="Antworten" data-composer
-    x-data="{ expanded: false, open(mode) { $wire.setMode(mode).then(() => { this.expanded = true; this.$nextTick(() => this.$root.querySelector('trix-editor')?.focus()) }) } }"
+    x-data="{ expanded: false, full: false, open(mode) { $wire.setMode(mode).then(() => { this.expanded = true; this.$nextTick(() => this.$root.querySelector('trix-editor')?.focus()) }) } }"
     x-on:composer-focus.window="open($event.detail.mode)"
-    x-on:composer-sent.window="expanded = false"
-    x-on:keydown.escape="expanded = false"
+    x-on:composer-sent.window="expanded = false; full = false"
+    x-on:keydown.escape="full ? full = false : expanded = false"
+    x-bind:class="full && 'fixed! inset-0! z-50! overflow-y-auto bg-canvas! pt-6! pb-10!'"
     class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:px-6 lg:bottom-0 lg:px-8"
 >
     {{-- Collapsed --}}
@@ -36,7 +37,7 @@
     </div>
 
     {{-- Expanded --}}
-    <div x-show="expanded" x-cloak @class(['-mx-1 rounded-2xl p-1', 'bg-amber-400/10' => $isNote])>
+    <div x-show="expanded" x-cloak @class(['-mx-1 rounded-2xl p-1', 'bg-amber-400/10' => $isNote]) x-bind:class="full && 'mx-auto! max-w-4xl'">
         <div class="mb-3 flex items-center justify-between gap-3">
             @if ($canReply && $canNote)
                 <div role="tablist" class="inline-flex gap-0.5 rounded-[10px] bg-ink/[0.06] p-0.5">
@@ -48,9 +49,16 @@
             @else
                 <p class="text-[13px] font-semibold">{{ $isNote ? 'Interne Notiz' : 'Antworten' }}</p>
             @endif
-            <button type="button" x-on:click="expanded = false" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink">
-                <x-heroicon-m-chevron-down class="size-5" aria-hidden="true" /><span class="sr-only">Einklappen</span>
-            </button>
+            <div class="flex items-center gap-1">
+                <button type="button" x-on:click="full = ! full; $nextTick(() => $root.querySelector('trix-editor')?.focus())" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink" x-bind:aria-pressed="full">
+                    <x-heroicon-m-arrows-pointing-out class="size-5" aria-hidden="true" x-show="! full" />
+                    <x-heroicon-m-arrows-pointing-in class="size-5" aria-hidden="true" x-show="full" x-cloak />
+                    <span class="sr-only">Vollbild</span>
+                </button>
+                <button type="button" x-on:click="expanded = false; full = false" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink">
+                    <x-heroicon-m-chevron-down class="size-5" aria-hidden="true" /><span class="sr-only">Einklappen</span>
+                </button>
+            </div>
         </div>
 
         <form wire:submit="send" class="space-y-3">
@@ -78,7 +86,7 @@
                 @endif
             @endunless
 
-            <div class="[&_trix-editor]:max-h-[40vh] [&_trix-editor]:overflow-y-auto">
+            <div x-bind:class="full ? '[&_trix-editor]:min-h-[55vh]!' : '[&_trix-editor]:max-h-[40vh] [&_trix-editor]:overflow-y-auto'">
                 <x-ui.rich-editor wire:model="body" placeholder="Nachricht schreiben …" />
             </div>
             @if ($isNote)
@@ -136,6 +144,9 @@
                     @unless ($isNote)
                         <x-ui.select wire:model="statusAfter" placeholder="Status unverändert" :options="$statusOptions" aria-label="Status danach" class="w-48" />
                     @endunless
+                    @if (! $isNote && $ticket->status !== \App\Enums\TicketStatus::Closed)
+                        <x-ui.button variant="secondary" x-on:click="$wire.statusAfter = 'closed'; $wire.send()" wire:loading.attr="disabled" wire:target="files,send" title="Antwort senden und Ticket schließen">Senden &amp; schließen</x-ui.button>
+                    @endif
                     <x-ui.button type="submit" icon="paper-airplane" wire:loading.attr="disabled" wire:target="files,send">
                         {{ $isNote ? 'Notiz speichern' : 'Antwort senden' }}
                     </x-ui.button>
@@ -148,6 +159,7 @@
             <kbd class="rounded border border-hairline px-1 font-sans">N</kbd> interne Notiz ·
             <kbd class="rounded border border-hairline px-1 font-sans">E</kbd> Status ·
             <kbd class="rounded border border-hairline px-1 font-sans">J</kbd> / <kbd class="rounded border border-hairline px-1 font-sans">K</kbd> nächstes / vorheriges Ticket ·
+            <kbd class="rounded border border-hairline px-1 font-sans">F</kbd> Liste aus/ein ·
             <kbd class="rounded border border-hairline px-1 font-sans">Esc</kbd> einklappen
         </p>
     </div>

@@ -43,6 +43,9 @@ document.addEventListener('keydown', (event) => {
     } else if ((key === 'r' || key === 'n') && document.querySelector('[data-composer]')) {
         event.preventDefault();
         window.dispatchEvent(new CustomEvent('composer-focus', { detail: { mode: key === 'r' ? 'reply' : 'note' } }));
+    } else if (key === 'f' && /^\/intern\/tickets\/\d+/.test(location.pathname)) {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent('toggle-ticket-focus'));
     } else if (key === 'e') {
         const status = document.querySelector('[data-shortcut="status"]:not([disabled])');
         if (! status) return;
