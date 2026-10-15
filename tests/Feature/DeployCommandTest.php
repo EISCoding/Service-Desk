@@ -40,3 +40,16 @@ it('replaces a missing or broken application key in .env', function (string $bro
     unlink("{$dir}/.env");
     rmdir($dir);
 })->with(['empty' => '', 'prefix only' => 'base64:', 'placeholder' => 'base64:...', 'too short' => 'abc']);
+
+it('removes caches of the previous version, e.g. an outdated icon manifest', function () {
+    $manifest = app()->bootstrapPath('cache/blade-icons.php');
+    file_put_contents($manifest, "<?php return ['heroicons' => []];");
+
+    try {
+        $this->artisan('servicedesk:deploy', ['--no-optimize' => true])->assertSuccessful();
+
+        expect($manifest)->not->toBeFile();
+    } finally {
+        @unlink($manifest);
+    }
+});
