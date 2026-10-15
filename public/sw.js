@@ -15,7 +15,7 @@ self.addEventListener('push', (event) => {
     event.waitUntil(self.registration.showNotification(data.title || 'ServiceDesk', {
         body: data.body || '',
         icon: data.icon || '/icons/icon-192.png',
-        badge: '/icons/badge-96.png',
+        badge: data.badge || '/icons/badge-96.png',
         tag: data.tag,
         renotify: Boolean(data.tag),
         data: { url: data.url || '/intern' },

@@ -37,6 +37,7 @@ final class Navigation
             ['label' => 'Benutzer', 'route' => 'intern.admin.users.index', 'icon' => 'group', 'active' => 'intern.admin.users.*', 'ability' => Permission::AdminUsers->value],
             ['label' => 'Gruppen', 'route' => 'intern.admin.groups.index', 'icon' => 'network-chart', 'active' => 'intern.admin.groups.*', 'ability' => Permission::AdminGroups->value],
             ['label' => 'Postfächer', 'route' => 'intern.admin.mailboxes.index', 'icon' => 'envelope', 'active' => 'intern.admin.mailboxes.*', 'ability' => Permission::AdminMailboxes->value],
+            ['label' => 'Erscheinungsbild', 'route' => 'intern.admin.branding', 'icon' => 'palette', 'active' => 'intern.admin.branding', 'ability' => Permission::AdminSettings->value],
             ['label' => 'Systemeinstellungen', 'route' => 'intern.admin.settings', 'icon' => 'slider-alt', 'active' => 'intern.admin.settings', 'ability' => Permission::AdminSettings->value],
             ['label' => 'Protokolle', 'route' => 'intern.admin.logs', 'icon' => 'file-find', 'active' => 'intern.admin.logs*', 'ability' => Permission::AdminLogs->value],
         ]);

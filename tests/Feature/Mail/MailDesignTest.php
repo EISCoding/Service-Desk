@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\SystemTemplate;
+use App\Livewire\Intern\Admin\Branding\Index as BrandingSettings;
 use App\Livewire\Intern\Admin\Settings\Index as SystemSettings;
 use App\Mail\TicketMessageMail;
 use App\Models\Contact;
@@ -55,7 +56,7 @@ it('uses the custom reply hint', function () {
 
 it('embeds the logo when sending and links it in previews', function () {
     $this->actingAs(User::factory()->admin()->create());
-    Livewire::test(SystemSettings::class)->set('logo', UploadedFile::fake()->image('logo.png', 64, 64))->call('save');
+    Livewire::test(BrandingSettings::class)->set('logo', UploadedFile::fake()->image('logo.png', 64, 64))->call('save');
 
     // Laravel's render() inlines embedded images as data URIs; the admin preview links the public URL.
     expect(sampleTicketMail()->render())->toContain('src="data:image/png;base64,');

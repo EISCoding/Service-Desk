@@ -26,7 +26,7 @@ describe('access', function () {
 
     it('is shown in the admin navigation', function () {
         expect(collect(Navigation::admin(User::factory()->admin()->create()))->pluck('label')->all())
-            ->toBe(['Benutzer', 'Gruppen', 'Postfächer', 'Systemeinstellungen', 'Protokolle']);
+            ->toBe(['Benutzer', 'Gruppen', 'Postfächer', 'Erscheinungsbild', 'Systemeinstellungen', 'Protokolle']);
     });
 });
 

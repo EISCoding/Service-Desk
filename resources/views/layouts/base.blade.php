@@ -2,6 +2,8 @@
 @php
     // Logged-in users get their stored preference; guests fall back to localStorage/system (see theme-script).
     $theme = auth()->user()?->theme;
+    $branding = app(\App\Support\Branding::class);
+    $favicon = $branding->favicon();
 @endphp
 <!DOCTYPE html>
 <html
@@ -20,8 +22,8 @@
 
     {{-- Installable as an app ("Zum Home-Bildschirm"), required for push on iPhones --}}
     <link rel="manifest" href="{{ route('manifest', request()->is('portal', 'portal/*') ? ['start' => 'portal'] : []) }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('icons/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('icons/icon-any-192.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ $branding->iconUrl('apple-touch-icon.png') }}">
+    <link rel="icon" type="{{ $favicon['type'] }}" href="{{ $favicon['url'] }}">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">

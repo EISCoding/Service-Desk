@@ -162,7 +162,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwurf **E · Service Desk** (Design-Canvas), Icons von Boxicons, Seitenleiste einklappbar (nur Icons), Logos und Favicons hochladbar, WYSIWYG für Mail-Vorlagen und das Mail-Layout.
 
 - [x] Boxicons als eigenes Icon-Set (Blade Icons), alle Heroicons ersetzt, Heroicons-Paket entfernt
-- [ ] Branding im Admin: Logo hell und dunkel, Favicon und App-Icon hochladen; Icons für iPhone, Android, Push und Manifest werden automatisch erzeugt; Vorschau und Zurücksetzen
+- [x] Branding im Admin: Logo hell und dunkel, Favicon und App-Icon hochladen; Icons für iPhone, Android, Push und Manifest werden automatisch erzeugt; Vorschau und Zurücksetzen
 - [ ] WYSIWYG-Editor (TipTap) für Antworten, Vorlagen, Textbausteine und Signaturen: Überschriften, Fett/Kursiv/Unterstrichen, Listen, Links, Ausrichtung, Textfarbe, Button-Link, Trennlinie, Platzhalter als Chips
 - [ ] Mail-Design im Admin: Logo, Farben, Schrift, Kopf- und Fußzeile (WYSIWYG), Antwort-Hinweis; Live-Vorschau mit Beispieldaten; Testmail senden
 - [ ] Design-System nach Entwurf E: Farben, Flächen, Radien, Schatten, Typografie; Komponenten (Buttons, Felder, Pills, Tabs, Menüs, Tabellen) in Hell und Dunkel

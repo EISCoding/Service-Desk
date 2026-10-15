@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\Permission;
-use App\Http\Controllers\BrandingLogoController;
+use App\Http\Controllers\BrandingAssetController;
 use App\Http\Controllers\Intern\Admin\LogDownloadController;
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\MailPreviewController;
@@ -13,6 +13,7 @@ use App\Http\Controllers\Portal\InvitationController;
 use App\Http\Controllers\Portal\LoginController;
 use App\Http\Controllers\Portal\PasswordResetController;
 use App\Livewire\Install\Wizard;
+use App\Livewire\Intern\Admin\Branding\Index as BrandingIndex;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Logs\Index as LogIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
@@ -37,6 +38,7 @@ use App\Models\Group;
 use App\Models\Mailbox;
 use App\Models\MailTemplate;
 use App\Models\User;
+use App\Support\Branding;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
@@ -104,6 +106,10 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
             ->where('file', '[A-Za-z0-9._-]+\\.log')
             ->name('logs.download');
 
+        Route::livewire('erscheinungsbild', BrandingIndex::class)
+            ->middleware('can:'.Permission::AdminSettings->value)
+            ->name('branding');
+
         Route::livewire('einstellungen', AdminSettings::class)
             ->middleware('can:'.Permission::AdminSettings->value)
             ->name('settings');
@@ -121,7 +127,10 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
     });
 });
 
-Route::get('logo', BrandingLogoController::class)->name('branding.logo');
+Route::get('logo', BrandingAssetController::class)->name('branding.logo');
+Route::get('branding/{asset}', BrandingAssetController::class)
+    ->whereIn('asset', Branding::ASSETS)
+    ->name('branding.asset');
 
 /*
 | Customer portal (guard "contact").

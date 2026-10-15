@@ -6,6 +6,7 @@ use App\Models\Mailbox;
 use App\Models\PushSubscription;
 use App\Models\User;
 use App\Support\AppSettings;
+use App\Support\Branding;
 use Closure;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
@@ -45,7 +46,8 @@ class WebPushService
         }
 
         $client = $this->client();
-        $json = json_encode($payload + ['icon' => asset('icons/icon-192.png')]);
+        $branding = app(Branding::class);
+        $json = json_encode($payload + ['icon' => $branding->iconUrl('icon-192.png'), 'badge' => $branding->iconUrl('badge-96.png')]);
 
         foreach ($subscriptions as $subscription) {
             $client->queueNotification(Subscription::create([
