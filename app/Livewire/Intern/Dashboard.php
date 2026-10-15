@@ -7,6 +7,7 @@ use App\Models\Appointment;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Support\Navigation;
+use App\Support\TicketCounts;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Computed;
@@ -35,17 +36,12 @@ class Dashboard extends Component
     }
 
     /**
-     * @return array{mine: int, unread: int, due: int, unassigned: int}
+     * @return array{mine: int, unread: int, due: int, unassigned: int, all: int}
      */
     #[Computed]
     public function counts(): array
     {
-        return [
-            'mine' => $this->open()->where('assignee_id', $this->user()->id)->count(),
-            'unread' => $this->open()->unreadBy($this->user())->count(),
-            'due' => $this->open()->where('follow_up_due', true)->count(),
-            'unassigned' => $this->open()->whereNull('assignee_id')->count(),
-        ];
+        return TicketCounts::for($this->user());
     }
 
     /**

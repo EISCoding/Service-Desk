@@ -1,5 +1,5 @@
-// Rich text editor for replies and notes (<trix-editor>).
-import 'trix';
+// WYSIWYG editor for replies, notes, templates and signatures.
+import richEditor from './editor';
 
 // Alpine.js ships with Livewire; register Alpine extensions in the `alpine:init` hook.
 
@@ -78,18 +78,21 @@ document.addEventListener('alpine:init', () => {
     }));
 });
 
-// Uploads in the editor are not used (attachments have their own field).
-document.addEventListener('trix-file-accept', (event) => event.preventDefault());
-
 // Keyboard shortcuts in /intern: J/K move through the ticket list, R reply, N internal note, E status.
 document.addEventListener('keydown', (event) => {
     const target = event.target;
-    const typing = target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT', 'TRIX-EDITOR'].includes(target.tagName);
+    const typing = target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
     if (typing || event.metaKey || event.ctrlKey || event.altKey || ! location.pathname.startsWith('/intern')) {
         return;
     }
 
     const key = event.key.toLowerCase();
+
+    if (key === '[') {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent('toggle-sidebar'));
+        return;
+    }
 
     if (key === 'j' || key === 'k') {
         const rows = [...document.querySelectorAll('ul[aria-label="Tickets"] > li > a')];
@@ -108,7 +111,8 @@ document.addEventListener('keydown', (event) => {
         event.preventDefault();
         window.dispatchEvent(new CustomEvent('toggle-ticket-focus'));
     } else if (key === 'e') {
-        const status = document.querySelector('[data-shortcut="status"]:not([disabled])');
+        // Narrow and wide ticket panes each have a status field; take the visible one.
+        const status = [...document.querySelectorAll('[data-shortcut="status"]:not([disabled])')].find((field) => field.offsetParent !== null);
         if (! status) return;
         event.preventDefault();
         status.focus();
@@ -121,22 +125,42 @@ document.addEventListener('keydown', (event) => {
 });
 
 document.addEventListener('alpine:init', () => {
-    // Trix bound to a Livewire property, see resources/views/components/ui/rich-editor.blade.php
-    window.Alpine.data('richEditor', (model) => ({
-        value: model,
+    window.Alpine.data('richEditor', richEditor);
 
-        init() {
-            const element = this.$refs.editor;
-            const load = () => {
-                if (element.editor && (this.value || '') !== element.value) {
-                    element.editor.loadHTML(this.value || '');
-                }
-            };
+    // Staff layout: sidebar collapsed to icons (stored per user) and the tooltip shown then.
+    window.Alpine.data('shell', (collapsed = false, updateUrl = null) => ({
+        collapsed,
+        tip: { show: false, text: '', top: 0, left: 0 },
 
-            element.addEventListener('trix-initialize', load);
-            element.addEventListener('trix-change', () => (this.value = element.value));
-            this.$watch('value', load);
-            load();
+        toggle() {
+            this.collapsed = ! this.collapsed;
+            this.tip.show = false;
+
+            if (updateUrl) {
+                fetch(updateUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({ collapsed: this.collapsed }),
+                });
+            }
+        },
+
+        showTip(event) {
+            const item = event.target.closest?.('[data-tip]');
+            if (! this.collapsed || ! item) {
+                this.tip.show = false;
+                return;
+            }
+            const rect = item.getBoundingClientRect();
+            this.tip = { show: true, text: item.dataset.tip, top: rect.top + rect.height / 2, left: rect.right + 10 };
+        },
+
+        hideTip() {
+            this.tip.show = false;
         },
     }));
 

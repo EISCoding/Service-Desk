@@ -78,7 +78,7 @@
                 </div>
             </div>
         @else
-            <x-ui.button wire:click="enableTwoFactor" icon="shield-check">Aktivieren</x-ui.button>
+            <x-ui.button wire:click="enableTwoFactor" icon="check-shield">Aktivieren</x-ui.button>
         @endif
     </x-ui.card>
     </div>

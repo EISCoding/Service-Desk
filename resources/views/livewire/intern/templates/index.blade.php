@@ -1,10 +1,16 @@
 @php($canManage = auth()->user()->can('create', \App\Models\MailTemplate::class))
 
 <div class="max-w-4xl space-y-8">
-    <x-ui.page-header title="Vorlagen" description="Automatische E-Mails und Textbausteine für Antworten." class="mb-0!" />
+    <x-ui.page-header title="Vorlagen" description="Automatische E-Mails und Textbausteine für Antworten." class="mb-0!">
+        @can(\App\Enums\Permission::AdminSettings->value)
+            <x-slot:actions>
+                <x-ui.button variant="secondary" size="sm" icon="envelope-open" :href="route('intern.admin.mail-design')" wire:navigate>Mail-Design</x-ui.button>
+            </x-slot:actions>
+        @endcan
+    </x-ui.page-header>
 
     <section>
-        <h2 class="mb-2 text-[13px] font-semibold text-ink-muted">Systemvorlagen</h2>
+        <h2 class="mb-2 text-[11px] font-semibold tracking-wide text-ink-faint uppercase">Systemvorlagen</h2>
         <x-ui.card :padding="false">
             @if ($this->systemTemplates->isEmpty())
                 <x-ui.empty-state icon="envelope" title="Keine Systemvorlagen" description="Sie werden beim Deployment angelegt (php artisan db:seed --class=MailTemplateSeeder)." />
@@ -37,7 +43,7 @@
 
     <section>
         <div class="mb-2 flex items-center justify-between">
-            <h2 class="text-[13px] font-semibold text-ink-muted">Textbausteine</h2>
+            <h2 class="text-[11px] font-semibold tracking-wide text-ink-faint uppercase">Textbausteine</h2>
             @if ($canManage)
                 <x-ui.button size="sm" icon="plus" wire:click="create">Neuer Textbaustein</x-ui.button>
             @endif
@@ -57,19 +63,19 @@
                     @endif
                 </div>
             @empty
-                <x-ui.empty-state icon="document-duplicate" title="Noch keine Textbausteine" description="Textbausteine lassen sich beim Antworten mit einem Klick einfügen." />
+                <x-ui.empty-state icon="copy-alt" title="Noch keine Textbausteine" description="Textbausteine lassen sich beim Antworten mit einem Klick einfügen." />
             @endforelse
         </x-ui.card>
     </section>
 
     @if ($canManage)
-    <x-ui.modal name="template-form" wire:model="showForm" max-width="2xl" :title="$this->editing?->isSystem() ? 'Systemvorlage bearbeiten' : ($editingId ? 'Textbaustein bearbeiten' : 'Neuer Textbaustein')">
+    <x-ui.modal name="template-form" wire:model="showForm" max-width="3xl" :title="$this->editing?->isSystem() ? 'Systemvorlage bearbeiten' : ($editingId ? 'Textbaustein bearbeiten' : 'Neuer Textbaustein')">
         <form wire:submit="save" id="template-form" class="space-y-4">
             <x-ui.input label="Name" wire:model="name" required />
             @if ($this->editing?->isSystem())
                 <x-ui.input label="Betreff" wire:model="subject" required :hint="\App\Enums\SystemTemplate::tryFrom((string) $this->editing->key)?->isTicketMail() === false ? null : 'Die Ticketnummer [#JJJJ-NNNNN] wird automatisch angehängt.'" />
             @endif
-            <x-ui.rich-editor label="Text" wire:model="body" />
+            <x-ui.rich-editor label="Text" wire:model="body" toolbar="full" placeholders />
             @include('livewire.intern.templates.placeholders')
             @if ($this->editing?->isSystem())
                 <x-ui.checkbox label="Aktiv" description="Nur aktive Systemvorlagen werden verschickt." wire:model="is_active" />

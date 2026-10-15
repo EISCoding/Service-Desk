@@ -21,7 +21,7 @@
             @if ($name) name="{{ $name }}" @endif
             @if ($error) aria-invalid="true" aria-describedby="{{ $id }}-error" @elseif ($hint) aria-describedby="{{ $id }}-hint" @endif
             {{ $attributes->except('class')->class([
-                'block h-9 w-full appearance-none rounded-[10px] bg-surface pr-9 pl-3 text-sm text-ink shadow-xs',
+                'block h-9 w-full appearance-none rounded-lg bg-surface pr-9 pl-3 text-sm text-ink shadow-xs',
                 'ring-1 ring-inset transition focus:outline-none focus:ring-2 disabled:opacity-60',
                 'ring-ink/15 hover:ring-ink/25 focus:ring-accent' => ! $error,
                 'ring-red-500 focus:ring-red-500' => $error,
@@ -35,6 +35,6 @@
             @endforeach
             {{ $slot }}
         </select>
-        <x-heroicon-m-chevron-up-down class="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
+        <x-bx-expand-vertical class="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
     </div>
 </x-ui.field>

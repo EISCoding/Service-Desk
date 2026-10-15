@@ -39,7 +39,7 @@
         </section>
     @empty
         <x-ui.card :padding="false">
-            <x-ui.empty-state icon="calendar-days" title="Keine anstehenden Termine" description="VOS-Termine entstehen, wenn ein Ticket auf „VOS“ gesetzt wird." />
+            <x-ui.empty-state icon="calendar" title="Keine anstehenden Termine" description="VOS-Termine entstehen, wenn ein Ticket auf „VOS“ gesetzt wird." />
         </x-ui.card>
     @endforelse
 </div>

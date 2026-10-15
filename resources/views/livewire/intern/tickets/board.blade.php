@@ -7,11 +7,8 @@
 
 <div wire:poll.15s="checkForChanges">
     <div class="mb-5 flex flex-wrap items-center gap-3">
-        <h1 class="text-[28px] leading-tight font-bold tracking-tight">Tickets</h1>
+        <h1 class="text-[22px] leading-tight font-semibold tracking-tight">Tickets</h1>
         <x-ticket.layout-switch current="board" />
-        @can('create', \App\Models\Ticket::class)
-            <x-ui.button icon="plus" class="ml-auto" x-on:click="$dispatch('create-ticket')">Neues Ticket</x-ui.button>
-        @endcan
     </div>
 
     <div class="mb-4 flex flex-wrap items-center gap-3">
@@ -24,7 +21,7 @@
     <div class="-mx-4 flex snap-x snap-mandatory scroll-px-4 items-start gap-3 overflow-x-auto px-4 pb-6 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:-mx-8 lg:snap-none lg:px-8" wire:loading.class.delay="opacity-60" wire:target="view,search">
         @foreach ($this->columns as $value => $tickets)
             @php($status = \App\Enums\TicketStatus::from($value))
-            <section wire:key="column-{{ $value }}" aria-labelledby="column-{{ $value }}" class="flex w-[17rem] shrink-0 snap-start flex-col rounded-2xl bg-ink/[0.035] p-2 dark:bg-white/[0.04]">
+            <section wire:key="column-{{ $value }}" aria-labelledby="column-{{ $value }}" class="flex w-[17rem] shrink-0 snap-start flex-col rounded-xl bg-ink/[0.035] p-2 dark:bg-white/[0.04]">
                 <header class="flex items-center gap-2 px-2 pt-1 pb-2.5">
                     <span class="size-2 rounded-full {{ $dots[$status->color()] ?? 'bg-zinc-400' }}" aria-hidden="true"></span>
                     <h2 id="column-{{ $value }}" class="text-[13px] font-semibold">{{ $status->label() }}</h2>
@@ -73,5 +70,4 @@
         </x-slot:footer>
     </x-ui.modal>
 
-    <livewire:intern.tickets.create-ticket />
 </div>

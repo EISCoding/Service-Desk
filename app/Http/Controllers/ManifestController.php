@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\Branding;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -12,19 +13,19 @@ use Illuminate\Http\Request;
  */
 class ManifestController extends Controller
 {
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(Request $request, Branding $branding): JsonResponse
     {
         $portal = $request->query('start') === 'portal';
         $name = (string) config('app.name');
         $start = $portal ? '/portal' : '/intern';
 
         $icon = fn (string $file, int $size, string $purpose) => [
-            'src' => "/icons/{$file}", 'sizes' => "{$size}x{$size}", 'type' => 'image/png', 'purpose' => $purpose,
+            'src' => $branding->iconUrl($file, absolute: false), 'sizes' => "{$size}x{$size}", 'type' => 'image/png', 'purpose' => $purpose,
         ];
 
         $shortcut = fn (string $label, string $url) => [
             'name' => $label, 'short_name' => $label, 'url' => $url,
-            'icons' => [['src' => '/icons/icon-any-192.png', 'sizes' => '192x192', 'type' => 'image/png']],
+            'icons' => [['src' => $branding->iconUrl('icon-any-192.png', absolute: false), 'sizes' => '192x192', 'type' => 'image/png']],
         ];
 
         return response()->json([

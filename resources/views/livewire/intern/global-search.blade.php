@@ -19,7 +19,7 @@
     x-on:click.outside="open = false"
 >
     <label for="global-search" class="sr-only">Tickets, Kunden und Ansprechpartner suchen</label>
-    <x-heroicon-m-magnifying-glass class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
+    <x-bx-search class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
     <input
         id="global-search"
         x-ref="search"

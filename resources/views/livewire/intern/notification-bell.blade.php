@@ -1,6 +1,6 @@
 <div wire:poll.30s class="relative" x-data="{ open: false }" x-on:keydown.escape="open = false">
     <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="relative grid size-9 place-items-center rounded-full text-ink-muted hover:bg-ink/[0.05] hover:text-ink">
-        <x-heroicon-o-bell class="size-5" aria-hidden="true" />
+        <x-bx-bell class="size-5" aria-hidden="true" />
         <span class="sr-only">Benachrichtigungen{{ $this->unreadCount ? " ({$this->unreadCount} ungelesen)" : '' }}</span>
         @if ($this->unreadCount)
             <span class="absolute top-1 right-1 grid min-w-4 place-items-center rounded-full bg-red-500 px-1 text-[10px] leading-4 font-semibold text-white" aria-hidden="true">{{ $this->unreadCount > 9 ? '9+' : $this->unreadCount }}</span>

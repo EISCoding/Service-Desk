@@ -36,14 +36,14 @@ it('marks a customer reply as unread for staff until they open the ticket', func
         ->and(Ticket::unreadBy($this->staff)->pluck('id')->all())->toBe([$this->ticket->id]);
 
     $this->actingAs($this->staff);
-    Livewire::test(TicketList::class)->assertSee('Neue Kundenantwort:');
+    Livewire::test(TicketList::class)->assertSee('Neue Kundenantwort');
 
     $this->travel(1)->minute();
     Livewire::test(TicketView::class, ['ticket' => $this->ticket]);
 
     expect($this->ticket->fresh()->isUnreadFor($this->staff))->toBeFalse()
         ->and(Ticket::unreadBy($this->staff)->count())->toBe(0);
-    Livewire::test(TicketList::class)->assertDontSee('Neue Kundenantwort:');
+    Livewire::test(TicketList::class)->assertDontSee('Neue Kundenantwort');
 
     // Each staff member has their own state.
     expect($this->ticket->fresh()->isUnreadFor(User::factory()->staff()->create()))->toBeTrue();

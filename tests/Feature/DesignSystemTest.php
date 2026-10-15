@@ -16,7 +16,7 @@ describe('button', function () {
         $this->blade('<x-ui.button href="/intern" variant="secondary">Zurück</x-ui.button>')
             ->assertSee('<a href="/intern"', false)
             ->assertDontSee('<button', false)
-            ->assertSee('ring-ink/12', false);
+            ->assertSee('ring-separator', false);
     });
 
     it('renders the danger variant and an icon', function () {
@@ -126,7 +126,7 @@ it('renders tables with sortable headings', function () {
 });
 
 it('renders an empty state with action', function () {
-    $this->blade('<x-ui.empty-state icon="users" title="Keine Benutzer" description="Lege den ersten an."><a>Anlegen</a></x-ui.empty-state>')
+    $this->blade('<x-ui.empty-state icon="group" title="Keine Benutzer" description="Lege den ersten an."><a>Anlegen</a></x-ui.empty-state>')
         ->assertSeeInOrder(['<svg', 'Keine Benutzer', 'Lege den ersten an.', 'Anlegen'], false);
 });
 

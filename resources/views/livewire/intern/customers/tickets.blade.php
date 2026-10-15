@@ -7,7 +7,7 @@
 
     <x-ui.card :padding="false">
         @if ($this->tickets->isEmpty())
-            <x-ui.empty-state icon="inbox-stack" title="Noch keine Tickets" description="Für diesen Kunden gibt es keine Tickets, die du sehen kannst." />
+            <x-ui.empty-state icon="collection" title="Noch keine Tickets" description="Für diesen Kunden gibt es keine Tickets, die du sehen kannst." />
         @else
             <x-ui.table>
                 <x-slot:head>

@@ -7,7 +7,8 @@ use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 /**
  * HTML of ticket messages (editor and incoming mails) is sanitized before it
- * is stored: no scripts, no event handlers, no javascript: links, no styles.
+ * is stored: no scripts, no event handlers, no javascript: links and no styles
+ * except the editor's alignment and palette colors (see RichTextAttributes).
  */
 final class Html
 {
@@ -87,8 +88,10 @@ final class Html
                 ->allowRelativeLinks(false)
                 ->forceAttribute('a', 'rel', 'noopener noreferrer')
                 ->forceAttribute('a', 'target', '_blank')
-                ->dropAttribute('style', '*')
                 ->dropAttribute('class', '*')
+                ->allowAttribute('style', ['p', 'h1', 'h2', 'h3', 'h4', 'li', 'span', 'div'])
+                ->allowAttribute('data-type', ['a', 'span'])
+                ->withAttributeSanitizer(new RichTextAttributes)
                 ->withMaxInputLength(2_000_000)
         );
     }

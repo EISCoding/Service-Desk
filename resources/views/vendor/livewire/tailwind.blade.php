@@ -17,10 +17,10 @@
 
             <div class="flex items-center gap-1">
                 @if ($paginator->onFirstPage())
-                    <span class="{{ $button }} text-ink-faint opacity-50" aria-hidden="true"><x-heroicon-m-chevron-left class="size-4" /></span>
+                    <span class="{{ $button }} text-ink-faint opacity-50" aria-hidden="true"><x-bx-chevron-left class="size-4" /></span>
                 @else
                     <button type="button" wire:click="previousPage('{{ $pageName }}')" x-on:click="{{ $scrollIntoView }}" class="{{ $button }} text-ink-muted hover:bg-ink/[0.06] hover:text-ink">
-                        <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /><span class="sr-only">Vorherige Seite</span>
+                        <x-bx-chevron-left class="size-4" aria-hidden="true" /><span class="sr-only">Vorherige Seite</span>
                     </button>
                 @endif
 
@@ -46,10 +46,10 @@
 
                 @if ($paginator->hasMorePages())
                     <button type="button" wire:click="nextPage('{{ $pageName }}')" x-on:click="{{ $scrollIntoView }}" class="{{ $button }} text-ink-muted hover:bg-ink/[0.06] hover:text-ink">
-                        <x-heroicon-m-chevron-right class="size-4" aria-hidden="true" /><span class="sr-only">Nächste Seite</span>
+                        <x-bx-chevron-right class="size-4" aria-hidden="true" /><span class="sr-only">Nächste Seite</span>
                     </button>
                 @else
-                    <span class="{{ $button }} text-ink-faint opacity-50" aria-hidden="true"><x-heroicon-m-chevron-right class="size-4" /></span>
+                    <span class="{{ $button }} text-ink-faint opacity-50" aria-hidden="true"><x-bx-chevron-right class="size-4" /></span>
                 @endif
             </div>
         </nav>

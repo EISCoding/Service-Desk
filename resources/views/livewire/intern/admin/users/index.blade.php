@@ -15,9 +15,9 @@
     <x-ui.card :padding="false">
         @if ($this->users->isEmpty())
             @if ($search !== '' || $status !== 'active')
-                <x-ui.empty-state icon="magnifying-glass" title="Keine Treffer" description="Kein Benutzer passt zu Suche und Filter." />
+                <x-ui.empty-state icon="search" title="Keine Treffer" description="Kein Benutzer passt zu Suche und Filter." />
             @else
-                <x-ui.empty-state icon="users" title="Noch keine Benutzer" />
+                <x-ui.empty-state icon="group" title="Noch keine Benutzer" />
             @endif
         @else
             <x-ui.table>
@@ -73,7 +73,7 @@
                                 @if (auth()->user()->can('deactivate', $user) || (auth()->user()->can('resetTwoFactor', $user) && $user->hasTwoFactorEnabled()))
                                     <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
                                         <button type="button" x-on:click="open = ! open" x-ref="trigger" x-bind:aria-expanded="open" class="rounded-lg p-1.5 text-ink-muted hover:bg-surface-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-accent">
-                                            <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
+                                            <x-bx-dots-horizontal-rounded class="size-5" aria-hidden="true" />
                                             <span class="sr-only">Weitere Aktionen für {{ $user->name }}</span>
                                         </button>
                                         <div x-show="open" x-cloak x-anchor.bottom-end.offset.4.fixed="$refs.trigger" x-on:click.outside="open = false" x-transition.opacity class="z-40 w-60 rounded-xl bg-surface p-1 text-left shadow-pop">
@@ -82,9 +82,9 @@
                                                     @if ($user->is_active) wire:confirm="{{ $user->name }} deaktivieren? Die Person kann sich danach nicht mehr anmelden." @endif
                                                     class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
                                                     @if ($user->is_active)
-                                                        <x-heroicon-o-no-symbol class="size-4 text-ink-muted" aria-hidden="true" /> Deaktivieren
+                                                        <x-bx-block class="size-4 text-ink-muted" aria-hidden="true" /> Deaktivieren
                                                     @else
-                                                        <x-heroicon-o-check-circle class="size-4 text-ink-muted" aria-hidden="true" /> Aktivieren
+                                                        <x-bx-check-circle class="size-4 text-ink-muted" aria-hidden="true" /> Aktivieren
                                                     @endif
                                                 </button>
                                             @endcan
@@ -92,7 +92,7 @@
                                                 <button type="button" x-on:click="open = false" wire:click="resetTwoFactor({{ $user->id }})"
                                                     wire:confirm="Zwei-Faktor-Authentifizierung von {{ $user->name }} zurücksetzen? Die Person meldet sich danach nur mit Passwort an und kann 2FA neu einrichten."
                                                     class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
-                                                    <x-heroicon-o-shield-exclamation class="size-4 text-ink-muted" aria-hidden="true" /> 2FA zurücksetzen
+                                                    <x-bx-shield-x class="size-4 text-ink-muted" aria-hidden="true" /> 2FA zurücksetzen
                                                 </button>
                                             @endif
                                         </div>
@@ -137,7 +137,7 @@
                     <x-ui.button variant="secondary" x-on:click="visible = ! visible" x-bind:aria-pressed="visible">
                         <span x-text="visible ? 'Verbergen' : 'Anzeigen'">Anzeigen</span>
                     </x-ui.button>
-                    <x-ui.button variant="secondary" icon="sparkles" wire:click="generatePassword" x-on:click="visible = true">Generieren</x-ui.button>
+                    <x-ui.button variant="secondary" icon="bxs-magic-wand" wire:click="generatePassword" x-on:click="visible = true">Generieren</x-ui.button>
                 </div>
                 <p class="mt-1.5 text-[13px] text-ink-muted">Mindestens 10 Zeichen mit Buchstaben und Zahlen. Bitte sicher an die Person weitergeben; sie kann es unter „Sicherheit“ ändern.</p>
             </div>

@@ -16,9 +16,9 @@
     <x-ui.card :padding="false" class="transition-opacity" wire:loading.delay.class="opacity-50">
         @if ($this->customers->isEmpty())
             @if ($search !== '' || $status !== 'active' || $type !== '')
-                <x-ui.empty-state icon="magnifying-glass" title="Keine Treffer" description="Kein Kunde passt zu Suche und Filter." />
+                <x-ui.empty-state icon="search" title="Keine Treffer" description="Kein Kunde passt zu Suche und Filter." />
             @else
-                <x-ui.empty-state icon="building-office-2" title="Noch keine Kunden" description="Lege den ersten Kunden an.">
+                <x-ui.empty-state icon="buildings" title="Noch keine Kunden" description="Lege den ersten Kunden an.">
                     <x-ui.button variant="secondary" size="sm" icon="plus" x-on:click="$dispatch('create-customer')">Neuer Kunde</x-ui.button>
                 </x-ui.empty-state>
             @endif

@@ -10,53 +10,53 @@
     the full editor (click, or the shortcuts R / N).
 --}}
 <section aria-label="Antworten" data-composer
-    x-data="{ expanded: false, full: false, open(mode) { $wire.setMode(mode).then(() => { this.expanded = true; this.$nextTick(() => this.$root.querySelector('trix-editor')?.focus()) }) } }"
+    x-data="{ expanded: false, full: false, open(mode) { $wire.setMode(mode).then(() => { this.expanded = true; this.$nextTick(() => this.$root.querySelector('[data-rich-editor]')?.richEditor?.focus()) }) } }"
     x-on:composer-focus.window="open($event.detail.mode)"
     x-on:composer-sent.window="expanded = false; full = false"
     x-on:keydown.escape="full ? full = false : expanded = false"
     x-bind:class="full && 'fixed! inset-0! z-50! overflow-y-auto bg-canvas! pt-6! pb-10!'"
-    class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:px-6 lg:bottom-0 lg:px-8"
+    class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 border-t border-separator bg-surface/95 px-4 py-3 backdrop-blur-xl backdrop-saturate-150 sm:px-6 lg:bottom-0 @3xl/ticket:col-start-1"
 >
     {{-- Collapsed --}}
     <div x-show="! expanded" class="flex items-center gap-2">
         <x-ui.avatar :name="auth()->user()->name" class="max-sm:hidden" />
         @if ($canReply)
-            <button type="button" x-on:click="open('reply')" class="flex h-10 min-w-0 flex-1 items-center rounded-full bg-surface px-4 text-left text-sm text-ink-faint shadow-card hover:text-ink-muted">
+            <button type="button" x-on:click="open('reply')" class="flex h-10 min-w-0 flex-1 items-center rounded-lg bg-surface-muted px-4 text-left text-sm text-ink-faint ring-1 ring-separator ring-inset hover:text-ink-muted">
                 <span class="truncate">{{ $replyTo ? "Antworten an {$replyTo} …" : 'Antworten …' }}</span>
             </button>
         @endif
         @if ($canNote)
             <button type="button" x-on:click="open('note')" @class([
-                'inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium',
-                'flex-1 bg-surface text-ink-faint shadow-card' => ! $canReply,
+                'inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg px-4 text-sm font-medium',
+                'flex-1 bg-surface-muted text-ink-faint ring-1 ring-separator ring-inset' => ! $canReply,
                 'bg-amber-400/15 text-amber-800 hover:bg-amber-400/25 dark:text-amber-300' => $canReply,
             ])>
-                <x-heroicon-m-lock-closed class="size-4" aria-hidden="true" /> {{ $canReply ? 'Notiz' : 'Interne Notiz schreiben …' }}
+                <x-bx-lock-alt class="size-4" aria-hidden="true" /> {{ $canReply ? 'Notiz' : 'Interne Notiz schreiben …' }}
             </button>
         @endif
     </div>
 
     {{-- Expanded --}}
-    <div x-show="expanded" x-cloak @class(['-mx-1 rounded-2xl p-1', 'bg-amber-400/10' => $isNote]) x-bind:class="full && 'mx-auto! max-w-4xl'">
+    <div x-show="expanded" x-cloak @class(['-mx-1 rounded-xl p-1', 'bg-amber-400/10' => $isNote]) x-bind:class="full && 'mx-auto! max-w-4xl'">
         <div class="mb-3 flex items-center justify-between gap-3">
             @if ($canReply && $canNote)
                 <div role="tablist" class="inline-flex gap-0.5 rounded-[10px] bg-ink/[0.06] p-0.5">
                     <button type="button" role="tab" aria-selected="{{ $isNote ? 'false' : 'true' }}" wire:click="setMode('reply')" @class(['rounded-lg px-3 py-1 text-[13px] font-medium', 'bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.08)] dark:bg-white/15' => ! $isNote, 'text-ink-muted hover:text-ink' => $isNote])>Antworten</button>
                     <button type="button" role="tab" aria-selected="{{ $isNote ? 'true' : 'false' }}" wire:click="setMode('note')" @class(['inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1 text-[13px] font-medium', 'bg-surface shadow-[0_1px_2px_rgb(0_0_0/0.08)] dark:bg-white/15' => $isNote, 'text-ink-muted hover:text-ink' => ! $isNote])>
-                        <x-heroicon-m-lock-closed class="size-3.5" aria-hidden="true" /> Interne Notiz
+                        <x-bx-lock-alt class="size-3.5" aria-hidden="true" /> Interne Notiz
                     </button>
                 </div>
             @else
                 <p class="text-[13px] font-semibold">{{ $isNote ? 'Interne Notiz' : 'Antworten' }}</p>
             @endif
             <div class="flex items-center gap-1">
-                <button type="button" x-on:click="full = ! full; $nextTick(() => $root.querySelector('trix-editor')?.focus())" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink" x-bind:aria-pressed="full">
-                    <x-heroicon-m-arrows-pointing-out class="size-5" aria-hidden="true" x-show="! full" />
-                    <x-heroicon-m-arrows-pointing-in class="size-5" aria-hidden="true" x-show="full" x-cloak />
+                <button type="button" x-on:click="full = ! full; $nextTick(() => $root.querySelector('[data-rich-editor]')?.richEditor?.focus())" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink" x-bind:aria-pressed="full">
+                    <x-bx-fullscreen class="size-5" aria-hidden="true" x-show="! full" />
+                    <x-bx-exit-fullscreen class="size-5" aria-hidden="true" x-show="full" x-cloak />
                     <span class="sr-only">Vollbild</span>
                 </button>
                 <button type="button" x-on:click="expanded = false; full = false" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink">
-                    <x-heroicon-m-chevron-down class="size-5" aria-hidden="true" /><span class="sr-only">Einklappen</span>
+                    <x-bx-chevron-down class="size-5" aria-hidden="true" /><span class="sr-only">Einklappen</span>
                 </button>
             </div>
         </div>
@@ -72,7 +72,7 @@
                                 <span wire:key="cc-{{ $address['email'] }}" class="inline-flex items-center gap-1 rounded-full bg-ink/[0.06] py-0.5 pr-1 pl-2.5">
                                     {{ $address['email'] }}
                                     <button type="button" wire:click="removeCc({{ $index }})" class="rounded-full text-ink-faint hover:text-ink">
-                                        <x-heroicon-m-x-mark class="size-3.5" aria-hidden="true" /><span class="sr-only">{{ $address['email'] }} entfernen</span>
+                                        <x-bx-x class="size-3.5" aria-hidden="true" /><span class="sr-only">{{ $address['email'] }} entfernen</span>
                                     </button>
                                 </span>
                             @endforeach
@@ -86,8 +86,8 @@
                 @endif
             @endunless
 
-            <div x-bind:class="full ? '[&_trix-editor]:min-h-[55vh]!' : '[&_trix-editor]:max-h-[40vh] [&_trix-editor]:overflow-y-auto'">
-                <x-ui.rich-editor wire:model="body" placeholder="Nachricht schreiben …" />
+            <div x-bind:class="full ? '[&_.rich-editor-content]:min-h-[55vh]!' : '[&_.rich-editor-content]:max-h-[40vh] [&_.rich-editor-content]:overflow-y-auto'">
+                <x-ui.rich-editor wire:model="body" toolbar="reply" placeholder="Nachricht schreiben …" />
             </div>
             @if ($isNote)
                 <p class="-mt-1 text-[12px] text-ink-muted">Interne Notizen sind für Kunden nie sichtbar.</p>
@@ -102,11 +102,11 @@
                 <ul class="flex flex-wrap gap-2" aria-label="Ausgewählte Dateien">
                     @foreach ($files as $index => $file)
                         <li wire:key="file-{{ $index }}" class="flex items-center gap-2 rounded-lg bg-surface px-2.5 py-1.5 text-[13px] shadow-card">
-                            <x-heroicon-o-paper-clip class="size-4 text-ink-muted" aria-hidden="true" />
+                            <x-bx-paperclip class="size-4 text-ink-muted" aria-hidden="true" />
                             <span class="max-w-48 truncate">{{ $file->getClientOriginalName() }}</span>
                             <span class="text-[11px] text-ink-muted">{{ \Illuminate\Support\Number::fileSize($file->getSize(), precision: 1) }}</span>
                             <button type="button" wire:click="removeFile({{ $index }})" class="text-ink-faint hover:text-ink">
-                                <x-heroicon-m-x-mark class="size-4" aria-hidden="true" /><span class="sr-only">Entfernen</span>
+                                <x-bx-x class="size-4" aria-hidden="true" /><span class="sr-only">Entfernen</span>
                             </button>
                         </li>
                     @endforeach
@@ -118,7 +118,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <div class="flex flex-wrap items-center gap-4">
                     <label class="inline-flex cursor-pointer items-center gap-1.5 text-[13px] font-medium text-ink-muted hover:text-ink">
-                        <x-heroicon-o-paper-clip class="size-4" aria-hidden="true" />
+                        <x-bx-paperclip class="size-4" aria-hidden="true" />
                         <span wire:loading.remove wire:target="files">Dateien anhängen</span>
                         <span wire:loading wire:target="files">Wird hochgeladen …</span>
                         <input type="file" wire:model="files" multiple class="sr-only">
@@ -128,29 +128,49 @@
                         {{-- Text snippets, inserted at the cursor with filled placeholders --}}
                         <div x-data="{ open: false }" class="relative" x-on:keydown.escape.stop="open = false">
                             <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="inline-flex items-center gap-1.5 text-[13px] font-medium text-ink-muted hover:text-ink">
-                                <x-heroicon-o-document-duplicate class="size-4" aria-hidden="true" /> Textbaustein
+                                <x-bx-copy-alt class="size-4" aria-hidden="true" /> Textbaustein
                             </button>
                             <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute bottom-full left-0 z-20 mb-1 max-h-64 w-64 overflow-y-auto rounded-xl bg-surface p-1 shadow-pop">
                                 @foreach ($this->snippets as $snippet)
                                     <button type="button" wire:key="snippet-{{ $snippet->id }}" class="block w-full truncate rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted"
-                                        x-on:click="open = false; $wire.snippet({{ $snippet->id }}).then(html => $root.closest('section').querySelector('trix-editor').editor.insertHTML(html))">{{ $snippet->name }}</button>
+                                        x-on:click="open = false; $wire.snippet({{ $snippet->id }}).then(html => $root.closest('section').querySelector('[data-rich-editor]').richEditor.insert(html))">{{ $snippet->name }}</button>
                                 @endforeach
                             </div>
                         </div>
                     @endif
                 </div>
 
-                <div class="flex items-center gap-2">
-                    @unless ($isNote)
-                        <x-ui.select wire:model="statusAfter" placeholder="Status unverändert" :options="$statusOptions" aria-label="Status danach" class="w-48" />
-                    @endunless
-                    @if (! $isNote && $ticket->status !== \App\Enums\TicketStatus::Closed)
-                        <x-ui.button variant="secondary" x-on:click="$wire.statusAfter = 'closed'; $wire.send()" wire:loading.attr="disabled" wire:target="files,send" title="Antwort senden und Ticket schließen">Senden &amp; schließen</x-ui.button>
-                    @endif
-                    <x-ui.button type="submit" icon="paper-airplane" wire:loading.attr="disabled" wire:target="files,send">
-                        {{ $isNote ? 'Notiz speichern' : 'Antwort senden' }}
-                    </x-ui.button>
-                </div>
+                @if ($isNote)
+                    <x-ui.button type="submit" icon="lock-alt" wire:loading.attr="disabled" wire:target="files,send">Notiz speichern</x-ui.button>
+                @else
+                    {{-- Send, optionally with a new status (like "Senden & schließen") --}}
+                    <div x-data="{ menu: false, labels: @js(['' => 'Status unverändert'] + $statusOptions) }" class="relative inline-flex" x-on:keydown.escape.stop="menu = false">
+                        <x-ui.button type="submit" icon="send" class="rounded-r-none!" wire:loading.attr="disabled" wire:target="files,send">
+                            Senden<span x-show="$wire.statusAfter" x-cloak x-text="' · ' + (labels[$wire.statusAfter] || '')"></span>
+                        </x-ui.button>
+                        <button type="button" x-on:click="menu = ! menu" x-bind:aria-expanded="menu" aria-haspopup="true" aria-label="Status nach dem Senden wählen"
+                            class="grid h-9 w-8 place-items-center rounded-r-lg border-l border-white/30 bg-accent-fill text-on-accent hover:bg-accent-fill-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                            <x-bx-chevron-up class="size-4" aria-hidden="true" />
+                        </button>
+                        <div x-show="menu" x-cloak x-on:click.outside="menu = false" x-transition.opacity role="menu" aria-label="Status nach dem Senden"
+                            class="absolute right-0 bottom-full z-20 mb-1 w-60 rounded-xl bg-surface p-1 shadow-pop">
+                            @if ($ticket->status !== \App\Enums\TicketStatus::Closed)
+                                <button type="button" x-on:click="menu = false; $wire.statusAfter = 'closed'; $wire.send()" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium hover:bg-surface-muted">
+                                    <x-bx-check-circle class="size-4 text-ink-muted" aria-hidden="true" /> Senden &amp; schließen
+                                </button>
+                                <div class="my-1 border-t border-separator"></div>
+                            @endif
+                            <p class="px-3 pt-1.5 pb-1 text-[11px] font-semibold tracking-wide text-ink-faint uppercase">Status danach</p>
+                            <template x-for="(label, value) in labels" :key="value">
+                                <button type="button" role="menuitemradio" x-bind:aria-checked="($wire.statusAfter || '') === value" x-on:click="$wire.statusAfter = value; menu = false"
+                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
+                                    <span class="flex-1" x-text="label"></span>
+                                    <x-bx-check x-show="($wire.statusAfter || '') === value" class="size-4 text-accent" aria-hidden="true" />
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                @endif
             </div>
         </form>
 

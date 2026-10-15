@@ -20,7 +20,7 @@ enum Theme: string
     public function icon(): string
     {
         return match ($this) {
-            self::System => 'computer-desktop',
+            self::System => 'desktop',
             self::Light => 'sun',
             self::Dark => 'moon',
         };

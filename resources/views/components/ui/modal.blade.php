@@ -8,7 +8,7 @@
     'name',
     'title' => null,
     'description' => null,
-    'maxWidth' => 'lg', // sm | md | lg | xl | 2xl
+    'maxWidth' => 'lg', // sm | md | lg | xl | 2xl | 3xl
 ])
 
 @php
@@ -18,6 +18,7 @@
         'md' => 'sm:max-w-md',
         'xl' => 'sm:max-w-xl',
         '2xl' => 'sm:max-w-2xl',
+        '3xl' => 'sm:max-w-3xl',
         default => 'sm:max-w-lg',
     };
 @endphp
@@ -53,7 +54,7 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100 sm:scale-100"
             x-transition:leave-end="opacity-0 sm:scale-95"
-            class="relative w-full {{ $width }} rounded-t-[22px] bg-surface shadow-pop sm:rounded-[20px]"
+            class="relative w-full {{ $width }} rounded-t-2xl bg-surface shadow-pop sm:rounded-2xl"
         >
             @if ($title)
                 <div class="flex items-start justify-between gap-4 px-6 pt-5">
@@ -65,7 +66,7 @@
                     </div>
                     <button type="button" x-on:click="show = false" class="-mr-2 rounded-full p-1.5 text-ink-faint hover:bg-surface-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-accent">
                         <span class="sr-only">Schließen</span>
-                        <x-heroicon-m-x-mark class="size-5" aria-hidden="true" />
+                        <x-bx-x class="size-5" aria-hidden="true" />
                     </button>
                 </div>
             @endif

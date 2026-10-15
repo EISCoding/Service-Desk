@@ -14,7 +14,7 @@
             <x-ui.segmented model="level" :current="$level" :options="['errors' => 'Fehler', 'warnings' => 'Warnungen', 'all' => 'Alle']" label="Stufe" />
             <x-ui.input wire:model.live.debounce.300ms="search" type="search" placeholder="Text suchen …" aria-label="Log durchsuchen" class="w-full sm:ml-auto sm:w-64" />
             @if ($this->files)
-                <x-ui.button variant="secondary" icon="arrow-down-tray" :href="route('intern.admin.logs.download', $file ?: $this->files[0])">Herunterladen</x-ui.button>
+                <x-ui.button variant="secondary" icon="download" :href="route('intern.admin.logs.download', $file ?: $this->files[0])">Herunterladen</x-ui.button>
             @endif
         </div>
 
@@ -28,7 +28,7 @@
                             <time class="text-[12px] text-ink-muted" datetime="{{ $entry['time']->toIso8601String() }}">{{ $entry['time']->isoFormat('D. MMM YYYY, HH:mm:ss') }}</time>
                         </span>
                         @if ($entry['details'] !== '')
-                            <x-heroicon-m-chevron-down class="mt-1 size-4 shrink-0 text-ink-faint transition group-open:rotate-180" aria-hidden="true" />
+                            <x-bx-chevron-down class="mt-1 size-4 shrink-0 text-ink-faint transition group-open:rotate-180" aria-hidden="true" />
                         @endif
                     </summary>
                     @if ($entry['details'] !== '')
@@ -72,7 +72,7 @@
                         @php($out = $mail->type === \App\Enums\MessageType::MailOut)
                         <li wire:key="mail-{{ $mail->id }}" class="flex items-start gap-3 px-5 py-3">
                             <span @class(['mt-0.5 grid size-7 shrink-0 place-items-center rounded-full', 'bg-accent/10 text-accent' => $out, 'bg-green-500/10 text-green-700 dark:text-green-400' => ! $out])>
-                                <x-dynamic-component :component="$out ? 'heroicon-m-arrow-up-right' : 'heroicon-m-arrow-down-left'" class="size-4" aria-hidden="true" />
+                                <x-dynamic-component :component="$out ? 'bx-up-arrow-alt' : 'bx-down-arrow-alt'" class="size-4" aria-hidden="true" />
                                 <span class="sr-only">{{ $out ? 'Ausgehend' : 'Eingehend' }}</span>
                             </span>
                             <div class="min-w-0 flex-1">
@@ -112,7 +112,7 @@
 
         <x-ui.card :padding="false">
             @if ($this->activities->isEmpty())
-                <x-ui.empty-state icon="clock" title="Noch keine Aktivität" />
+                <x-ui.empty-state icon="time-five" title="Noch keine Aktivität" />
             @else
                 <ul class="divide-y divide-hairline">
                     @foreach ($this->activities as $activity)
@@ -179,7 +179,7 @@
         <x-ui.card :padding="false" title="Fehlgeschlagene Jobs">
             @if ($this->failedJobs->total() > 0)
                 <x-slot:actions>
-                    <x-ui.button variant="secondary" size="sm" icon="arrow-path" wire:click="retryAllJobs">Alle erneut</x-ui.button>
+                    <x-ui.button variant="secondary" size="sm" icon="refresh" wire:click="retryAllJobs">Alle erneut</x-ui.button>
                     <x-ui.button variant="ghost" size="sm" wire:click="flushJobs" wire:confirm="Alle fehlgeschlagenen Jobs löschen?">Alle löschen</x-ui.button>
                 </x-slot:actions>
             @endif

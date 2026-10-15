@@ -41,7 +41,7 @@
 
             <x-ui.input label="Betreff" wire:model="subject" required maxlength="255" />
 
-            <x-ui.rich-editor label="Beschreibung" wire:model="body" placeholder="Was ist das Anliegen?" />
+            <x-ui.rich-editor label="Beschreibung" wire:model="body" toolbar="reply" placeholder="Was ist das Anliegen?" />
 
             <div class="flex flex-wrap items-end justify-between gap-4">
                 <x-ui.select label="Priorität" wire:model="priority" :options="$priorityOptions" class="w-40" />

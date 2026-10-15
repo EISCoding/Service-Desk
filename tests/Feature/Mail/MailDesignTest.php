@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\SystemTemplate;
-use App\Livewire\Intern\Admin\Settings\Index as SystemSettings;
+use App\Livewire\Intern\Admin\Branding\Index as BrandingSettings;
 use App\Mail\TicketMessageMail;
 use App\Models\Contact;
 use App\Models\Mailbox;
@@ -55,7 +55,7 @@ it('uses the custom reply hint', function () {
 
 it('embeds the logo when sending and links it in previews', function () {
     $this->actingAs(User::factory()->admin()->create());
-    Livewire::test(SystemSettings::class)->set('logo', UploadedFile::fake()->image('logo.png', 64, 64))->call('save');
+    Livewire::test(BrandingSettings::class)->set('logo', UploadedFile::fake()->image('logo.png', 64, 64))->call('save');
 
     // Laravel's render() inlines embedded images as data URIs; the admin preview links the public URL.
     expect(sampleTicketMail()->render())->toContain('src="data:image/png;base64,');
@@ -66,25 +66,6 @@ it('embeds the logo when sending and links it in previews', function () {
 
     expect($sent->getHtmlBody())->toContain('src="cid:')
         ->and(collect($sent->getAttachments())->contains(fn ($part) => $part->getDisposition() === 'inline'))->toBeTrue();
-});
-
-it('stores the mail texts in the system settings and shows a preview', function () {
-    $this->actingAs(User::factory()->admin()->create());
-
-    Livewire::test(SystemSettings::class)
-        ->assertSet('mailReplyHint', 'Bitte antworten Sie direkt auf diese E-Mail, damit Ihre Nachricht dem Ticket zugeordnet wird.')
-        ->set('mailReplyHint', 'Einfach antworten.')
-        ->set('mailFooter', 'Muster IT GmbH')
-        ->call('save')
-        ->assertHasNoErrors();
-
-    expect(app(AppSettings::class)->get('mail_footer'))->toBe('Muster IT GmbH');
-
-    $this->get('/intern/admin/einstellungen/mail-vorschau')->assertOk()
-        ->assertSee('Einfach antworten.')
-        ->assertSee('Muster IT GmbH')
-        ->assertSee('Guten Tag Erika Muster');
-    $this->actingAs(User::factory()->staff()->create())->get('/intern/admin/einstellungen/mail-vorschau')->assertForbidden();
 });
 
 it('renders staff notifications in the same layout', function () {

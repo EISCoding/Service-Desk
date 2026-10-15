@@ -14,9 +14,9 @@
     <x-ui.card :padding="false">
         @if ($this->groups->isEmpty())
             @if ($search !== '')
-                <x-ui.empty-state icon="magnifying-glass" title="Keine Treffer" description="Keine Gruppe passt zu „{{ $search }}“." />
+                <x-ui.empty-state icon="search" title="Keine Treffer" description="Keine Gruppe passt zu „{{ $search }}“." />
             @else
-                <x-ui.empty-state icon="user-group" title="Noch keine Gruppen" description="Lege Gruppen wie „Support“ oder „Technik“ an und weise ihnen Mitarbeiter zu.">
+                <x-ui.empty-state icon="network-chart" title="Noch keine Gruppen" description="Lege Gruppen wie „Support“ oder „Technik“ an und weise ihnen Mitarbeiter zu.">
                     <x-ui.button variant="secondary" size="sm" icon="plus" wire:click="create">Neue Gruppe</x-ui.button>
                 </x-ui.empty-state>
             @endif

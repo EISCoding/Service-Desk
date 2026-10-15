@@ -20,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'is_active', 'password', 'theme', 'signature', 'ticket_view', 'notification_settings'])]
+#[Fillable(['name', 'email', 'is_active', 'password', 'theme', 'sidebar_collapsed', 'signature', 'ticket_view', 'notification_settings'])]
 #[Hidden(['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'])]
 class User extends Authenticatable
 {
@@ -32,7 +32,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected array $activityIgnored = ['theme', 'signature', 'ticket_view', 'notification_settings', 'two_factor_secret', 'two_factor_recovery_codes'];
+    protected array $activityIgnored = ['theme', 'sidebar_collapsed', 'signature', 'ticket_view', 'notification_settings', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     /**
      * @var array<string, mixed>
@@ -113,6 +113,7 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'password' => 'hashed',
             'theme' => Theme::class,
+            'sidebar_collapsed' => 'boolean',
             'notification_settings' => 'array',
             'two_factor_confirmed_at' => 'datetime',
         ];

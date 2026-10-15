@@ -3,27 +3,27 @@
 <div wire:poll.30s="checkForChanges" class="mx-auto max-w-6xl">
     <header class="mb-6">
         <p class="text-[13px] font-medium text-ink-muted">{{ now()->isoFormat('dddd, D. MMMM') }}</p>
-        <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>
+        <h1 class="mt-0.5 text-[24px] leading-tight font-semibold tracking-tight">{{ $this->greeting() }}</h1>
     </header>
 
     {{-- Key figures, each leads to the matching ticket list --}}
     <ul class="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Kennzahlen">
         @foreach ([
-            ['mine', 'Meine offenen', 'inbox', 'bg-accent-fill'],
-            ['unread', 'Neue Kundenantworten', 'chat-bubble-left-ellipsis', 'bg-indigo-500'],
-            ['due', 'Wiedervorlagen fällig', 'bell-alert', 'bg-orange-500'],
+            ['mine', 'Meine offenen', 'collection', 'bg-accent-fill'],
+            ['unread', 'Neue Kundenantworten', 'message-rounded-dots', 'bg-indigo-500'],
+            ['due', 'Wiedervorlagen fällig', 'bell-ring', 'bg-orange-500'],
             ['unassigned', 'Nicht zugeordnet', 'user-plus', 'bg-zinc-500'],
         ] as [$key, $label, $icon, $color])
             <li>
                 <a href="{{ route('intern.tickets.index', ['ansicht' => $key]) }}" wire:navigate class="group flex h-full flex-col gap-3 rounded-card bg-surface p-4 shadow-card transition hover:-translate-y-px hover:shadow-pop">
                     <span class="flex items-center justify-between">
                         <span class="grid size-8 place-items-center rounded-[10px] text-white {{ $color }}">
-                            <x-dynamic-component :component="'heroicon-s-'.$icon" class="size-[18px]" aria-hidden="true" />
+                            <x-dynamic-component :component="\App\Support\Icon::component($icon, solid: true)" class="size-[18px]" aria-hidden="true" />
                         </span>
-                        <x-heroicon-m-chevron-right class="size-4 text-ink-faint transition group-hover:translate-x-0.5" aria-hidden="true" />
+                        <x-bx-chevron-right class="size-4 text-ink-faint transition group-hover:translate-x-0.5" aria-hidden="true" />
                     </span>
                     <span>
-                        <span class="block text-[28px] leading-none font-bold tracking-tight tabular-nums">{{ $counts[$key] }}</span>
+                        <span class="block text-[26px] leading-none font-semibold tracking-tight tabular-nums">{{ $counts[$key] }}</span>
                         <span class="mt-1 block text-[13px] font-medium text-ink-muted">{{ $label }}</span>
                     </span>
                 </a>
@@ -34,7 +34,7 @@
     <div class="mt-6 grid items-start gap-6 lg:grid-cols-2">
         <x-ui.card title="Neue Kundenantworten" :padding="false">
             @if ($this->unread->isEmpty())
-                <p class="flex items-center gap-2 px-5 pt-2 pb-5 text-sm text-ink-muted"><x-heroicon-o-check-circle class="size-5 text-green-600 dark:text-green-400" aria-hidden="true" /> Alles gelesen.</p>
+                <p class="flex items-center gap-2 px-5 pt-2 pb-5 text-sm text-ink-muted"><x-bx-check-circle class="size-5 text-green-600 dark:text-green-400" aria-hidden="true" /> Alles gelesen.</p>
             @else
                 <ul class="mt-2 divide-y divide-hairline border-t border-hairline">
                     @foreach ($this->unread as $ticket)
@@ -46,7 +46,7 @@
 
         <x-ui.card title="Fällige Wiedervorlagen" :padding="false">
             @if ($this->due->isEmpty())
-                <p class="flex items-center gap-2 px-5 pt-2 pb-5 text-sm text-ink-muted"><x-heroicon-o-check-circle class="size-5 text-green-600 dark:text-green-400" aria-hidden="true" /> Nichts fällig.</p>
+                <p class="flex items-center gap-2 px-5 pt-2 pb-5 text-sm text-ink-muted"><x-bx-check-circle class="size-5 text-green-600 dark:text-green-400" aria-hidden="true" /> Nichts fällig.</p>
             @else
                 <ul class="mt-2 divide-y divide-hairline border-t border-hairline">
                     @foreach ($this->due as $ticket)

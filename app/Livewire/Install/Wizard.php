@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Support\AccentColor;
 use App\Support\AppSettings;
 use App\Support\EnvFile;
+use App\Support\IconGenerator;
 use App\Support\Installation;
 use Database\Seeders\MailTemplateSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
@@ -145,6 +146,7 @@ class Wizard extends Component
             ['label' => 'Datenbank-Treiber (MySQL/MariaDB)', 'ok' => extension_loaded('pdo_mysql') || extension_loaded('pdo_sqlite'), 'hint' => 'Die Erweiterung pdo_mysql in den PHP-Einstellungen aktivieren.', 'required' => true],
             ['label' => 'Schreibrechte für storage und bootstrap/cache', 'ok' => is_writable(storage_path()) && is_writable(base_path('bootstrap/cache')), 'hint' => 'In Plesk im Dateimanager „Berechtigungen reparieren“.', 'required' => true],
             ['label' => 'Konfigurationsdatei .env beschreibbar', 'ok' => EnvFile::writable(), 'hint' => 'Die Datei .env (oder der Ordner der Anwendung) muss für PHP beschreibbar sein.', 'required' => true],
+            ['label' => 'Bildbearbeitung (GD)', 'ok' => IconGenerator::available(), 'hint' => 'Die Erweiterung gd in den PHP-Einstellungen aktivieren, sonst lassen sich keine App-Icons erzeugen.', 'required' => false],
             ['label' => 'Hintergrundprozesse (proc_open)', 'ok' => function_exists('proc_open') && ! in_array('proc_open', $disabled, true), 'hint' => 'proc_open aus „disable_functions“ entfernen, sonst laufen Mails und Benachrichtigungen nur beim Seitenaufruf.', 'required' => false],
         ];
     }

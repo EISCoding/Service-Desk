@@ -16,11 +16,19 @@ class AppSettings
     public const DEFAULTS = [
         'company_name' => null,
         'logo' => null,         // path on the local disk
-        'logo_version' => null, // cache busting for the logo URL
+        'logo_version' => null, // cache busting for the logo URLs
+        'logo_dark' => null,    // optional logo for dark surfaces
+        'app_icon' => null,     // icons generated from an upload (see Branding)
+        'app_icon_badge' => null,
+        'app_icon_background' => null,
+        'favicon' => null,
+        'icon_version' => null, // cache busting for icons and favicon
         'accent' => 'blue',
         'reopen_days' => null,
         'mail_reply_hint' => null, // line below ticket mails
-        'mail_footer' => null,     // e.g. address, phone, legal details
+        'mail_footer' => null,     // plain text footer of older versions
+        'mail_footer_html' => null, // footer from the mail design editor
+        'mail_design' => null,     // see MailBranding::DEFAULT_DESIGN
         'push_vapid' => null,      // web push key pair (private key encrypted)
     ];
 

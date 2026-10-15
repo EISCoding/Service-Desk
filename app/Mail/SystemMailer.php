@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Mail\Mailboxes\MailboxSettings;
 use App\Models\Mailbox;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,17 +24,41 @@ class SystemMailer
             $mail->from($mailbox->email, $mailbox->name);
         }
 
+        $mailer = self::mailer($mailbox);
+
+        return $mailer ? $mail->mailer($mailer) : $mail;
+    }
+
+    /**
+     * Sends a mailable right away (e.g. the test mail of the mail design).
+     */
+    public static function send(Mailable $mail, string $to): void
+    {
+        $mailbox = Mailbox::default();
+
+        if ($mailbox) {
+            $mail->from($mailbox->email, $mailbox->name);
+        }
+
+        Mail::mailer(self::mailer($mailbox))->to($to)->send($mail);
+    }
+
+    /**
+     * Name of the mailer to use, null for the default from the .env.
+     */
+    private static function mailer(?Mailbox $mailbox): ?string
+    {
         if ($override = config('servicedesk.mail.mailer')) {
-            return $mail->mailer($override);
+            return $override;
         }
 
         if (! $mailbox) {
-            return $mail;
+            return null;
         }
 
         config(['mail.mailers.mailbox' => MailboxSettings::smtpConfigFor($mailbox)]);
         Mail::purge('mailbox'); // a long-running worker picks up changed mailbox settings
 
-        return $mail->mailer('mailbox');
+        return 'mailbox';
     }
 }

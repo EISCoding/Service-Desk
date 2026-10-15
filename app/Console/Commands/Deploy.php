@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use BladeUI\Icons\Factory as IconFactory;
 use Database\Seeders\MailTemplateSeeder;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Console\Command;
@@ -39,8 +40,27 @@ class Deploy extends Command
             }
         }
 
+        // Caches of the previous version must not leak into the new one: an icon manifest
+        // without newly added icon sets, for example, breaks compiling the views.
+        $this->components->task('Clear old caches', function () {
+            foreach (['icons:clear', 'view:clear', 'route:clear', 'event:clear', 'config:clear'] as $command) {
+                if ($this->getApplication()->has($command)) {
+                    $this->callSilently($command);
+                }
+            }
+        });
+
         if (! $this->option('no-optimize')) {
-            $this->components->task('Caches', fn () => $this->callSilently('optimize') === 0);
+            $this->components->task('Caches', function () {
+                // This process registered the icon components while booting, possibly from the
+                // old manifest: rebuild it and register them again before the views are compiled.
+                if ($this->getApplication()->has('icons:cache') && class_exists(IconFactory::class)) {
+                    $this->callSilently('icons:cache');
+                    app(IconFactory::class)->registerComponents();
+                }
+
+                return $this->callSilently('optimize') === 0;
+            });
         }
 
         // A worker started by the scheduler finishes its current job and exits.

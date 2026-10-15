@@ -153,3 +153,23 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Sichtprüfung, Barrierefreiheit, README (Installation über den Assistenten)
 
 **Fertig wenn:** Neue Antworten erscheinen ohne Neuladen, Board funktioniert per Drag & Drop, eine frische Plesk-Installation lässt sich komplett im Browser einrichten, Push kommt aufs Handy, Tests und Audit grün.
+
+
+---
+
+## Phase 9 – Redesign, Branding und Mail-Editor
+
+Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwurf **E · Service Desk** (Design-Canvas), Icons von Boxicons, Seitenleiste einklappbar (nur Icons), Logos und Favicons hochladbar, WYSIWYG für Mail-Vorlagen und das Mail-Layout.
+
+- [x] Boxicons als eigenes Icon-Set (Blade Icons), alle Heroicons ersetzt, Heroicons-Paket entfernt
+- [x] Branding im Admin: Logo hell und dunkel, Favicon und App-Icon hochladen; Icons für iPhone, Android, Push und Manifest werden automatisch erzeugt; Vorschau und Zurücksetzen
+- [x] WYSIWYG-Editor (TipTap) für Antworten, Vorlagen, Textbausteine und Signaturen: Überschriften, Fett/Kursiv/Unterstrichen, Listen, Links, Ausrichtung, Textfarbe, Button-Link, Trennlinie, Platzhalter als Chips
+- [x] Mail-Design im Admin: Logo, Farben, Schrift, Kopf- und Fußzeile (WYSIWYG), Antwort-Hinweis; Live-Vorschau mit Beispieldaten; Testmail senden
+- [x] Design-System nach Entwurf E: Farben, Flächen, Radien, Schatten, Typografie; Komponenten (Buttons, Felder, Pills, Tabs, Menüs, Tabellen) in Hell und Dunkel
+- [x] Intern-Layout: einklappbare Seitenleiste (nur Icons mit Tooltips, Zustand pro Benutzer gemerkt), Ansichten mit Zählern, Kopfzeile mit Suche und „Neues Ticket“, Handy mit Tab-Leiste
+- [x] Ticket-Arbeitsplatz nach Entwurf E: Liste mit Vorschau, Verlauf als Karten, Eigenschaften-Leiste, Composer mit „Senden mit Status“
+- [x] Übrige Seiten im neuen Design: Übersicht, Kunden, Termine, Vorlagen, Einstellungen, Admin, Installer, Fehlerseiten
+- [x] Portal und Anmeldeseiten im neuen Design
+- [x] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit, README
+
+**Fertig wenn:** Alle Seiten im neuen Design, keine Heroicons mehr, Seitenleiste einklappbar, Branding und Mail-Design im Admin pflegbar, Vorlagen im WYSIWYG-Editor, Tests und Audit grün.

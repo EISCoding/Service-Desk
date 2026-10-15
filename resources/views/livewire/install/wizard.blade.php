@@ -4,7 +4,7 @@
 <div>
     <div class="mb-8 text-center">
         <x-brand-mark size="lg" class="mx-auto shadow-md" />
-        <h1 class="mt-4 text-[26px] font-bold tracking-tight">ServiceDesk einrichten</h1>
+        <h1 class="mt-4 text-[24px] font-semibold tracking-tight">ServiceDesk einrichten</h1>
         <p class="mt-1 text-sm text-ink-muted">In wenigen Schritten startklar – alles im Browser.</p>
     </div>
 
@@ -19,7 +19,7 @@
                     'bg-ink/[0.07] text-ink-muted' => $position > $index,
                 ])>
                     @if ($position < $index)
-                        <x-heroicon-m-check class="size-3.5" aria-hidden="true" />
+                        <x-bx-check class="size-3.5" aria-hidden="true" />
                     @else
                         {{ $position + 1 }}
                     @endif
@@ -43,11 +43,11 @@
                 @foreach ($this->checks as $check)
                     <li class="flex items-start gap-3">
                         @if ($check['ok'])
-                            <x-heroicon-s-check-circle class="size-5 shrink-0 text-green-600 dark:text-green-400" aria-hidden="true" />
+                            <x-bxs-check-circle class="size-5 shrink-0 text-green-600 dark:text-green-400" aria-hidden="true" />
                         @elseif ($check['required'])
-                            <x-heroicon-s-x-circle class="size-5 shrink-0 text-red-600 dark:text-red-400" aria-hidden="true" />
+                            <x-bxs-x-circle class="size-5 shrink-0 text-red-600 dark:text-red-400" aria-hidden="true" />
                         @else
-                            <x-heroicon-s-exclamation-triangle class="size-5 shrink-0 text-orange-500" aria-hidden="true" />
+                            <x-bxs-error class="size-5 shrink-0 text-orange-500" aria-hidden="true" />
                         @endif
                         <span class="text-sm">
                             <span class="font-medium">{{ $check['label'] }}</span>
@@ -63,7 +63,7 @@
                 @if ($this->canContinue())
                     <x-ui.button wire:click="start">Los geht’s</x-ui.button>
                 @else
-                    <x-ui.button wire:click="$refresh" variant="secondary" icon="arrow-path">Erneut prüfen</x-ui.button>
+                    <x-ui.button wire:click="$refresh" variant="secondary" icon="refresh">Erneut prüfen</x-ui.button>
                 @endif
             </div>
 
@@ -109,7 +109,7 @@
                             <img src="{{ $logo->temporaryUrl() }}" alt="" class="size-12 rounded-xl object-contain ring-1 ring-hairline">
                         @endif
                         <label class="inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] bg-surface px-3 py-1.5 text-sm font-medium ring-1 ring-ink/12 ring-inset hover:bg-surface-muted">
-                            <x-heroicon-m-arrow-up-tray class="size-4" aria-hidden="true" /> Datei wählen
+                            <x-bx-upload class="size-4" aria-hidden="true" /> Datei wählen
                             <input type="file" wire:model="logo" accept="image/png,image/jpeg,image/webp" class="sr-only">
                         </label>
                     </div>
@@ -191,7 +191,7 @@
         @else
             <div class="text-center">
                 <span class="mx-auto grid size-12 place-items-center rounded-full bg-green-500/15 text-green-700 dark:text-green-400">
-                    <x-heroicon-s-check class="size-6" aria-hidden="true" />
+                    <x-bx-check class="size-6" aria-hidden="true" />
                 </span>
                 <h2 class="mt-3 text-lg font-semibold">Fertig eingerichtet</h2>
                 <p class="mt-1 text-sm text-ink-muted">Ein letzter Schritt in Plesk, damit Mails und Erinnerungen im Hintergrund laufen:</p>
@@ -205,7 +205,7 @@
             </ol>
             <p class="mt-4 text-[13px] text-ink-muted">Ob der Planer läuft, siehst du später unter Admin → Protokolle → Hintergrund-Jobs.</p>
             <div class="mt-6 flex justify-center">
-                <x-ui.button :href="url('/intern/login')" icon="arrow-right">Zur Anmeldung</x-ui.button>
+                <x-ui.button :href="url('/intern/login')" icon="right-arrow-alt">Zur Anmeldung</x-ui.button>
             </div>
         @endif
     </x-ui.card>

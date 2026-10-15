@@ -9,7 +9,7 @@
 @php
     $contact = auth('contact')->user();
     $nav = array_filter([
-        ['route' => 'portal.home', 'active' => 'portal.home|portal.tickets.show', 'label' => 'Tickets', 'icon' => 'inbox-stack'],
+        ['route' => 'portal.home', 'active' => 'portal.home|portal.tickets.show', 'label' => 'Tickets', 'icon' => 'collection'],
         ['route' => 'portal.tickets.create', 'active' => 'portal.tickets.create', 'label' => 'Neues Ticket', 'icon' => 'plus-circle'],
         ['route' => 'portal.profile', 'active' => 'portal.profile', 'label' => 'Profil', 'icon' => 'user-circle'],
     ], fn (array $item) => Route::has($item['route']));
@@ -17,7 +17,7 @@
 
 <x-layouts::base :title="$title">
     <div x-data class="min-h-full">
-        <header class="sticky top-0 z-20 border-b border-hairline bg-canvas/75 backdrop-blur-2xl backdrop-saturate-150">
+        <header class="sticky top-0 z-20 border-b border-separator bg-surface/85 backdrop-blur-xl backdrop-saturate-150">
             <div class="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4 sm:px-6">
                 <a href="{{ route('portal.home') }}" wire:navigate class="flex items-center gap-2.5">
                     <x-brand-mark size="sm" />
@@ -32,20 +32,23 @@
                             <li>
                                 <a href="{{ route($item['route']) }}" wire:navigate @if ($active) aria-current="page" @endif
                                     @class([
-                                        'rounded-full px-3.5 py-1.5 text-sm transition-colors',
-                                        'bg-ink/[0.07] font-semibold text-ink' => $active,
+                                        'inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition-colors',
+                                        'bg-ink/[0.07] font-semibold text-ink dark:bg-white/[0.08]' => $active,
                                         'text-ink-muted hover:bg-ink/[0.04] hover:text-ink' => ! $active,
-                                    ])>{{ $item['label'] }}</a>
+                                    ])>
+                                    <x-dynamic-component :component="\App\Support\Icon::component($item['icon'], solid: $active)" @class(['size-[18px]', 'text-accent' => $active]) aria-hidden="true" />
+                                    {{ $item['label'] }}
+                                </a>
                             </li>
                         @endforeach
                     </ul>
                 </nav>
 
                 <div class="relative ml-auto" x-data="{ open: false }" x-on:keydown.escape="open = false">
-                    <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="flex items-center gap-2 rounded-full py-1 pr-2 pl-1 text-sm hover:bg-ink/[0.05]">
+                    <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="flex items-center gap-2 rounded-lg py-1 pr-2 pl-1 text-sm hover:bg-ink/[0.05]">
                         <x-ui.avatar :name="$contact->fullName()" size="sm" />
                         <span class="hidden max-w-40 truncate font-medium sm:block">{{ $contact->fullName() }}</span>
-                        <x-heroicon-m-chevron-down class="size-4 text-ink-faint" aria-hidden="true" />
+                        <x-bx-chevron-down class="size-4 text-ink-faint" aria-hidden="true" />
                     </button>
                     <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-64 rounded-xl bg-surface p-1 shadow-pop">
                         <div class="px-3 py-2">
@@ -61,14 +64,14 @@
                         <div class="my-1 border-t border-separator"></div>
                         @if (Route::has('portal.profile'))
                             <a href="{{ route('portal.profile') }}" wire:navigate class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
-                                <x-heroicon-o-user-circle class="size-4 text-ink-muted" aria-hidden="true" />
+                                <x-bx-user-circle class="size-4 text-ink-muted" aria-hidden="true" />
                                 Profil
                             </a>
                         @endif
                         <form method="POST" action="{{ route('portal.logout') }}">
                             @csrf
                             <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
-                                <x-heroicon-o-arrow-right-start-on-rectangle class="size-4 text-ink-muted" aria-hidden="true" />
+                                <x-bx-log-out class="size-4 text-ink-muted" aria-hidden="true" />
                                 Abmelden
                             </button>
                         </form>
@@ -82,7 +85,7 @@
         </main>
 
         {{-- Tab bar (mobile) --}}
-        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl backdrop-saturate-150 md:hidden" aria-label="Hauptnavigation">
+        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-separator bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl backdrop-saturate-150 md:hidden" aria-label="Hauptnavigation">
             <ul class="mx-auto flex max-w-lg">
                 @foreach ($nav as $item)
                     @php($active = request()->routeIs(...explode('|', $item['active'])))
@@ -93,7 +96,7 @@
                                 'text-accent' => $active,
                                 'text-ink-faint hover:text-ink' => ! $active,
                             ])>
-                            <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" class="size-6" aria-hidden="true" />
+                            <x-dynamic-component :component="\App\Support\Icon::component($item['icon'], solid: $active)" class="size-6" aria-hidden="true" />
                             {{ $item['label'] }}
                         </a>
                     </li>

@@ -17,7 +17,7 @@
 @if (! empty($salutation))
 {{ $salutation }}
 @endif
-@if ($footer = app(\App\Support\MailBranding::class)->footer())
+@if ($footer = ($brand ?? app(\App\Support\MailBranding::class))->footerText())
 
 --
 {!! $footer !!}

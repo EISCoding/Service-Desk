@@ -27,7 +27,7 @@
                 <div class="flex items-center gap-0.5">
                     @can('pin', $note)
                         <x-ui.button variant="ghost" size="sm" wire:click="togglePin({{ $note->id }})" :title="$note->is_pinned ? 'Lösen' : 'Anheften'">
-                            <x-dynamic-component :component="$note->is_pinned ? 'heroicon-s-bookmark' : 'heroicon-o-bookmark'" class="size-4" aria-hidden="true" />
+                            <x-dynamic-component :component="$note->is_pinned ? 'bxs-bookmark' : 'bx-bookmark'" class="size-4" aria-hidden="true" />
                             <span class="sr-only">{{ $note->is_pinned ? 'Lösen' : 'Anheften' }}</span>
                         </x-ui.button>
                     @endcan
@@ -54,7 +54,7 @@
         </article>
     @empty
         <x-ui.card :padding="false">
-            <x-ui.empty-state icon="pencil-square" title="Noch keine Notizen" description="Interne Hinweise zu diesem Kunden – für Kunden nie sichtbar." />
+            <x-ui.empty-state icon="edit" title="Noch keine Notizen" description="Interne Hinweise zu diesem Kunden – für Kunden nie sichtbar." />
         </x-ui.card>
     @endforelse
 </div>

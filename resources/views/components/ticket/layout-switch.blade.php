@@ -3,8 +3,8 @@
 
 @php
     $items = [
-        'list' => ['Liste', 'list-bullet', route('intern.tickets.index', ['darstellung' => 'liste'])],
-        'board' => ['Board', 'view-columns', route('intern.tickets.board')],
+        'list' => ['Liste', 'list-ul', route('intern.tickets.index', ['darstellung' => 'liste'])],
+        'board' => ['Board', 'columns', route('intern.tickets.board')],
     ];
 @endphp
 
@@ -18,7 +18,7 @@
                 'bg-surface text-ink shadow-[0_1px_2px_rgb(0_0_0/0.08),0_0_0_0.5px_rgb(0_0_0/0.04)] dark:bg-white/15' => $current === $key,
                 'text-ink-muted hover:text-ink' => $current !== $key,
             ])>
-            <x-dynamic-component :component="'heroicon-m-'.$icon" class="size-4" aria-hidden="true" />
+            <x-dynamic-component :component="\App\Support\Icon::component($icon)" class="size-4" aria-hidden="true" />
             <span @class(['sr-only' => $compact])>{{ $label }}</span>
         </a>
     @endforeach

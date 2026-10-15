@@ -13,7 +13,7 @@
 
     <x-ui.card :padding="false">
         @if ($this->mailboxes->isEmpty())
-            <x-ui.empty-state icon="inbox" title="Noch keine Postfächer" description="Lege ein Postfach an, damit eingehende Mails zu Tickets werden.">
+            <x-ui.empty-state icon="envelope" title="Noch keine Postfächer" description="Lege ein Postfach an, damit eingehende Mails zu Tickets werden.">
                 <x-ui.button variant="secondary" size="sm" icon="plus" wire:click="create">Neues Postfach</x-ui.button>
             </x-ui.empty-state>
         @else
@@ -75,7 +75,7 @@
                 <fieldset class="space-y-4 rounded-xl bg-surface-muted/60 p-4">
                     <div class="flex items-center justify-between gap-3">
                         <legend class="text-sm font-semibold">{{ $heading }}</legend>
-                        <x-ui.button variant="secondary" size="sm" icon="signal" wire:click="test{{ ucfirst($protocol) }}">
+                        <x-ui.button variant="secondary" size="sm" icon="plug" wire:click="test{{ ucfirst($protocol) }}">
                             <span wire:loading.remove wire:target="test{{ ucfirst($protocol) }}">Verbindung testen</span>
                             <span wire:loading wire:target="test{{ ucfirst($protocol) }}">Teste …</span>
                         </x-ui.button>

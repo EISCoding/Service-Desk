@@ -12,11 +12,11 @@
         <button type="button" {{ $attributes->whereStartsWith('wire:click') }} class="group inline-flex items-center gap-1 hover:text-ink focus-visible:outline-2 focus-visible:outline-accent">
             {{ $slot }}
             @if ($direction === 'asc')
-                <x-heroicon-m-chevron-up class="size-3.5" aria-hidden="true" />
+                <x-bx-chevron-up class="size-3.5" aria-hidden="true" />
             @elseif ($direction === 'desc')
-                <x-heroicon-m-chevron-down class="size-3.5" aria-hidden="true" />
+                <x-bx-chevron-down class="size-3.5" aria-hidden="true" />
             @else
-                <x-heroicon-m-chevron-up-down class="size-3.5 opacity-0 group-hover:opacity-100" aria-hidden="true" />
+                <x-bx-expand-vertical class="size-3.5 opacity-0 group-hover:opacity-100" aria-hidden="true" />
             @endif
         </button>
     @else

@@ -39,3 +39,23 @@ it('converts between HTML and plain text', function () {
     expect(Html::toText('<p>Zeile 1</p><p>Zeile 2 &amp; mehr</p>'))->toBe("Zeile 1\nZeile 2 & mehr")
         ->and(Html::fromText("Hallo <b>\nWelt\n\nNeuer Absatz"))->toBe("<p>Hallo &lt;b&gt;<br>\nWelt</p><p>Neuer Absatz</p>");
 });
+
+it('keeps the editor formatting: alignment, palette colors, buttons and placeholders', function () {
+    $html = '<p style="text-align: center; position: fixed">a <span style="color: rgb(209, 36, 47)">rot</span></p>'
+        .'<h2 style="text-align:right;margin-top:900px">Titel</h2>'
+        .'<p><a href="https://firma.de" data-type="button">Zum Termin</a> <span data-type="placeholder">{ticket.nummer}</span></p><hr>';
+
+    expect(Html::sanitize($html))->toBe(
+        '<p style="text-align: center">a <span style="color: #d1242f">rot</span></p>'
+        .'<h2 style="text-align: right">Titel</h2>'
+        .'<p><a href="https://firma.de" data-type="button" rel="noopener noreferrer" target="_blank">Zum Termin</a> <span data-type="placeholder">{ticket.nummer}</span></p><hr />'
+    );
+});
+
+it('drops colors outside the palette and unknown data types', function () {
+    // Incoming mails often force black text, which would be unreadable in dark mode.
+    expect(Html::sanitize('<p style="color: #000000">a</p><span style="color: #d1242f; background: url(https://track.er/x)">b</span>'))
+        ->toBe('<p>a</p><span style="color: #d1242f">b</span>')
+        ->and(Html::sanitize('<a href="https://x.de" data-type="script">x</a><span data-type="button">y</span><p data-type="placeholder">z</p>'))
+        ->toBe('<a href="https://x.de" rel="noopener noreferrer" target="_blank">x</a><span>y</span><p>z</p>');
+});

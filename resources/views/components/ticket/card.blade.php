@@ -22,7 +22,7 @@
             <x-ui.badge :color="$ticket->priority->color()">{{ $ticket->priority->label() }}</x-ui.badge>
         @endif
         @if ($ticket->follow_up_due)
-            <x-ui.badge color="orange"><x-heroicon-m-bell-alert class="size-3" aria-hidden="true" /> Fällig</x-ui.badge>
+            <x-ui.badge color="orange"><x-bxs-bell-ring class="size-3" aria-hidden="true" /> Fällig</x-ui.badge>
         @elseif ($ticket->follow_up_at)
             <span class="text-[11px] text-ink-muted">Wiedervorlage {{ $ticket->follow_up_at->isoFormat('D. MMM') }}</span>
         @endif

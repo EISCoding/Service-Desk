@@ -26,9 +26,9 @@ class TicketList extends Component
     use PollsForChanges;
 
     public const VIEWS = [
-        'mine' => 'Meine',
+        'mine' => 'Meine Tickets',
         'groups' => 'Meine Gruppen',
-        'all' => 'Alle',
+        'all' => 'Alle Tickets',
         'unassigned' => 'Nicht zugeordnet',
     ];
 
@@ -80,7 +80,7 @@ class TicketList extends Component
     public int $limit = self::PAGE_SIZE;
 
     /**
-     * @param  string|null  $preset  start from a dashboard figure: mine | unread | due | unassigned
+     * @param  string|null  $preset  start from a dashboard figure or sidebar view: mine | unread | due | unassigned | all
      */
     public function mount(?int $selectedId = null, ?string $preset = null): void
     {
@@ -92,7 +92,7 @@ class TicketList extends Component
             $this->view = auth()->user()->ticket_view ?? 'all';
         }
 
-        if (in_array($preset, ['mine', 'unread', 'due', 'unassigned'], true)) {
+        if (in_array($preset, ['mine', 'unread', 'due', 'unassigned', 'all'], true)) {
             $this->resetFilters();
             $this->view = in_array($preset, ['mine', 'unassigned'], true) ? $preset : 'all';
             $this->unreadOnly = $preset === 'unread';

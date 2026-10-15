@@ -6,7 +6,7 @@
             @unless ($this->contact->customer->isPrivate())
                 <p class="text-[13px] font-medium text-ink-muted">{{ $this->contact->customer->company }}</p>
             @endunless
-            <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>
+            <h1 class="mt-0.5 text-[24px] leading-tight font-semibold tracking-tight">{{ $this->greeting() }}</h1>
             <p class="mt-1 text-[15px] text-ink-muted">{{ $this->summaryText() }}</p>
         </div>
         @if (Route::has('portal.tickets.create'))
@@ -18,7 +18,7 @@
         <section aria-labelledby="waiting-title" class="mb-8">
             <h2 id="waiting-title" class="mb-3 flex items-center gap-2 text-[15px] font-semibold">
                 <span class="grid size-6 place-items-center rounded-full bg-yellow-400/25 text-yellow-800 dark:text-yellow-300">
-                    <x-heroicon-s-chat-bubble-left-ellipsis class="size-3.5" aria-hidden="true" />
+                    <x-bxs-message-rounded-dots class="size-3.5" aria-hidden="true" />
                 </span>
                 Wartet auf Ihre Antwort
                 @if ($summary['waiting'] > $this->waiting->count())
@@ -35,7 +35,7 @@
                                 Unsere letzte Nachricht {{ ($ticket->team_replied_at ?? $ticket->last_activity_at)?->diffForHumans() }}
                             </span>
                             <span class="mt-auto inline-flex items-center gap-0.5 pt-3 text-[13px] font-medium text-accent">
-                                Jetzt antworten <x-heroicon-m-chevron-right class="size-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+                                Jetzt antworten <x-bx-chevron-right class="size-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
                             </span>
                         </a>
                     </li>
@@ -57,9 +57,9 @@
     <x-ui.card :padding="false">
         @if ($this->tickets->isEmpty())
             @if ($search !== '' || $state !== 'open')
-                <x-ui.empty-state icon="magnifying-glass" title="Keine Tickets gefunden" description="Kein Ticket passt zu Suche und Filter." />
+                <x-ui.empty-state icon="search" title="Keine Tickets gefunden" description="Kein Ticket passt zu Suche und Filter." />
             @else
-                <x-ui.empty-state icon="inbox" title="Keine offenen Tickets" description="Wenn Sie ein Anliegen haben, legen Sie einfach ein neues Ticket an." />
+                <x-ui.empty-state icon="collection" title="Keine offenen Tickets" description="Wenn Sie ein Anliegen haben, legen Sie einfach ein neues Ticket an." />
             @endif
         @else
             <ul class="divide-y divide-hairline transition-opacity" wire:loading.delay.class="opacity-50">
@@ -89,7 +89,7 @@
                             </p>
                             @if ($appointment = $ticket->appointments->first())
                                 <p class="mt-1 inline-flex items-center gap-1 text-[12px] font-medium text-teal-700 dark:text-teal-300">
-                                    <x-heroicon-m-calendar-days class="size-3.5" aria-hidden="true" /> Vor-Ort-Termin {{ $appointment->timeRange() }}
+                                    <x-bx-calendar class="size-3.5" aria-hidden="true" /> Vor-Ort-Termin {{ $appointment->timeRange() }}
                                 </p>
                             @endif
                         </div>

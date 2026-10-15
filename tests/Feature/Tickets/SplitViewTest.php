@@ -18,7 +18,7 @@ it('shows list and ticket side by side under /intern/tickets/{id}', function () 
         ->assertSee("<title>Ticket#{$this->ticket->number} Drucker defekt · ServiceDesk</title>", false)
         ->assertSeeLivewire(TicketList::class)
         ->assertSeeLivewire(TicketView::class)
-        ->assertSee('lg:grid-cols-[minmax(320px,400px)_1fr]', false)
+        ->assertSee('lg:grid-cols-[minmax(320px,380px)_1fr]', false)
         ->assertSee('aria-current="page"', false);
 });
 
