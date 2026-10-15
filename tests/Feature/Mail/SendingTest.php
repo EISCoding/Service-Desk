@@ -117,7 +117,9 @@ it('suggests the CC recipients of the last customer mail without our own address
         ->assertHasErrors('newCc');
 
     Queue::fake();
-    $composer->set('body', '<div>x</div>')->call('send');
+    // The invalid address is still in the field and blocks sending until it is corrected or cleared.
+    $composer->set('body', '<div>x</div>')->call('send')->assertHasErrors('newCc');
+    $composer->set('newCc', '')->call('send')->assertHasNoErrors();
 
     expect($this->ticket->messages()->where('type', 'mail_out')->sole()->cc)
         ->toBe([['email' => 'chef@kunde.test', 'name' => 'Chef'], ['email' => 'neu@kunde.test', 'name' => null]]);

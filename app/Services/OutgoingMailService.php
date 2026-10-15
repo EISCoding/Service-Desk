@@ -61,23 +61,28 @@ class OutgoingMailService
     }
 
     /**
-     * CC proposal for a reply: recipients of the last customer mail without our
-     * own mailboxes and without the main recipient.
+     * CC for the next mail of a ticket (replies and template mails), like "reply all":
+     * - the team answered last: the CC of that answer (removed addresses stay removed)
+     * - the customer wrote since: that CC plus the recipients of the customer's mail
+     * Our own mailboxes and the main recipient are never in the CC.
      *
      * @return list<array{email: string, name: ?string}>
      */
     public function suggestedCc(Ticket $ticket): array
     {
-        $last = $ticket->messages()->reorder()->where('type', MessageType::MailIn->value)->latest('id')->first();
-        if (! $last) {
-            return [];
+        $latest = fn (MessageType $type) => $ticket->messages()->reorder()->where('type', $type->value)->latest('id')->first();
+        $in = $latest(MessageType::MailIn);
+        $out = $latest(MessageType::MailOut);
+
+        $candidates = $out?->cc ?? [];
+        if ($in && (! $out || $in->id > $out->id)) {
+            $candidates = [...$candidates, ...($in->to ?? []), ...($in->cc ?? [])];
+            if ($in->from_email) {
+                $candidates[] = ['email' => $in->from_email, 'name' => $in->from_name];
+            }
         }
 
         $exclude = [...Mailbox::addresses(), strtolower($ticket->recipient()['email'] ?? '')];
-        $candidates = [...($last->to ?? []), ...($last->cc ?? [])];
-        if ($last->from_email) {
-            $candidates[] = ['email' => $last->from_email, 'name' => $last->from_name];
-        }
 
         return collect($candidates)
             ->filter(fn (array $r) => ! in_array(strtolower($r['email']), $exclude, true))

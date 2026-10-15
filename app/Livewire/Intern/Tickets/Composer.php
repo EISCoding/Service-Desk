@@ -118,6 +118,11 @@ class Composer extends Component
         $internal = $this->mode === 'note';
         $this->authorize($internal ? 'addNote' : 'reply', $this->ticket);
 
+        // An address typed into the CC field without pressing Enter is meant to be included.
+        if (! $internal && trim($this->newCc) !== '') {
+            $this->addCc();
+        }
+
         $maxKb = config('servicedesk.attachments.max_kb');
 
         $this->validate([
