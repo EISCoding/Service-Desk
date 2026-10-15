@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\BrandingLogoController;
+use App\Http\Controllers\Intern\Admin\LogDownloadController;
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\MailPreviewController;
 use App\Http\Controllers\Intern\TicketPageController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Portal\InvitationController;
 use App\Http\Controllers\Portal\LoginController;
 use App\Http\Controllers\Portal\PasswordResetController;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
+use App\Livewire\Intern\Admin\Logs\Index as LogIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
 use App\Livewire\Intern\Admin\Settings\Index as AdminSettings;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
@@ -85,6 +87,14 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         Route::livewire('benutzer', UserIndex::class)
             ->middleware('can:viewAny,'.User::class)
             ->name('users.index');
+
+        Route::livewire('protokolle', LogIndex::class)
+            ->middleware('can:'.Permission::AdminLogs->value)
+            ->name('logs');
+        Route::get('protokolle/datei/{file}', LogDownloadController::class)
+            ->middleware('can:'.Permission::AdminLogs->value)
+            ->where('file', '[A-Za-z0-9._-]+\\.log')
+            ->name('logs.download');
 
         Route::livewire('einstellungen', AdminSettings::class)
             ->middleware('can:'.Permission::AdminSettings->value)

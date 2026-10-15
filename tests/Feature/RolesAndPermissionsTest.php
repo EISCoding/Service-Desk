@@ -14,7 +14,7 @@ it('defines exactly the permissions from the plan', function () {
     expect(Permission::values())->toEqualCanonicalizing([
         'tickets.view.own', 'tickets.view.group', 'tickets.view.all', 'tickets.edit', 'tickets.delete',
         'tickets.merge', 'notes.manage', 'customers.manage', 'contacts.portal', 'templates.manage',
-        'admin.users', 'admin.groups', 'admin.mailboxes', 'admin.settings',
+        'admin.users', 'admin.groups', 'admin.mailboxes', 'admin.settings', 'admin.logs',
     ]);
 });
 

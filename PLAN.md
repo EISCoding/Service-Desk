@@ -147,7 +147,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Kanban-Ansicht: Board als zweite Ansicht der Tickets, Spalten nach Status, Drag & Drop ändert den Status, aktualisiert sich laufend
 - [x] Ticketansicht: Kunden-Seitenleiste (Kontakt, Notizen, weitere Tickets), Schnellaktionen, Vollbild-Editor, kompaktere Liste mit Vorschau
 - [x] Kundentyp Firma oder Privatperson (Privatperson ist selbst der Ansprechpartner)
-- [ ] Logs im Admin-Bereich: Systemfehler, Mail-Protokoll, Aktivitäten, Hintergrund-Jobs
+- [x] Logs im Admin-Bereich: Systemfehler, Mail-Protokoll, Aktivitäten, Hintergrund-Jobs
 - [ ] Web-Push: Benachrichtigungen im Browser und aufs Handy (Service Worker, App-Manifest), pro Benutzer aktivierbar
 - [ ] Installations-Assistent: Datenbank, Admin-Konto, Firma und Logo, Postfach (SMTP/IMAP); danach gesperrt
 - [ ] Sichtprüfung, Barrierefreiheit, README (Installation über den Assistenten)
