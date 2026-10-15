@@ -128,8 +128,27 @@ it('adds push to ticket notifications of users with a device', function () {
 });
 
 it('serves the web app manifest and the service worker', function () {
-    $this->get(route('manifest'))->assertOk()->assertJsonPath('start_url', '/intern')->assertJsonPath('display', 'standalone');
-    $this->get(route('manifest', ['start' => 'portal']))->assertJsonPath('start_url', '/portal');
+    $this->get('/manifest.json')
+        ->assertOk()
+        ->assertHeader('Content-Type', 'application/manifest+json')
+        ->assertJsonPath('start_url', '/intern')
+        ->assertJsonPath('display', 'standalone')
+        ->assertJsonPath('icons.0.purpose', 'any')
+        ->assertJsonPath('icons.2.purpose', 'maskable');
+    $this->get(route('manifest', ['start' => 'portal']))->assertJsonPath('start_url', '/portal')->assertJsonPath('id', '/portal');
+
+    foreach (['icons/icon-any-192.png', 'icons/icon-any-512.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'apple-touch-icon.png'] as $file) {
+        expect(public_path($file))->toBeFile();
+    }
     expect(file_get_contents(public_path('sw.js')))->toContain("addEventListener('push'");
-    $this->get('/intern')->assertSee('rel="manifest"', false);
+});
+
+it('marks every page as installable for iPhone and Android', function () {
+    $this->get('/intern')
+        ->assertSee('<link rel="manifest" href="'.route('manifest').'">', false)
+        ->assertSee('<link rel="apple-touch-icon" sizes="180x180"', false)
+        ->assertSee('<meta name="apple-mobile-web-app-capable" content="yes">', false)
+        ->assertSee('<meta name="apple-mobile-web-app-title" content="'.config('app.name').'">', false);
+
+    $this->get('/portal/login')->assertSee(route('manifest', ['start' => 'portal']), false);
 });

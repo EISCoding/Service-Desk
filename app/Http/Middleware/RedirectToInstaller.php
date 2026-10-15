@@ -22,7 +22,7 @@ class RedirectToInstaller
             return $next($request);
         }
 
-        if ($installer || $request->is('livewire*', 'up', 'manifest.webmanifest')) {
+        if ($installer || $request->is('livewire*', 'up', 'manifest.json')) {
             return $next($request);
         }
 

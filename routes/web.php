@@ -41,7 +41,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
 
-Route::get('manifest.webmanifest', ManifestController::class)->name('manifest');
+// Web app manifest: "Zum Home-Bildschirm" turns the site into an app (iPhone, Android).
+Route::get('manifest.json', ManifestController::class)->name('manifest');
 
 // Browser installer of a fresh deployment (gone once installed, see RedirectToInstaller).
 Route::livewire('install', Wizard::class)->name('install');
