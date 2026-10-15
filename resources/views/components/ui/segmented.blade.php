@@ -11,7 +11,7 @@
     'label' => null,   // aria-label
 ])
 
-<div role="tablist" @if ($label) aria-label="{{ $label }}" @endif {{ $attributes->class('inline-flex max-w-full gap-0.5 overflow-x-auto rounded-[10px] bg-ink/[0.06] p-0.5') }}>
+<div role="tablist" @if ($label) aria-label="{{ $label }}" @endif {{ $attributes->class('inline-flex max-w-full gap-0.5 overflow-x-auto overflow-y-hidden rounded-[10px] bg-ink/[0.06] p-0.5') }}>
     @foreach ($options as $value => $option)
         @php
             [$text, $count] = is_array($option) ? $option + [null, null] : [$option, null];

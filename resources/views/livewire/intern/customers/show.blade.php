@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <nav role="tablist" aria-label="Kundenbereiche" class="mb-6 -mx-1 flex gap-1 overflow-x-auto border-b border-separator px-1">
+    <nav role="tablist" aria-label="Kundenbereiche" class="mb-6 -mx-1 flex gap-1 overflow-x-auto overflow-y-hidden border-b border-hairline px-1 [scrollbar-width:none]">
         @foreach ($tabs as $key => $label)
             @php($active = $tab === $key)
             <button
@@ -61,7 +61,7 @@
                 wire:click="showTab('{{ $key }}')"
                 @class([
                     'relative shrink-0 px-3 pt-1 pb-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-accent',
-                    'text-ink after:absolute after:inset-x-2 after:-bottom-px after:h-0.5 after:rounded-full after:bg-accent' => $active,
+                    'text-ink after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-accent' => $active,
                     'text-ink-muted hover:text-ink' => ! $active,
                 ])
             >
