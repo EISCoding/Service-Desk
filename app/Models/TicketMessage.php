@@ -35,6 +35,19 @@ class TicketMessage extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        // Unread markers: remember when the customer or the team last wrote (people, not auto-replies).
+        static::created(function (TicketMessage $message) {
+            if ($message->isInternal() || $message->is_automatic) {
+                return;
+            }
+
+            Ticket::whereKey($message->ticket_id)->toBase()
+                ->update([$message->isFromCustomer() ? 'customer_replied_at' : 'team_replied_at' => now()]);
+        });
+    }
+
     /**
      * The body is always stored sanitized.
      */
@@ -69,6 +82,15 @@ class TicketMessage extends Model
     public function isInternal(): bool
     {
         return $this->type === MessageType::Internal;
+    }
+
+    /**
+     * Written by the customer side: a contact, or an incoming mail (also from unknown senders).
+     */
+    public function isFromCustomer(): bool
+    {
+        return $this->author instanceof Contact
+            || ($this->type === MessageType::MailIn && ! $this->author instanceof User);
     }
 
     public function authorName(): string

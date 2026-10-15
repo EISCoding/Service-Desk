@@ -48,6 +48,7 @@ class Show extends Component
 
         $this->authorizeView($ticket);
         $this->ticket = $ticket->loadMissing('contact');
+        $ticket->markAsReadBy($this->contact());
     }
 
     #[Computed]
@@ -124,6 +125,7 @@ class Show extends Component
         $this->reset('body', 'files');
         $this->ticket->refresh();
         unset($this->messages);
+        $this->dispatch('composer-sent');
         $this->toast('Ihre Antwort wurde gesendet.');
     }
 

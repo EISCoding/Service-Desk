@@ -1,19 +1,51 @@
+@php($summary = $this->summary)
+
 <div>
-    <x-ui.page-header title="Ihre Tickets" :description="$this->contact->is_primary ? 'Alle Anfragen von '.$this->contact->customer->company.'.' : 'Ihre Anfragen an uns.'">
+    <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div class="min-w-0">
+            <p class="text-[13px] font-medium text-ink-muted">{{ $this->contact->customer->company }}</p>
+            <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>
+            <p class="mt-1 text-[15px] text-ink-muted">{{ $this->summaryText() }}</p>
+        </div>
         @if (Route::has('portal.tickets.create'))
-            <x-slot:actions>
-                <x-ui.button icon="plus" :href="route('portal.tickets.create')" wire:navigate>Neues Ticket</x-ui.button>
-            </x-slot:actions>
+            <x-ui.button icon="plus" :href="route('portal.tickets.create')" wire:navigate>Neues Ticket</x-ui.button>
         @endif
-    </x-ui.page-header>
+    </header>
+
+    @if ($this->waiting->isNotEmpty())
+        <section aria-labelledby="waiting-title" class="mb-8">
+            <h2 id="waiting-title" class="mb-3 flex items-center gap-2 text-[15px] font-semibold">
+                <span class="grid size-6 place-items-center rounded-full bg-yellow-400/25 text-yellow-800 dark:text-yellow-300">
+                    <x-heroicon-s-chat-bubble-left-ellipsis class="size-3.5" aria-hidden="true" />
+                </span>
+                Wartet auf Ihre Antwort
+                @if ($summary['waiting'] > $this->waiting->count())
+                    <span class="text-[13px] font-normal text-ink-muted">({{ $summary['waiting'] }})</span>
+                @endif
+            </h2>
+            <ul class="grid gap-3 sm:grid-cols-2">
+                @foreach ($this->waiting as $ticket)
+                    <li wire:key="waiting-{{ $ticket->id }}">
+                        <a href="{{ route('portal.tickets.show', $ticket) }}" wire:navigate class="group flex h-full flex-col rounded-card bg-surface p-4 shadow-card ring-1 ring-yellow-500/30 transition hover:-translate-y-px hover:shadow-pop">
+                            <span class="ref text-ink-muted">{{ $ticket->reference() }}</span>
+                            <span class="mt-0.5 line-clamp-2 text-[15px] font-semibold">{{ $ticket->subject }}</span>
+                            <span class="mt-1 text-[13px] text-ink-muted">
+                                Unsere letzte Nachricht {{ ($ticket->team_replied_at ?? $ticket->last_activity_at)?->diffForHumans() }}
+                            </span>
+                            <span class="mt-auto inline-flex items-center gap-0.5 pt-3 text-[13px] font-medium text-accent">
+                                Jetzt antworten <x-heroicon-m-chevron-right class="size-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+                            </span>
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
+
+    <h2 class="mb-3 text-[15px] font-semibold">{{ $this->contact->is_primary ? 'Anfragen von '.$this->contact->customer->company : 'Ihre Anfragen' }}</h2>
 
     <div class="mb-4 flex flex-wrap items-center gap-3">
-        <div role="tablist" aria-label="Status" class="inline-grid grid-cols-3 gap-0.5 rounded-[10px] bg-ink/[0.05] p-0.5">
-            @foreach (['open' => 'Offen', 'closed' => 'Geschlossen', 'all' => 'Alle'] as $value => $label)
-                <button type="button" role="tab" aria-selected="{{ $state === $value ? 'true' : 'false' }}" wire:click="$set('state', '{{ $value }}')"
-                    @class(['rounded-lg px-3 py-1 text-[13px] font-medium', 'bg-surface shadow-xs' => $state === $value, 'text-ink-muted hover:text-ink' => $state !== $value])>{{ $label }}</button>
-            @endforeach
-        </div>
+        <x-ui.segmented model="state" :current="$state" :options="['open' => 'Offen', 'closed' => 'Geschlossen', 'all' => 'Alle']" label="Status" />
         @if ($this->contact->is_primary)
             <x-ui.select wire:model.live="scope" aria-label="Tickets von" class="w-48" :options="['company' => 'Ganze Firma', 'mine' => 'Nur meine']" />
         @endif
@@ -28,19 +60,26 @@
                 <x-ui.empty-state icon="inbox" title="Keine offenen Tickets" description="Wenn Sie ein Anliegen haben, legen Sie einfach ein neues Ticket an." />
             @endif
         @else
-            <ul class="divide-y divide-separator transition-opacity" wire:loading.delay.class="opacity-50">
+            <ul class="divide-y divide-hairline transition-opacity" wire:loading.delay.class="opacity-50">
                 @foreach ($this->tickets as $ticket)
-                    <li wire:key="ticket-{{ $ticket->id }}" class="relative flex items-center gap-4 px-5 py-3.5 hover:bg-surface-muted/60">
-                        <div class="min-w-0 flex-1">
-                            <p class="truncate text-sm font-medium">
+                    @php($unread = $ticket->isUnreadFor($this->contact))
+                    <li wire:key="ticket-{{ $ticket->id }}" class="relative flex flex-wrap items-center gap-x-4 gap-y-1.5 px-5 py-3.5 hover:bg-surface-muted/60">
+                        <div class="min-w-0 flex-1 basis-64">
+                            <p @class(['flex items-center gap-1.5 text-sm', 'font-semibold' => $unread, 'font-medium' => ! $unread])>
+                                @if ($unread)
+                                    <span class="size-2 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                                    <span class="sr-only">Neue Antwort:</span>
+                                @endif
+                                <span class="truncate">
                                 @if (Route::has('portal.tickets.show'))
                                     <a href="{{ route('portal.tickets.show', $ticket) }}" wire:navigate class="after:absolute after:inset-0">{{ $ticket->subject }}</a>
                                 @else
                                     {{ $ticket->subject }}
                                 @endif
+                                </span>
                             </p>
                             <p class="mt-0.5 truncate text-[12px] text-ink-muted">
-                                <span class="font-mono">{{ $ticket->reference() }}</span>
+                                <span class="tabular-nums">{{ $ticket->reference() }}</span>
                                 · aktualisiert <time datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans() }}</time>
                                 @if ($this->contact->is_primary && $ticket->contact)
                                     · {{ $ticket->contact->fullName() }}
@@ -57,7 +96,7 @@
                 @endforeach
             </ul>
             @if ($this->tickets->hasPages())
-                <div class="border-t border-separator px-5 py-3">{{ $this->tickets->links() }}</div>
+                <div class="border-t border-hairline px-5 py-3">{{ $this->tickets->links() }}</div>
             @endif
         @endif
     </x-ui.card>

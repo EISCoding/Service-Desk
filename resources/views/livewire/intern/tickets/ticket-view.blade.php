@@ -1,74 +1,137 @@
-@php
-    $canUpdate = auth()->user()->can('update', $ticket);
-@endphp
+@php($canUpdate = auth()->user()->can('update', $ticket))
+@php($pill = 'h-8 appearance-none rounded-full bg-transparent pr-7 text-[13px] font-medium text-ink focus:outline-none disabled:opacity-70')
 
-<div class="px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
-    <a href="{{ route('intern.tickets.index') }}" wire:navigate class="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-ink-muted hover:text-ink lg:hidden">
-        <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /> Tickets
-    </a>
+<div class="flex min-h-full flex-col">
+    <div class="flex-1 px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-6">
+        <a href="{{ route('intern.tickets.index') }}" wire:navigate class="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-accent lg:hidden">
+            <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /> Tickets
+        </a>
 
-    <header class="mb-6 flex flex-wrap items-start justify-between gap-4">
-        <div class="min-w-0">
-            <p class="font-mono text-[13px] text-ink-muted">{{ $ticket->reference() }}</p>
-            <h2 class="mt-0.5 text-[22px] leading-tight font-semibold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h2>
-            <div class="mt-2 flex flex-wrap gap-1.5">
-                <x-ui.badge :color="$ticket->status->color()" dot :title="$ticket->status->description()">{{ $ticket->status->label() }}</x-ui.badge>
-                <x-ui.badge :color="$ticket->priority->color()">{{ $ticket->priority->label() }}</x-ui.badge>
+        {{-- Header --}}
+        <header class="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+            <div class="min-w-0 flex-1">
+                <p class="flex flex-wrap items-center gap-x-2 text-[13px] text-ink-muted">
+                    <span class="tabular-nums font-medium">{{ $ticket->reference() }}</span>
+                    @if ($ticket->customer)
+                        <span aria-hidden="true">·</span>
+                        <a href="{{ route('intern.customers.show', $ticket->customer) }}" wire:navigate class="hover:text-accent">{{ $ticket->customer->company }}</a>
+                    @endif
+                    @if ($ticket->contact)
+                        <span aria-hidden="true">·</span><span>{{ $ticket->contact->fullName() }}</span>
+                    @elseif ($ticket->requester_email)
+                        <span aria-hidden="true">·</span><span>{{ $ticket->requester_name ?: $ticket->requester_email }}</span>
+                    @endif
+                </p>
+                <h2 class="mt-1 text-[24px] leading-tight font-bold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h2>
                 @if ($ticket->mergedInto)
-                    <a href="{{ route('intern.tickets.show', $ticket->mergedInto) }}" wire:navigate>
+                    <a href="{{ route('intern.tickets.show', $ticket->mergedInto) }}" wire:navigate class="mt-2 inline-block">
                         <x-ui.badge>Zusammengeführt in {{ $ticket->mergedInto->reference() }} →</x-ui.badge>
                     </a>
                 @endif
             </div>
-        </div>
 
-        <div class="flex shrink-0 items-center gap-2">
-            @if ($canUpdate && $ticket->assignee_id !== auth()->id())
-                <x-ui.button icon="hand-raised" wire:click="take">Übernehmen</x-ui.button>
-            @endif
-            @canany(['delete', 'merge'], $ticket)
-                <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
-                    <x-ui.button variant="secondary" x-on:click="open = ! open" x-bind:aria-expanded="open">
-                        <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
-                        <span class="sr-only">Weitere Aktionen</span>
-                    </x-ui.button>
-                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
-                        @if (! $ticket->merged_into_id)
-                            @can('merge', $ticket)
-                                <button type="button" x-on:click="open = false; $dispatch('open-modal', { name: 'merge' })" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
-                                    <x-heroicon-o-arrows-pointing-in class="size-4 text-ink-muted" aria-hidden="true" /> Zusammenführen …
+            <div class="flex shrink-0 items-center gap-2">
+                @if ($canUpdate && $ticket->assignee_id !== auth()->id())
+                    <x-ui.button icon="hand-raised" wire:click="take">Übernehmen</x-ui.button>
+                @endif
+                @canany(['delete', 'merge'], $ticket)
+                    <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
+                        <x-ui.button variant="secondary" x-on:click="open = ! open" x-bind:aria-expanded="open">
+                            <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
+                            <span class="sr-only">Weitere Aktionen</span>
+                        </x-ui.button>
+                        <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-pop">
+                            @if (! $ticket->merged_into_id)
+                                @can('merge', $ticket)
+                                    <button type="button" x-on:click="open = false; $dispatch('open-modal', { name: 'merge' })" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
+                                        <x-heroicon-o-arrows-pointing-in class="size-4 text-ink-muted" aria-hidden="true" /> Zusammenführen …
+                                    </button>
+                                @endcan
+                            @endif
+                            @can('delete', $ticket)
+                                <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="{{ $ticket->reference() }} mit allen Nachrichten und Anhängen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
+                                    <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Ticket löschen
                                 </button>
                             @endcan
-                        @endif
-                        @can('delete', $ticket)
-                            <button type="button" x-on:click="open = false" wire:click="delete" wire:confirm="{{ $ticket->reference() }} mit allen Nachrichten und Anhängen endgültig löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
-                                <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Ticket löschen
-                            </button>
-                        @endcan
+                        </div>
                     </div>
-                </div>
-            @endcanany
+                @endcanany
+            </div>
+        </header>
+
+        {{-- Properties as compact pills (Status opens with "E") --}}
+        <div class="mt-4 flex flex-wrap items-center gap-2" aria-label="Ticketdaten">
+            <label class="relative inline-flex items-center gap-1.5 rounded-full bg-ink/[0.05] pl-3 hover:bg-ink/[0.08]">
+                <span @class(['size-2 rounded-full', match ($ticket->status->color()) {
+                    'blue' => 'bg-blue-500', 'indigo' => 'bg-indigo-500', 'yellow' => 'bg-yellow-500', 'orange' => 'bg-orange-500',
+                    'purple' => 'bg-purple-500', 'teal' => 'bg-teal-500', default => 'bg-zinc-400',
+                }]) aria-hidden="true"></span>
+                <span class="sr-only">Status</span>
+                <select class="{{ $pill }}" wire:change="setStatus($event.target.value)" data-shortcut="status" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" @disabled(! $canUpdate)>
+                    @foreach ($statusOptions as $value => $label)
+                        <option value="{{ $value }}" @selected($ticket->status->value === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <x-heroicon-m-chevron-down class="pointer-events-none absolute right-2.5 size-3.5 text-ink-faint" aria-hidden="true" />
+            </label>
+
+            @foreach ([
+                ['Priorität', 'setPriority', $priorityOptions, $ticket->priority->value, null, 'flag'],
+                ['Gruppe', 'setGroup', $this->groupOptions, $ticket->group_id, 'Ohne Gruppe', 'user-group'],
+                ['Bearbeiter', 'setAssignee', $this->assigneeOptions, $ticket->assignee_id, 'Nicht zugeordnet', 'user'],
+            ] as [$label, $action, $options, $current, $placeholder, $icon])
+                <label class="relative inline-flex items-center gap-1.5 rounded-full bg-ink/[0.05] pl-3 hover:bg-ink/[0.08]">
+                    <x-dynamic-component :component="'heroicon-m-'.$icon" class="size-3.5 text-ink-muted" aria-hidden="true" />
+                    <span class="sr-only">{{ $label }}</span>
+                    <select class="{{ $pill }}" wire:change="{{ $action }}($event.target.value)" @disabled(! $canUpdate)>
+                        @if ($placeholder)
+                            <option value="">{{ $placeholder }}</option>
+                        @endif
+                        @foreach ($options as $value => $optionLabel)
+                            <option value="{{ $value }}" @selected((string) $current === (string) $value)>{{ $optionLabel }}</option>
+                        @endforeach
+                    </select>
+                    <x-heroicon-m-chevron-down class="pointer-events-none absolute right-2.5 size-3.5 text-ink-faint" aria-hidden="true" />
+                </label>
+            @endforeach
+
+            @if ($ticket->follow_up_at)
+                <x-ui.badge :color="$ticket->follow_up_due ? 'orange' : 'gray'" class="h-8 px-3">
+                    <x-heroicon-m-bell-alert class="size-3.5" aria-hidden="true" /> Wiedervorlage {{ $ticket->follow_up_at->isoFormat('dd, D. MMM') }}
+                </x-ui.badge>
+            @endif
         </div>
-    </header>
 
-    <div class="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_280px]">
-        {{-- Ticket fields --}}
-        <aside class="2xl:order-last" aria-label="Ticketdaten">
-            <x-ui.card :padding="false" class="2xl:sticky 2xl:top-6">
-                <div class="grid grid-cols-2 gap-x-4 gap-y-3 p-4 sm:grid-cols-3 2xl:grid-cols-1">
-                    <x-ui.select label="Status" :options="$statusOptions" :selected="$ticket->status->value" wire:change="setStatus($event.target.value)" data-shortcut="status" wire:key="status-{{ $ticket->status->value }}-{{ $statusVersion }}" :disabled="! $canUpdate" />
-                    <x-ui.select label="Priorität" :options="$priorityOptions" :selected="$ticket->priority->value" wire:change="setPriority($event.target.value)" :disabled="! $canUpdate" />
-                    <x-ui.select label="Gruppe" placeholder="Ohne Gruppe" :options="$this->groupOptions" :selected="$ticket->group_id" wire:change="setGroup($event.target.value)" :disabled="! $canUpdate" />
-                    <x-ui.select label="Bearbeiter" placeholder="Nicht zugeordnet" :options="$this->assigneeOptions" :selected="$ticket->assignee_id" wire:change="setAssignee($event.target.value)" :disabled="! $canUpdate" />
+        {{-- Details: customer, contact, appointments, info --}}
+        <div x-data="{ open: {{ $ticket->customer_id ? 'false' : 'true' }} }" class="mt-4 overflow-hidden rounded-card bg-surface shadow-card">
+            <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="flex w-full items-center gap-3 px-4 py-3 text-left text-[13px] hover:bg-surface-muted/50">
+                <span class="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-1 text-ink-muted">
+                    <span class="inline-flex items-center gap-1.5">
+                        <x-heroicon-m-building-office-2 class="size-4" aria-hidden="true" />
+                        <span @class(['font-medium text-ink' => $ticket->customer, 'italic' => ! $ticket->customer])>{{ $ticket->customer?->company ?? 'Ohne Kunde' }}</span>
+                    </span>
+                    @if ($ticket->contact)
+                        <span class="inline-flex items-center gap-1.5"><x-heroicon-m-user class="size-4" aria-hidden="true" /> {{ $ticket->contact->fullName() }}</span>
+                    @endif
+                    <span class="inline-flex items-center gap-1.5">
+                        <x-heroicon-m-calendar-days class="size-4" aria-hidden="true" />
+                        {{ $this->appointments->isEmpty() ? 'Keine Termine' : trans_choice(':count Termin|:count Termine', $this->appointments->count()) }}
+                    </span>
+                    <span class="inline-flex items-center gap-1.5"><x-heroicon-m-inbox-arrow-down class="size-4" aria-hidden="true" /> {{ $ticket->source->label() }}</span>
+                </span>
+                <span class="text-[12px] font-medium text-accent" x-text="open ? 'Weniger' : 'Details'">Details</span>
+            </button>
 
+            <div x-show="open" x-collapse x-cloak class="border-t border-hairline">
+                <div class="grid gap-x-6 gap-y-4 p-4 md:grid-cols-2">
                     {{-- Customer with search --}}
-                    <div class="col-span-2 sm:col-span-1 2xl:col-span-1" x-data="{ editing: false }">
+                    <div x-data="{ editing: false }">
                         <p class="mb-1.5 text-[13px] font-medium">Kunde</p>
                         @if ($ticket->customer)
                             <div class="flex items-start justify-between gap-2" x-show="! editing">
                                 <a href="{{ route('intern.customers.show', $ticket->customer) }}" wire:navigate class="min-w-0 text-sm text-accent hover:underline">
                                     <span class="block truncate font-medium">{{ $ticket->customer->company }}</span>
-                                    <span class="font-mono text-[12px] text-ink-muted">{{ $ticket->customer->number }}</span>
+                                    <span class="tabular-nums text-[12px] text-ink-muted">{{ $ticket->customer->number }}</span>
                                 </a>
                                 @if ($canUpdate)
                                     <button type="button" x-on:click="editing = true; $nextTick(() => $refs.search.focus())" class="text-[12px] text-ink-muted hover:text-ink">Ändern</button>
@@ -85,9 +148,9 @@
                         @if ($canUpdate)
                             <div x-show="editing" x-cloak x-on:keydown.escape="editing = false" class="relative">
                                 <input x-ref="search" type="search" wire:model.live.debounce.250ms="customerSearch" placeholder="Firma oder Nummer …" aria-label="Kunde suchen"
-                                    class="block h-9 w-full rounded-[10px] bg-surface px-3 text-sm shadow-xs ring-1 ring-separator ring-inset placeholder:text-ink-faint focus:ring-2 focus:ring-accent focus:outline-none">
+                                    class="block h-9 w-full rounded-[10px] bg-surface px-3 text-sm ring-1 ring-ink/15 ring-inset placeholder:text-ink-faint focus:ring-2 focus:ring-accent focus:outline-none">
                                 @if ($this->customerResults->isNotEmpty())
-                                    <ul class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl bg-surface shadow-lg ring-1 ring-separator">
+                                    <ul class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl bg-surface shadow-pop">
                                         @foreach ($this->customerResults as $result)
                                             <li>
                                                 <button type="button" wire:click="setCustomer({{ $result->id }})" x-on:click="editing = false" class="block w-full px-3 py-2 text-left text-sm hover:bg-surface-muted">
@@ -108,7 +171,7 @@
                         @endif
                     </div>
 
-                    <div class="col-span-2 sm:col-span-1 2xl:col-span-1">
+                    <div>
                         <x-ui.select label="Ansprechpartner" :placeholder="$ticket->customer ? 'Kein Ansprechpartner' : 'Erst Kunde wählen'" :options="$this->contactOptions" :selected="$ticket->contact_id" wire:change="setContact($event.target.value)" :disabled="! $canUpdate || ! $ticket->customer" />
                         @if ($ticket->contact)
                             <p class="mt-1 truncate text-[12px] text-ink-muted">
@@ -119,159 +182,78 @@
                             </p>
                         @endif
                     </div>
-                </div>
 
-                {{-- On-site appointments (VOS) --}}
-                <div class="border-t border-separator px-4 py-3">
-                    <div class="flex items-center justify-between">
-                        <p class="text-[13px] font-medium">Termine</p>
-                        @if ($canUpdate)
-                            <button type="button" wire:click="planAppointment" class="text-[12px] font-medium text-accent hover:underline">Termin planen</button>
-                        @endif
-                    </div>
-                    @forelse ($this->appointments as $appointment)
-                        <div wire:key="appointment-{{ $appointment->id }}" @class(['mt-2 rounded-lg bg-teal-500/10 px-3 py-2 text-[12px]', 'opacity-60' => $appointment->ends_at->isPast()])>
-                            <div class="flex items-start justify-between gap-2">
-                                <p class="font-medium text-ink">{{ $appointment->timeRange() }}</p>
-                                @if ($canUpdate)
-                                    <button type="button" wire:click="deleteAppointment({{ $appointment->id }})" wire:confirm="Termin löschen?" class="text-ink-faint hover:text-red-600">
-                                        <x-heroicon-m-x-mark class="size-4" aria-hidden="true" /><span class="sr-only">Termin löschen</span>
-                                    </button>
-                                @endif
-                            </div>
-                            <p class="text-ink-muted">{{ $appointment->technician?->name ?? 'Kein Techniker' }}</p>
-                            <p class="mt-1 whitespace-pre-line text-ink-muted">{{ $appointment->location }}</p>
-                            @if ($appointment->note)
-                                <p class="mt-1 text-ink">{{ $appointment->note }}</p>
+                    {{-- On-site appointments (VOS) --}}
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <p class="text-[13px] font-medium">Termine</p>
+                            @if ($canUpdate)
+                                <button type="button" wire:click="planAppointment" class="text-[12px] font-medium text-accent hover:underline">Termin planen</button>
                             @endif
                         </div>
-                    @empty
-                        <p class="mt-1 text-[12px] text-ink-muted">Keine Termine.</p>
-                    @endforelse
-                </div>
+                        @forelse ($this->appointments as $appointment)
+                            <div wire:key="appointment-{{ $appointment->id }}" @class(['mt-2 rounded-xl bg-teal-500/10 px-3 py-2 text-[12px]', 'opacity-60' => $appointment->ends_at->isPast()])>
+                                <div class="flex items-start justify-between gap-2">
+                                    <p class="font-medium text-ink">{{ $appointment->timeRange() }}</p>
+                                    @if ($canUpdate)
+                                        <button type="button" wire:click="deleteAppointment({{ $appointment->id }})" wire:confirm="Termin löschen?" class="text-ink-faint hover:text-red-600">
+                                            <x-heroicon-m-x-mark class="size-4" aria-hidden="true" /><span class="sr-only">Termin löschen</span>
+                                        </button>
+                                    @endif
+                                </div>
+                                <p class="text-ink-muted">{{ $appointment->technician?->name ?? 'Kein Techniker' }}</p>
+                                <p class="mt-1 whitespace-pre-line text-ink-muted">{{ $appointment->location }}</p>
+                                @if ($appointment->note)
+                                    <p class="mt-1 text-ink">{{ $appointment->note }}</p>
+                                @endif
+                            </div>
+                        @empty
+                            <p class="mt-1 text-[12px] text-ink-muted">Keine Termine.</p>
+                        @endforelse
+                    </div>
 
-                <dl class="grid grid-cols-2 gap-3 border-t border-separator px-4 py-3 text-[12px] text-ink-muted 2xl:grid-cols-1">
-                    <div class="flex justify-between gap-2"><dt>Quelle</dt><dd class="text-ink">{{ $ticket->source->label() }}</dd></div>
-                    <div class="flex justify-between gap-2"><dt>Erstellt</dt><dd class="text-ink">{{ $ticket->created_at->isoFormat('D. MMM YYYY, HH:mm') }}</dd></div>
-                    @if ($ticket->follow_up_at)
-                        <div class="flex justify-between gap-2"><dt>Wiedervorlage</dt><dd @class(['font-medium', 'text-orange-600 dark:text-orange-400' => $ticket->follow_up_due, 'text-ink' => ! $ticket->follow_up_due])>{{ $ticket->follow_up_at->isoFormat('dd, D. MMM YYYY') }}</dd></div>
-                    @endif
-                    @if ($ticket->closed_at)
-                        <div class="flex justify-between gap-2"><dt>Geschlossen</dt><dd class="text-ink">{{ $ticket->closed_at->isoFormat('D. MMM YYYY, HH:mm') }}</dd></div>
-                    @endif
-                </dl>
-            </x-ui.card>
-        </aside>
+                    <dl class="space-y-1.5 text-[12px] text-ink-muted">
+                        <div class="flex justify-between gap-2"><dt>Quelle</dt><dd class="text-ink">{{ $ticket->source->label() }}</dd></div>
+                        <div class="flex justify-between gap-2"><dt>Erstellt</dt><dd class="text-ink">{{ $ticket->created_at->isoFormat('D. MMM YYYY, HH:mm') }}</dd></div>
+                        @if ($ticket->follow_up_at)
+                            <div class="flex justify-between gap-2"><dt>Wiedervorlage</dt><dd @class(['font-medium', 'text-orange-600 dark:text-orange-400' => $ticket->follow_up_due, 'text-ink' => ! $ticket->follow_up_due])>{{ $ticket->follow_up_at->isoFormat('dd, D. MMM YYYY') }}</dd></div>
+                        @endif
+                        @if ($ticket->closed_at)
+                            <div class="flex justify-between gap-2"><dt>Geschlossen</dt><dd class="text-ink">{{ $ticket->closed_at->isoFormat('D. MMM YYYY, HH:mm') }}</dd></div>
+                        @endif
+                    </dl>
+                </div>
+            </div>
+        </div>
 
         {{-- Conversation / activity log --}}
-        <div class="min-w-0 space-y-4">
-            <div role="tablist" aria-label="Ansicht" class="inline-grid grid-cols-2 gap-0.5 rounded-[10px] bg-ink/[0.05] p-0.5">
-                @foreach (['messages' => 'Nachrichten', 'activity' => 'Aktivität'] as $value => $label)
-                    <button type="button" role="tab" aria-selected="{{ $tab === $value ? 'true' : 'false' }}" wire:click="$set('tab', '{{ $value }}')"
-                        @class(['rounded-lg px-3 py-1 text-[13px] font-medium', 'bg-surface shadow-xs' => $tab === $value, 'text-ink-muted hover:text-ink' => $tab !== $value])>{{ $label }}</button>
-                @endforeach
-            </div>
-
-            @if ($tab === 'activity')
-                <livewire:intern.tickets.history :ticket="$ticket" :key="'history-'.$ticket->id" />
-            @else
-            @forelse ($this->messages as $message)
-                <article wire:key="message-{{ $message->id }}" @class([
-                    'rounded-card p-4 ring-1 sm:p-5',
-                    'bg-yellow-500/10 ring-yellow-500/30' => $message->isInternal(),
-                    'bg-surface ring-separator/80' => ! $message->isInternal(),
-                ])>
-                    <header class="mb-3 flex items-start gap-3">
-                        <x-ui.avatar :name="$message->authorName()" />
-                        <div class="min-w-0 flex-1">
-                            <p class="text-sm">
-                                <span class="font-medium">{{ $message->authorName() }}</span>
-                                @if ($message->author instanceof \App\Models\Contact)
-                                    <span class="text-[12px] text-ink-muted">· Kunde</span>
-                                @endif
-                            </p>
-                            <p class="text-[12px] text-ink-muted">
-                                <time datetime="{{ $message->created_at->toIso8601String() }}" title="{{ $message->created_at->isoFormat('D. MMMM YYYY, HH:mm') }}">{{ $message->created_at->isoFormat('D. MMM YYYY, HH:mm') }}</time>
-                            </p>
-                        </div>
-                        @if ($message->isInternal())
-                            <x-ui.badge color="yellow"><x-heroicon-m-lock-closed class="size-3" aria-hidden="true" /> Interne Notiz</x-ui.badge>
-                        @elseif ($message->type !== \App\Enums\MessageType::Public)
-                            <div class="flex flex-wrap justify-end gap-1">
-                                @if ($message->is_automatic)
-                                    <x-ui.badge color="gray"><x-heroicon-m-cpu-chip class="size-3" aria-hidden="true" /> Automatisch</x-ui.badge>
-                                @endif
-                                @if ($template = \App\Enums\SystemTemplate::tryFrom((string) $message->template_key))
-                                    <x-ui.badge color="gray"><x-heroicon-m-document-text class="size-3" aria-hidden="true" /> {{ $template->label() }}</x-ui.badge>
-                                @endif
-                                <x-ui.badge><x-heroicon-m-envelope class="size-3" aria-hidden="true" /> {{ $message->type->label() }}</x-ui.badge>
-                            </div>
-                        @endif
-                    </header>
-
-                    @if ($message->type === \App\Enums\MessageType::MailOut)
-                        <p class="-mt-1 mb-3 text-[12px] text-ink-muted">
-                            An {{ collect($message->to)->pluck('email')->join(', ') }}@if ($message->cc) · CC {{ collect($message->cc)->pluck('email')->join(', ') }}@endif
-                            @switch($message->mail_status)
-                                @case('queued') · <span class="text-yellow-700 dark:text-yellow-300">wird gesendet …</span> @break
-                                @case('sent') · gesendet {{ $message->sent_at?->isoFormat('D. MMM, HH:mm') }} @break
-                            @endswitch
-                        </p>
-                        @if ($message->mailFailed())
-                            <x-ui.alert type="error" class="mb-3">
-                                Versand fehlgeschlagen: {{ $message->mail_error }}
-                                @can('reply', $ticket)
-                                    <button type="button" wire:click="retryMail({{ $message->id }})" class="ml-1 font-medium underline">Erneut senden</button>
-                                @endcan
-                            </x-ui.alert>
-                        @endif
-                    @endif
-
-                    @php([$mainText, $quotedText] = $message->displayParts())
-                    <div class="message-body">{!! $mainText !!}</div>
-                    @if ($quotedText)
-                        <details class="group mt-3">
-                            <summary class="inline-flex cursor-pointer list-none items-center gap-1 rounded-full bg-ink/[0.05] px-2.5 py-0.5 text-[12px] font-medium text-ink-muted hover:text-ink">
-                                <x-heroicon-m-ellipsis-horizontal class="size-4" aria-hidden="true" />
-                                <span class="group-open:hidden">Zitierten Verlauf anzeigen</span>
-                                <span class="hidden group-open:inline">Zitierten Verlauf ausblenden</span>
-                            </summary>
-                            <div class="message-body mt-3 border-l-2 border-separator pl-3 text-ink-muted">{!! $quotedText !!}</div>
-                        </details>
-                    @endif
-
-                    @if ($message->listedAttachments()->isNotEmpty())
-                        <ul class="mt-4 flex flex-wrap gap-2" aria-label="Anhänge">
-                            @foreach ($message->listedAttachments() as $attachment)
-                                <li>
-                                    <a href="{{ $attachment->url(inline: $attachment->canBeShownInline()) }}" target="_blank" class="flex max-w-60 items-center gap-2 rounded-xl bg-surface-muted px-3 py-2 text-[13px] ring-1 ring-separator hover:ring-accent">
-                                        @if ($attachment->isImage())
-                                            <img src="{{ $attachment->url(inline: true) }}" alt="" class="size-8 shrink-0 rounded-md object-cover" loading="lazy">
-                                        @else
-                                            <x-heroicon-o-paper-clip class="size-4 shrink-0 text-ink-muted" aria-hidden="true" />
-                                        @endif
-                                        <span class="min-w-0">
-                                            <span class="block truncate font-medium">{{ $attachment->original_name }}</span>
-                                            <span class="text-[11px] text-ink-muted">{{ $attachment->humanSize() }}</span>
-                                        </span>
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </article>
-            @empty
-                <x-ui.card :padding="false">
-                    <x-ui.empty-state icon="chat-bubble-left-right" title="Noch keine Nachrichten" />
-                </x-ui.card>
-            @endforelse
-
-            @if (auth()->user()->can('reply', $ticket) || auth()->user()->can('addNote', $ticket))
-                <livewire:intern.tickets.composer :ticket="$ticket" :key="'composer-'.$ticket->id" />
-            @endif
-            @endif
+        <div class="mt-6 flex items-center justify-between gap-3">
+            <x-ui.segmented model="tab" :current="$tab" :options="['messages' => 'Nachrichten', 'activity' => 'Aktivität']" label="Ansicht" />
         </div>
+
+        @if ($tab === 'activity')
+            <div class="mt-4">
+                <livewire:intern.tickets.history :ticket="$ticket" :key="'history-'.$ticket->id" />
+            </div>
+        @else
+            <div class="mt-4 space-y-4">
+                @php($day = null)
+                @forelse ($this->messages as $message)
+                    @if ($day !== $message->created_at->toDateString())
+                        @php($day = $message->created_at->toDateString())
+                        <x-ticket.day :date="$message->created_at" />
+                    @endif
+                    <x-ticket.message wire:key="message-{{ $message->id }}" :message="$message" :mine="! $message->isFromCustomer()" :can-retry="auth()->user()->can('reply', $ticket)" />
+                @empty
+                    <x-ui.empty-state icon="chat-bubble-left-right" title="Noch keine Nachrichten" />
+                @endforelse
+            </div>
+        @endif
     </div>
+
+    @if ($tab !== 'activity' && (auth()->user()->can('reply', $ticket) || auth()->user()->can('addNote', $ticket)))
+        <livewire:intern.tickets.composer :ticket="$ticket" :key="'composer-'.$ticket->id" />
+    @endif
 
     {{-- Merge into another ticket --}}
     @can('merge', $ticket)
@@ -281,7 +263,7 @@
                 @foreach ($this->mergeResults as $target)
                     <li wire:key="merge-{{ $target->id }}" class="flex items-center justify-between gap-3 py-2.5">
                         <div class="min-w-0 text-sm">
-                            <p class="truncate"><span class="font-mono text-[12px] text-ink-muted">{{ $target->reference() }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
+                            <p class="truncate"><span class="tabular-nums text-[12px] text-ink-muted">{{ $target->reference() }}</span> <span class="font-medium">{{ $target->subject }}</span></p>
                             <p class="text-[12px] text-ink-muted">{{ $target->customer?->company ?? 'Ohne Kunde' }} · {{ $target->status->label() }}</p>
                         </div>
                         <x-ui.button size="sm" variant="secondary" wire:click="merge({{ $target->id }})" wire:confirm="{{ $ticket->reference() }} in {{ $target->reference() }} zusammenführen? Das lässt sich nicht rückgängig machen.">Hierhin</x-ui.button>

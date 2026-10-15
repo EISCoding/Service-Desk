@@ -39,7 +39,7 @@
         x-show="show"
         x-transition.opacity.duration.200ms
         x-on:click="show = false"
-        class="fixed inset-0 bg-black/30 backdrop-blur-[2px] dark:bg-black/60"
+        class="fixed inset-0 bg-black/25 backdrop-blur-sm dark:bg-black/60"
         aria-hidden="true"
     ></div>
 
@@ -53,7 +53,7 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100 sm:scale-100"
             x-transition:leave-end="opacity-0 sm:scale-95"
-            class="relative w-full {{ $width }} rounded-t-2xl bg-surface shadow-2xl ring-1 ring-separator sm:rounded-2xl"
+            class="relative w-full {{ $width }} rounded-t-[22px] bg-surface shadow-pop sm:rounded-[20px]"
         >
             @if ($title)
                 <div class="flex items-start justify-between gap-4 px-6 pt-5">

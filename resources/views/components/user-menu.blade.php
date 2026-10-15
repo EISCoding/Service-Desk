@@ -1,7 +1,4 @@
-@php
-    $user = auth()->user();
-    $initials = collect(explode(' ', $user->name))->filter()->map(fn ($part) => mb_substr($part, 0, 1))->take(2)->implode('');
-@endphp
+@php($user = auth()->user())
 
 <div x-data="{ open: false }" x-on:keydown.escape.window="open = false" class="relative">
     <button
@@ -11,7 +8,7 @@
         aria-haspopup="true"
         class="flex items-center gap-2 rounded-full p-0.5 pr-2 hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-accent"
     >
-        <span class="grid size-8 place-items-center rounded-full bg-gradient-to-b from-zinc-400 to-zinc-500 text-[12px] font-semibold text-white dark:from-zinc-500 dark:to-zinc-600" aria-hidden="true">{{ mb_strtoupper($initials) }}</span>
+        <x-ui.avatar :name="$user->name" aria-hidden="true" />
         <span class="hidden text-[13px] font-medium sm:block">{{ $user->name }}</span>
         <x-heroicon-m-chevron-down class="hidden size-4 text-ink-faint sm:block" aria-hidden="true" />
         <span class="sr-only">Benutzermenü</span>
@@ -26,7 +23,7 @@
         x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="ease-in duration-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute right-0 z-40 mt-2 w-72 origin-top-right rounded-2xl bg-surface/95 p-1.5 shadow-xl ring-1 ring-separator backdrop-blur-xl"
+        class="absolute right-0 z-40 mt-2 w-72 origin-top-right rounded-2xl bg-surface/95 p-1.5 shadow-pop backdrop-blur-xl"
     >
         <div class="px-3 pt-2 pb-3">
             <p class="truncate text-sm font-semibold">{{ $user->name }}</p>

@@ -81,6 +81,7 @@ class TicketView extends Component
     {
         $this->authorize('view', $ticket);
         $this->ticket = $ticket;
+        $ticket->markAsReadBy(auth()->user());
     }
 
     /**

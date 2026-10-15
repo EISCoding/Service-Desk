@@ -10,7 +10,7 @@
 
 <div class="mb-6">
     <x-ui.page-header title="Einstellungen" class="mb-4!" />
-    <nav aria-label="Einstellungen" class="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+    <nav aria-label="Einstellungen" class="-mx-4 overflow-x-auto overflow-y-hidden px-4 sm:mx-0 sm:px-0">
         <ul class="inline-flex gap-0.5 rounded-[10px] bg-ink/[0.05] p-0.5">
             @foreach ($items as $item)
                 @php($active = request()->routeIs($item['route']))

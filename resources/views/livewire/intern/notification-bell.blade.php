@@ -7,7 +7,7 @@
         @endif
     </button>
 
-    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-[min(22rem,calc(100vw-2rem))] rounded-xl bg-surface shadow-lg ring-1 ring-separator">
+    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-[min(22rem,calc(100vw-2rem))] rounded-xl bg-surface shadow-pop">
         <div class="flex items-center justify-between border-b border-separator px-4 py-2.5">
             <p class="text-sm font-semibold">Benachrichtigungen</p>
             @if ($this->unreadCount)
@@ -21,7 +21,7 @@
                         <span @class(['mt-1.5 size-2 shrink-0 rounded-full', 'bg-accent' => ! $notification->read_at, 'bg-transparent' => $notification->read_at]) aria-hidden="true"></span>
                         <span class="min-w-0">
                             <span class="block text-sm font-medium">{{ $notification->data['title'] ?? '' }}</span>
-                            <span class="block truncate text-[13px] text-ink-muted"><span class="font-mono">{{ $notification->data['reference'] ?? '' }}</span> {{ $notification->data['subject'] ?? '' }}</span>
+                            <span class="block truncate text-[13px] text-ink-muted"><span class="tabular-nums">{{ $notification->data['reference'] ?? '' }}</span> {{ $notification->data['subject'] ?? '' }}</span>
                             @if (! empty($notification->data['text']))
                                 <span class="mt-0.5 line-clamp-2 block text-[12px] text-ink-muted">{{ $notification->data['text'] }}</span>
                             @endif

@@ -49,8 +49,9 @@
                         <x-ui.input label="Kunde" wire:model.live.debounce.300ms="customer" placeholder="Firma oder Nr." class="col-span-2" />
                         <x-ui.checkbox label="Ohne Kunde" wire:model.live="withoutCustomer" />
                         <x-ui.checkbox label="Wiedervorlage fällig" wire:model.live="dueOnly" />
+                        <x-ui.checkbox label="Nur ungelesene" wire:model.live="unreadOnly" />
                         <x-ui.select label="Sortierung" wire:model.live="sort" :options="['activity' => 'Letzte Aktivität', 'priority' => 'Priorität', 'created' => 'Neueste zuerst']" />
-                        <div class="flex items-end justify-end">
+                        <div class="col-span-2 flex items-end justify-end">
                             <x-ui.button variant="ghost" size="sm" wire:click="resetFilters">Zurücksetzen</x-ui.button>
                         </div>
                     </div>
@@ -63,6 +64,7 @@
         <ul class="divide-y divide-separator transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
             @foreach ($items as $ticket)
                 @php($selected = $ticket->id === $selectedId)
+                @php($unread = ! $selected && $ticket->isUnreadFor(auth()->user()))
                 <li wire:key="ticket-{{ $ticket->id }}">
                     <a
                         href="{{ route('intern.tickets.show', $ticket) }}"
@@ -75,10 +77,16 @@
                         ])
                     >
                         <div class="flex items-center justify-between gap-2 text-[12px] text-ink-muted">
-                            <span class="font-mono">{{ $ticket->reference() }}</span>
+                            <span class="tabular-nums">{{ $ticket->reference() }}</span>
                             <time datetime="{{ $ticket->last_activity_at?->toIso8601String() }}">{{ $ticket->last_activity_at?->diffForHumans(short: true) }}</time>
                         </div>
-                        <p class="mt-0.5 truncate text-sm font-medium text-ink">{{ $ticket->subject }}</p>
+                        <p class="mt-0.5 flex items-center gap-1.5 text-sm text-ink">
+                            @if ($unread)
+                                <span class="size-2 shrink-0 rounded-full bg-accent" aria-hidden="true"></span>
+                                <span class="sr-only">Neue Kundenantwort:</span>
+                            @endif
+                            <span @class(['truncate', 'font-semibold' => $unread, 'font-medium' => ! $unread])>{{ $ticket->subject }}</span>
+                        </p>
                         <p class="truncate text-[13px] text-ink-muted">
                             @if ($ticket->customer)
                                 {{ $ticket->customer->company }}@if ($ticket->contact) · {{ $ticket->contact->fullName() }}@endif

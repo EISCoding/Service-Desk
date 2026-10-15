@@ -173,6 +173,7 @@ class Composer extends Component
 
         $this->reset('body', 'files', 'statusAfter');
         $this->dispatch('ticket-changed');
+        $this->dispatch('composer-sent');
         $this->dispatch('ticket-updated');
         $this->toast(match (true) {
             $internal => 'Interne Notiz gespeichert.',

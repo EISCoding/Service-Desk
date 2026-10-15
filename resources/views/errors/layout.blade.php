@@ -22,7 +22,7 @@
 </head>
 <body class="h-full bg-canvas font-sans text-ink antialiased">
     <main class="flex min-h-full flex-col items-center justify-center px-4 py-16 text-center">
-        <p class="font-mono text-[13px] font-medium tracking-widest text-accent">{{ $code }}</p>
+        <p class="tabular-nums text-[13px] font-medium tracking-widest text-accent">{{ $code }}</p>
         <h1 class="mt-2 text-[28px] font-semibold tracking-tight">{{ $title }}</h1>
         <p class="mt-3 max-w-md text-[15px] text-ink-muted">{{ $message }}</p>
         <div class="mt-8 flex flex-wrap justify-center gap-2">

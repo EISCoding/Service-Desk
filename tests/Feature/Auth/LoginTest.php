@@ -20,7 +20,7 @@ it('logs staff in and sends them to /intern', function () {
         ->assertRedirect('/intern');
 
     $this->assertAuthenticatedAs($user);
-    $this->get('/intern')->assertRedirect(route('intern.tickets.index'));
+    $this->get('/intern')->assertOk()->assertSee('Übersicht');
     $this->get('/intern/tickets')->assertOk()->assertSee($user->name);
 });
 

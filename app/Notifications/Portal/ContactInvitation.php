@@ -3,6 +3,7 @@
 namespace App\Notifications\Portal;
 
 use App\Enums\SystemTemplate;
+use App\Mail\SystemMailer;
 use App\Models\Contact;
 use App\Models\MailTemplate;
 use App\Support\Html;
@@ -43,7 +44,7 @@ class ContactInvitation extends Notification implements ShouldQueue
         $placeholders = new Placeholders(contact: $contact, portalLink: $this->url($contact));
         $body = $placeholders->html($template->body ?? SystemTemplate::PortalInvitation->defaultBody());
 
-        return (new MailMessage)
+        return SystemMailer::via(new MailMessage)
             ->subject($placeholders->text($template->subject ?? SystemTemplate::PortalInvitation->defaultSubject()))
             ->view(['mail.template', 'mail.template-text'], ['body' => $body, 'text' => Html::toText($body)]);
     }

@@ -12,7 +12,7 @@
                 @endif
             </div>
             <p class="mt-1 text-sm text-ink-muted">
-                <span class="font-mono">{{ $customer->number }}</span>
+                <span class="tabular-nums">{{ $customer->number }}</span>
                 @if ($customer->city)
                     · {{ trim("{$customer->postal_code} {$customer->city}") }}
                 @endif
@@ -28,7 +28,7 @@
                         <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
                         <span class="sr-only">Weitere Aktionen</span>
                     </x-ui.button>
-                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-lg ring-1 ring-separator">
+                    <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-20 mt-1 w-56 rounded-xl bg-surface p-1 shadow-pop">
                         @can('archive', $customer)
                             @if ($customer->isArchived())
                                 <button type="button" x-on:click="open = false" wire:click="restore" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <nav role="tablist" aria-label="Kundenbereiche" class="mb-6 -mx-1 flex gap-1 overflow-x-auto border-b border-separator px-1">
+    <nav role="tablist" aria-label="Kundenbereiche" class="mb-6 -mx-1 flex gap-1 overflow-x-auto overflow-y-hidden border-b border-hairline px-1 [scrollbar-width:none]">
         @foreach ($tabs as $key => $label)
             @php($active = $tab === $key)
             <button
@@ -61,7 +61,7 @@
                 wire:click="showTab('{{ $key }}')"
                 @class([
                     'relative shrink-0 px-3 pt-1 pb-2.5 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-accent',
-                    'text-ink after:absolute after:inset-x-2 after:-bottom-px after:h-0.5 after:rounded-full after:bg-accent' => $active,
+                    'text-ink after:absolute after:inset-x-2 after:bottom-0 after:h-0.5 after:rounded-full after:bg-accent' => $active,
                     'text-ink-muted hover:text-ink' => ! $active,
                 ])
             >
@@ -110,7 +110,7 @@
                                 </div>
                                 <div>
                                     <dt class="text-[12px] font-medium text-ink-muted">Kundennummer</dt>
-                                    <dd class="mt-0.5 font-mono">{{ $customer->number }}</dd>
+                                    <dd class="mt-0.5 tabular-nums">{{ $customer->number }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-[12px] font-medium text-ink-muted">E-Mail</dt>

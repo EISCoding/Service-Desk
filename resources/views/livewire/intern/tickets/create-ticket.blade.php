@@ -18,7 +18,7 @@
                                 'ring-red-500' => $errors->has('customerId'),
                             ])>
                         @if ($this->customerResults->isNotEmpty())
-                            <ul class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl bg-surface shadow-lg ring-1 ring-separator">
+                            <ul class="absolute z-20 mt-1 w-full overflow-hidden rounded-xl bg-surface shadow-pop">
                                 @foreach ($this->customerResults as $result)
                                     <li>
                                         <button type="button" wire:click="selectCustomer({{ $result->id }})" class="block w-full px-3 py-2 text-left text-sm hover:bg-surface-muted">

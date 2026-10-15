@@ -17,7 +17,7 @@
 <x-layouts::base :title="$title">
     <div x-data class="min-h-full">
         {{-- Sidebar (desktop) --}}
-        <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-separator bg-surface/70 backdrop-blur-xl backdrop-saturate-150 lg:flex">
+        <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-hairline bg-surface-muted/80 backdrop-blur-2xl backdrop-saturate-150 lg:flex dark:bg-surface/70">
             <a href="{{ route('intern.dashboard') }}" wire:navigate class="flex h-14 items-center gap-2.5 px-5">
                 <x-brand-mark size="sm" />
                 <span class="text-[15px] font-semibold tracking-tight">{{ config('app.name') }}</span>
@@ -33,12 +33,12 @@
                                 wire:navigate
                                 @if ($active) aria-current="page" @endif
                                 @class([
-                                    'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
-                                    'bg-ink/[0.07] font-medium text-ink' => $active,
-                                    'text-ink-muted hover:bg-ink/[0.04] hover:text-ink' => ! $active,
+                                    'flex items-center gap-3 rounded-lg px-3 py-[7px] text-sm transition-colors',
+                                    'bg-accent-fill font-medium text-on-accent shadow-[0_1px_2px_rgb(0_0_0/0.1)]' => $active,
+                                    'text-ink/80 hover:bg-ink/[0.05] hover:text-ink' => ! $active,
                                 ])
                             >
-                                <x-dynamic-component :component="'heroicon-o-'.$item['icon']" @class(['size-5', 'text-accent' => $active]) aria-hidden="true" />
+                                <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" @class(['size-5 shrink-0', 'text-accent' => ! $active]) aria-hidden="true" />
                                 {{ $item['label'] }}
                             </a>
                         </li>
@@ -57,12 +57,12 @@
                                         wire:navigate
                                         @if ($active) aria-current="page" @endif
                                         @class([
-                                            'flex items-center gap-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
-                                            'bg-ink/[0.07] font-medium text-ink' => $active,
-                                            'text-ink-muted hover:bg-ink/[0.04] hover:text-ink' => ! $active,
+                                            'flex items-center gap-3 rounded-lg px-3 py-[7px] text-sm transition-colors',
+                                            'bg-accent-fill font-medium text-on-accent shadow-[0_1px_2px_rgb(0_0_0/0.1)]' => $active,
+                                            'text-ink/80 hover:bg-ink/[0.05] hover:text-ink' => ! $active,
                                         ])
                                     >
-                                        <x-dynamic-component :component="'heroicon-o-'.$item['icon']" @class(['size-5', 'text-accent' => $active]) aria-hidden="true" />
+                                        <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" @class(['size-5 shrink-0', 'text-ink-muted' => ! $active]) aria-hidden="true" />
                                         {{ $item['label'] }}
                                     </a>
                                 </li>
@@ -75,7 +75,7 @@
 
         <div class="lg:pl-60">
             {{-- Topbar --}}
-            <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-separator bg-canvas/80 px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6">
+            <header class="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-hairline bg-canvas/75 px-4 backdrop-blur-2xl backdrop-saturate-150 sm:px-6">
                 <a href="{{ route('intern.dashboard') }}" wire:navigate class="shrink-0 lg:hidden">
                     <x-brand-mark />
                     <span class="sr-only">{{ config('app.name') }}</span>
@@ -95,7 +95,7 @@
         </div>
 
         {{-- Tab bar (mobile) --}}
-        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-separator bg-surface/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl backdrop-saturate-150 lg:hidden" aria-label="Hauptnavigation">
+        <nav class="fixed inset-x-0 bottom-0 z-30 border-t border-hairline bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl backdrop-saturate-150 lg:hidden" aria-label="Hauptnavigation">
             <ul class="mx-auto flex max-w-lg">
                 @foreach ($mainNav as $item)
                     @php($active = request()->routeIs($item['active']))

@@ -123,3 +123,18 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 - [x] Deploy-Anleitung für Plesk in `README.md` (Domain, PHP-Version, Git, Cron, `.env`, erster Admin per `php artisan servicedesk:create-admin`)
 
 **Fertig wenn:** Alle Tests grün, Deployment auf Plesk nach README in einem Durchgang möglich.
+
+---
+
+## Phase 7 – UX und Design
+
+- [x] Portal- und System-Mails über das Standard-Postfach senden (keine separate SMTP-Einstellung nötig)
+- [x] Design-System hochwertiger: Flächen, Tiefe, Typografie, Komponenten, Layouts (intern und Portal)
+- [x] Chat-Verlauf: Nachrichten als Sprechblasen (Kunde/Team getrennt), Antwortfeld immer griffbereit
+- [x] Startseiten: Team-Übersicht (meine offenen, fällige Wiedervorlagen, neue Kundenantworten), Portal-Start mit Begrüßung und „Wartet auf Ihre Antwort“
+- [x] Ungelesen-Markierung: neue Kundenantworten intern, neue Team-Antworten im Portal
+- [x] Status-Fortschritt im Portal (Eingegangen → In Bearbeitung → Erledigt)
+- [x] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit erneut prüfen
+
+**Fertig wenn:** Kunden bekommen Portal-Mails, alle Seiten im neuen Design, Tests und Audit grün.
+

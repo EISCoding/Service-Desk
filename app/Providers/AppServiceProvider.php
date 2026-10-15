@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsureContactCanUsePortal;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Mail\Inbound\ImapMailboxConnector;
 use App\Mail\Inbound\MailboxConnector;
+use App\Mail\SystemMailer;
 use App\Models\Appointment;
 use App\Models\Attachment;
 use App\Models\Contact;
@@ -45,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Staff password reset (Fortify) in the branded mail layout.
-        ResetPassword::toMailUsing(fn (User $user, string $token) => (new MailMessage)
+        ResetPassword::toMailUsing(fn (User $user, string $token) => SystemMailer::via(new MailMessage)
             ->subject('Passwort zurücksetzen')
             ->greeting("Hallo {$user->name},")
             ->line('für dein Konto wurde das Zurücksetzen des Passworts angefordert.')

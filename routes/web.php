@@ -17,6 +17,7 @@ use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
 use App\Livewire\Intern\Customers\Index as CustomerIndex;
 use App\Livewire\Intern\Customers\Show as CustomerShow;
+use App\Livewire\Intern\Dashboard;
 use App\Livewire\Intern\Settings\General as GeneralSettings;
 use App\Livewire\Intern\Settings\Notifications as NotificationSettings;
 use App\Livewire\Intern\Settings\Security;
@@ -31,7 +32,6 @@ use App\Models\Group;
 use App\Models\Mailbox;
 use App\Models\MailTemplate;
 use App\Models\User;
-use App\Support\Navigation;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
@@ -41,9 +41,8 @@ Route::redirect('/', '/intern');
 | are registered by Fortify under the same /intern prefix.
 */
 Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(function () {
-    // Start page: the first area the user may open.
-    Route::get('/', fn () => redirect()->route(Navigation::main(auth()->user())[0]['route'] ?? 'intern.settings.general'))
-        ->name('dashboard');
+    // Start page: overview for ticket users, otherwise the first area the user may open.
+    Route::livewire('/', Dashboard::class)->name('dashboard');
 
     // Areas built in later phases (placeholders until then).
     Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');

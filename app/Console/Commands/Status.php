@@ -29,9 +29,12 @@ class Status extends Command
         $this->newLine();
         $this->line('<options=bold>Mailversand</>');
         $mailer = config('mail.default');
-        $this->components->twoColumnDetail('System-Mails (MAIL_MAILER)', $mailer === 'smtp'
-            ? 'smtp '.config('mail.mailers.smtp.host').':'.config('mail.mailers.smtp.port')
-            : "{$mailer} – Mails werden NICHT verschickt");
+        $default = Mailbox::default();
+        $this->components->twoColumnDetail('Portal- und System-Mails', match (true) {
+            $default !== null => "über das Standard-Postfach {$default->email}",
+            $mailer === 'smtp' => 'smtp '.config('mail.mailers.smtp.host').':'.config('mail.mailers.smtp.port').' (MAIL_* in der .env)',
+            default => "{$mailer} – Mails werden NICHT verschickt (kein aktives Postfach, MAIL_MAILER={$mailer})",
+        });
         $this->components->twoColumnDetail('Ticket-Mails (MAILBOX_MAILER)', config('servicedesk.mail.mailer')
             ? config('servicedesk.mail.mailer').' – Ticket-Mails gehen NICHT raus, Zeile in der .env leeren'
             : 'über die Postfächer');

@@ -3,6 +3,7 @@
 namespace App\Notifications\Staff;
 
 use App\Enums\NotificationEvent;
+use App\Mail\SystemMailer;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -40,7 +41,7 @@ class TicketNotification extends Notification implements ShouldQueue
 
     public function toMail(User $user): MailMessage
     {
-        return (new MailMessage)
+        return SystemMailer::via(new MailMessage)
             ->subject("{$this->title} – {$this->ticket->reference()}")
             ->greeting("Hallo {$user->name},")
             ->line($this->title.': '.$this->ticket->subject)
