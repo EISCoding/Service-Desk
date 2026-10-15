@@ -159,7 +159,7 @@ it('keeps its header (views, search, filters) sticky over the whole list', funct
     // otherwise the header scrolls away once the list is longer than the window.
     $html = Livewire::test(TicketList::class)->html();
 
-    expect($html)->toMatch('/^<div[^>]*class="flex min-h-full flex-col"/')
+    expect($html)->toMatch('/^<div[^>]*class="flex min-h-full flex-col[^"]*"/')
         ->and($html)->toContain('sticky top-0');
 });
 

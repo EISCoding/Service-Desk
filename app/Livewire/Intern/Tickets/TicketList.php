@@ -26,9 +26,9 @@ class TicketList extends Component
     use PollsForChanges;
 
     public const VIEWS = [
-        'mine' => 'Meine',
+        'mine' => 'Meine Tickets',
         'groups' => 'Meine Gruppen',
-        'all' => 'Alle',
+        'all' => 'Alle Tickets',
         'unassigned' => 'Nicht zugeordnet',
     ];
 

@@ -15,20 +15,20 @@
     x-on:composer-sent.window="expanded = false; full = false"
     x-on:keydown.escape="full ? full = false : expanded = false"
     x-bind:class="full && 'fixed! inset-0! z-50! overflow-y-auto bg-canvas! pt-6! pb-10!'"
-    class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:px-6 lg:bottom-0 lg:px-8"
+    class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 border-t border-separator bg-surface/95 px-4 py-3 backdrop-blur-xl backdrop-saturate-150 sm:px-6 lg:bottom-0 @3xl/ticket:col-start-1"
 >
     {{-- Collapsed --}}
     <div x-show="! expanded" class="flex items-center gap-2">
         <x-ui.avatar :name="auth()->user()->name" class="max-sm:hidden" />
         @if ($canReply)
-            <button type="button" x-on:click="open('reply')" class="flex h-10 min-w-0 flex-1 items-center rounded-full bg-surface px-4 text-left text-sm text-ink-faint shadow-card hover:text-ink-muted">
+            <button type="button" x-on:click="open('reply')" class="flex h-10 min-w-0 flex-1 items-center rounded-lg bg-surface-muted px-4 text-left text-sm text-ink-faint ring-1 ring-separator ring-inset hover:text-ink-muted">
                 <span class="truncate">{{ $replyTo ? "Antworten an {$replyTo} …" : 'Antworten …' }}</span>
             </button>
         @endif
         @if ($canNote)
             <button type="button" x-on:click="open('note')" @class([
-                'inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-medium',
-                'flex-1 bg-surface text-ink-faint shadow-card' => ! $canReply,
+                'inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg px-4 text-sm font-medium',
+                'flex-1 bg-surface-muted text-ink-faint ring-1 ring-separator ring-inset' => ! $canReply,
                 'bg-amber-400/15 text-amber-800 hover:bg-amber-400/25 dark:text-amber-300' => $canReply,
             ])>
                 <x-bx-lock-alt class="size-4" aria-hidden="true" /> {{ $canReply ? 'Notiz' : 'Interne Notiz schreiben …' }}
@@ -37,7 +37,7 @@
     </div>
 
     {{-- Expanded --}}
-    <div x-show="expanded" x-cloak @class(['-mx-1 rounded-2xl p-1', 'bg-amber-400/10' => $isNote]) x-bind:class="full && 'mx-auto! max-w-4xl'">
+    <div x-show="expanded" x-cloak @class(['-mx-1 rounded-xl p-1', 'bg-amber-400/10' => $isNote]) x-bind:class="full && 'mx-auto! max-w-4xl'">
         <div class="mb-3 flex items-center justify-between gap-3">
             @if ($canReply && $canNote)
                 <div role="tablist" class="inline-flex gap-0.5 rounded-[10px] bg-ink/[0.06] p-0.5">
@@ -140,17 +140,37 @@
                     @endif
                 </div>
 
-                <div class="flex items-center gap-2">
-                    @unless ($isNote)
-                        <x-ui.select wire:model="statusAfter" placeholder="Status unverändert" :options="$statusOptions" aria-label="Status danach" class="w-48" />
-                    @endunless
-                    @if (! $isNote && $ticket->status !== \App\Enums\TicketStatus::Closed)
-                        <x-ui.button variant="secondary" x-on:click="$wire.statusAfter = 'closed'; $wire.send()" wire:loading.attr="disabled" wire:target="files,send" title="Antwort senden und Ticket schließen">Senden &amp; schließen</x-ui.button>
-                    @endif
-                    <x-ui.button type="submit" icon="send" wire:loading.attr="disabled" wire:target="files,send">
-                        {{ $isNote ? 'Notiz speichern' : 'Antwort senden' }}
-                    </x-ui.button>
-                </div>
+                @if ($isNote)
+                    <x-ui.button type="submit" icon="lock-alt" wire:loading.attr="disabled" wire:target="files,send">Notiz speichern</x-ui.button>
+                @else
+                    {{-- Send, optionally with a new status (like "Senden & schließen") --}}
+                    <div x-data="{ menu: false, labels: @js(['' => 'Status unverändert'] + $statusOptions) }" class="relative inline-flex" x-on:keydown.escape.stop="menu = false">
+                        <x-ui.button type="submit" icon="send" class="rounded-r-none!" wire:loading.attr="disabled" wire:target="files,send">
+                            Senden<span x-show="$wire.statusAfter" x-cloak x-text="' · ' + (labels[$wire.statusAfter] || '')"></span>
+                        </x-ui.button>
+                        <button type="button" x-on:click="menu = ! menu" x-bind:aria-expanded="menu" aria-haspopup="true" aria-label="Status nach dem Senden wählen"
+                            class="grid h-9 w-8 place-items-center rounded-r-lg border-l border-white/30 bg-accent-fill text-on-accent hover:bg-accent-fill-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+                            <x-bx-chevron-up class="size-4" aria-hidden="true" />
+                        </button>
+                        <div x-show="menu" x-cloak x-on:click.outside="menu = false" x-transition.opacity role="menu" aria-label="Status nach dem Senden"
+                            class="absolute right-0 bottom-full z-20 mb-1 w-60 rounded-xl bg-surface p-1 shadow-pop">
+                            @if ($ticket->status !== \App\Enums\TicketStatus::Closed)
+                                <button type="button" x-on:click="menu = false; $wire.statusAfter = 'closed'; $wire.send()" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium hover:bg-surface-muted">
+                                    <x-bx-check-circle class="size-4 text-ink-muted" aria-hidden="true" /> Senden &amp; schließen
+                                </button>
+                                <div class="my-1 border-t border-separator"></div>
+                            @endif
+                            <p class="px-3 pt-1.5 pb-1 text-[11px] font-semibold tracking-wide text-ink-faint uppercase">Status danach</p>
+                            <template x-for="(label, value) in labels" :key="value">
+                                <button type="button" role="menuitemradio" x-bind:aria-checked="($wire.statusAfter || '') === value" x-on:click="$wire.statusAfter = value; menu = false"
+                                    class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
+                                    <span class="flex-1" x-text="label"></span>
+                                    <x-bx-check x-show="($wire.statusAfter || '') === value" class="size-4 text-accent" aria-hidden="true" />
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                @endif
             </div>
         </form>
 

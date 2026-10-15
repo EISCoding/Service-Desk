@@ -167,7 +167,7 @@ Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwu
 - [x] Mail-Design im Admin: Logo, Farben, Schrift, Kopf- und Fußzeile (WYSIWYG), Antwort-Hinweis; Live-Vorschau mit Beispieldaten; Testmail senden
 - [x] Design-System nach Entwurf E: Farben, Flächen, Radien, Schatten, Typografie; Komponenten (Buttons, Felder, Pills, Tabs, Menüs, Tabellen) in Hell und Dunkel
 - [x] Intern-Layout: einklappbare Seitenleiste (nur Icons mit Tooltips, Zustand pro Benutzer gemerkt), Ansichten mit Zählern, Kopfzeile mit Suche und „Neues Ticket“, Handy mit Tab-Leiste
-- [ ] Ticket-Arbeitsplatz nach Entwurf E: Liste mit Vorschau, Verlauf als Karten, Eigenschaften-Leiste, Composer mit „Senden mit Status“
+- [x] Ticket-Arbeitsplatz nach Entwurf E: Liste mit Vorschau, Verlauf als Karten, Eigenschaften-Leiste, Composer mit „Senden mit Status“
 - [ ] Übrige Seiten im neuen Design: Übersicht, Kunden, Termine, Vorlagen, Einstellungen, Admin, Installer, Fehlerseiten
 - [ ] Portal und Anmeldeseiten im neuen Design
 - [ ] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit, README

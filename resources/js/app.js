@@ -111,7 +111,8 @@ document.addEventListener('keydown', (event) => {
         event.preventDefault();
         window.dispatchEvent(new CustomEvent('toggle-ticket-focus'));
     } else if (key === 'e') {
-        const status = document.querySelector('[data-shortcut="status"]:not([disabled])');
+        // Narrow and wide ticket panes each have a status field; take the visible one.
+        const status = [...document.querySelectorAll('[data-shortcut="status"]:not([disabled])')].find((field) => field.offsetParent !== null);
         if (! status) return;
         event.preventDefault();
         status.focus();
