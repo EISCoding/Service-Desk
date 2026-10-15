@@ -7,7 +7,7 @@
 
     <header class="mb-6">
         <p class="ref text-ink-muted">{{ $ticket->reference() }}</p>
-        <h1 class="mt-0.5 text-[24px] leading-tight font-bold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h1>
+        <h1 class="mt-0.5 text-[22px] leading-tight font-semibold tracking-tight [overflow-wrap:anywhere]">{{ $ticket->subject }}</h1>
         <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
             <x-ui.badge :color="$ticket->status->portalColor()" dot>{{ $ticket->status->portalLabel() }}</x-ui.badge>
         </div>
@@ -77,7 +77,7 @@
 
                     <div x-show="! expanded" class="flex items-center gap-2">
                         <x-ui.avatar :name="$contact->fullName()" class="max-sm:hidden" />
-                        <button type="button" x-on:click="open()" class="flex h-10 min-w-0 flex-1 items-center rounded-full bg-surface px-4 text-left text-sm text-ink-faint shadow-card hover:text-ink-muted sm:bg-ink/[0.04] sm:shadow-none sm:ring-1 sm:ring-hairline">
+                        <button type="button" x-on:click="open()" class="flex h-10 min-w-0 flex-1 items-center rounded-lg bg-surface px-4 text-left text-sm text-ink-faint shadow-card hover:text-ink-muted sm:bg-ink/[0.04] sm:shadow-none sm:ring-1 sm:ring-hairline">
                             <span class="truncate">Antworten …</span>
                         </button>
                     </div>

@@ -169,7 +169,7 @@ Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwu
 - [x] Intern-Layout: einklappbare Seitenleiste (nur Icons mit Tooltips, Zustand pro Benutzer gemerkt), Ansichten mit Zählern, Kopfzeile mit Suche und „Neues Ticket“, Handy mit Tab-Leiste
 - [x] Ticket-Arbeitsplatz nach Entwurf E: Liste mit Vorschau, Verlauf als Karten, Eigenschaften-Leiste, Composer mit „Senden mit Status“
 - [x] Übrige Seiten im neuen Design: Übersicht, Kunden, Termine, Vorlagen, Einstellungen, Admin, Installer, Fehlerseiten
-- [ ] Portal und Anmeldeseiten im neuen Design
+- [x] Portal und Anmeldeseiten im neuen Design
 - [ ] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit, README
 
 **Fertig wenn:** Alle Seiten im neuen Design, keine Heroicons mehr, Seitenleiste einklappbar, Branding und Mail-Design im Admin pflegbar, Vorlagen im WYSIWYG-Editor, Tests und Audit grün.

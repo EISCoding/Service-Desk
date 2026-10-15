@@ -6,7 +6,7 @@
             @unless ($this->contact->customer->isPrivate())
                 <p class="text-[13px] font-medium text-ink-muted">{{ $this->contact->customer->company }}</p>
             @endunless
-            <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>
+            <h1 class="mt-0.5 text-[24px] leading-tight font-semibold tracking-tight">{{ $this->greeting() }}</h1>
             <p class="mt-1 text-[15px] text-ink-muted">{{ $this->summaryText() }}</p>
         </div>
         @if (Route::has('portal.tickets.create'))
