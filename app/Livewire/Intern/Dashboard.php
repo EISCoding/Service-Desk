@@ -96,7 +96,7 @@ class Dashboard extends Component
     protected function changeToken(): string
     {
         $appointments = Appointment::query()->where('technician_id', $this->user()->id)->toBase()
-            ->selectRaw('count(*) as total, max(updated_at) as changed')->first();
+            ->reorder()->selectRaw('count(*) as total, max(updated_at) as changed')->first();
 
         return Ticket::fingerprintOf(Ticket::query()->visibleTo($this->user())).md5(json_encode($appointments));
     }

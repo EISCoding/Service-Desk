@@ -315,7 +315,9 @@ class Ticket extends Model
      */
     public function fingerprint(bool $withInternal = true): string
     {
+        // reorder(): the relation sorts by date, and MariaDB/MySQL reject ORDER BY on aggregates.
         $messages = $this->messages()->toBase()
+            ->reorder()
             ->when(! $withInternal, fn ($query) => $query->where('type', '!=', MessageType::Internal->value))
             ->selectRaw('count(*) as total, max(id) as last_id, max(updated_at) as changed')
             ->first();
@@ -328,7 +330,7 @@ class Ticket extends Model
      */
     public static function fingerprintOf(Builder $query): string
     {
-        return md5(json_encode($query->toBase()->selectRaw(
+        return md5(json_encode($query->toBase()->reorder()->selectRaw(
             'count(*) as total, max(updated_at) as changed, max(last_activity_at) as activity, max(customer_replied_at) as customer, max(team_replied_at) as team'
         )->first()));
     }

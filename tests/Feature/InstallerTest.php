@@ -115,6 +115,8 @@ it('validates the admin account and allows skipping the mailbox', function () {
 });
 
 it('reports a database that cannot be reached', function () {
+    $default = config('database.default');
+
     Livewire::test(Wizard::class)
         ->call('back', 'database')
         ->set('dbDriver', 'mysql')
@@ -127,7 +129,7 @@ it('reports a database that cannot be reached', function () {
         ->assertSet('step', 'database');
 
     // The working test database is still in use.
-    expect(config('database.default'))->toBe('sqlite');
+    expect(config('database.default'))->toBe($default);
 });
 
 it('belongs to the browser that started it', function () {

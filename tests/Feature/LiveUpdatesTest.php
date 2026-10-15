@@ -12,6 +12,7 @@ use App\Models\Customer;
 use App\Models\Ticket;
 use App\Models\TicketMessage;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -105,4 +106,20 @@ describe('portal', function () {
 
         $this->get(route('portal.tickets.show', $this->ticket->id))->assertRedirect(route('portal.home'));
     });
+});
+
+it('builds fingerprints that MariaDB and MySQL accept in strict mode', function () {
+    // ORDER BY together with count()/max() fails there (SQLite allows it): "1140 Mixing of GROUP columns".
+    $queries = [];
+    DB::listen(function ($query) use (&$queries) {
+        $queries[] = strtolower($query->sql);
+    });
+
+    $this->ticket->fingerprint();
+    $this->ticket->fingerprint(withInternal: false);
+    Ticket::fingerprintOf(Ticket::query()->latest('last_activity_at'));
+
+    $aggregates = array_filter($queries, fn (string $sql) => str_contains($sql, 'max('));
+    expect($aggregates)->toHaveCount(3)
+        ->and(array_filter($aggregates, fn (string $sql) => str_contains($sql, 'order by')))->toBeEmpty();
 });

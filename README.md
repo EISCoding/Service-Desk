@@ -137,6 +137,13 @@ php artisan test
 Die Tests laufen gegen eine SQLite-In-Memory-Datenbank (siehe `phpunit.xml`), es wird keine
 lokale Datenbank verändert.
 
+Vor einem Deployment zusätzlich gegen MariaDB testen: SQLite ist großzügiger (z. B. bei `ORDER BY`
+zusammen mit `count()`/`max()`, was MariaDB im strikten Modus ablehnt). Mit einer leeren Testdatenbank:
+
+```bash
+DB_CONNECTION=mariadb DB_HOST=127.0.0.1 DB_DATABASE=servicedesk_test DB_USERNAME=sd DB_PASSWORD=sd php artisan test
+```
+
 ## Queue und Scheduler (Plesk-Prinzip)
 
 Es gibt keinen dauerhaft laufenden Queue-Worker. Stattdessen:
