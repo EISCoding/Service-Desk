@@ -163,3 +163,12 @@ it('writes values the way dotenv reads them', function () {
         'FLAG' => 'false',
     ])->and(preg_match_all('/^DB_PASSWORD=/m', file_get_contents(EnvFile::path())))->toBe(1);
 });
+
+it('checks for the GD extension without making it a requirement', function () {
+    $checks = collect(Livewire::test(Wizard::class)->instance()->checks());
+    $gd = $checks->firstWhere('label', 'Bildbearbeitung (GD)');
+
+    expect($gd)->not->toBeNull()
+        ->and($gd['required'])->toBeFalse()
+        ->and($gd['ok'])->toBe(extension_loaded('gd'));
+});

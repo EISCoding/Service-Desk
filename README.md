@@ -59,7 +59,7 @@ Anmeldung unter <http://localhost:8000/intern/login>.
 Nach dem Login:
 
 - **Benutzer und Gruppen**: Admin → Benutzer / Gruppen (`/intern/admin/benutzer`, `/intern/admin/gruppen`)
-- **Einstellungen** (Benutzermenü oben rechts): Darstellung, Standard-Ansicht der Ticketliste,
+- **Einstellungen** (Benutzermenü unten in der Seitenleiste): Darstellung, Standard-Ansicht der Ticketliste,
   Benachrichtigungen, Signatur, Passwort und 2FA (`/intern/einstellungen`)
 - **Darkmode**: Benutzermenü → Darstellung (System / Hell / Dunkel)
 - **Kunden**: `/intern/kunden` – `db:seed` legt lokal 12 Demo-Kunden mit Ansprechpartnern an
@@ -71,7 +71,18 @@ Nach dem Login:
 - **Glocke** oben rechts: Benachrichtigungen (neues Ticket in der Gruppe, Zuweisung, Kundenantwort),
   wird jede Minute aktualisiert; Mails dazu landen lokal im Log
 - **Suche**: `⌘K` / `Strg+K` (Tickets, Kunden, Ansprechpartner); Tastenkürzel in Tickets: `J`/`K`, `R`, `N`, `E`
-- **Systemeinstellungen**: Admin → Systemeinstellungen (Firmenname, Logo, Akzentfarbe, Frist)
+- **Seitenleiste**: lässt sich auf Icons einklappen (Knopf unten oder Taste `[`), der Zustand wird pro
+  Benutzer gemerkt; „Ansichten“ zeigen offene Tickets mit Zählern (Meine, neue Kundenantworten, fällige
+  Wiedervorlagen, nicht zugeordnet, alle)
+- **Erscheinungsbild**: Admin → Erscheinungsbild (Logo für helle und dunkle Flächen, App-Icon, Favicon,
+  Akzentfarbe); aus dem App-Icon entstehen automatisch die Icons für iPhone, Android, Push und Manifest
+- **Mail-Design**: Admin → Mail-Design (Farben, Schrift, Logo, Kopf- und Fußzeile, Antwort-Hinweis) mit
+  Live-Vorschau für Computer und Handy und Testmail über das Standard-Postfach
+- **Editor**: Antworten, Vorlagen, Textbausteine und Signaturen mit WYSIWYG-Editor (TipTap); in Vorlagen
+  zusätzlich Überschriften, Ausrichtung, Textfarben, Buttons, Trennlinien und Platzhalter als Chips
+- **Systemeinstellungen**: Admin → Systemeinstellungen (Firmenname, Wiedereröffnungsfrist)
+- **Icons**: [Boxicons](https://boxicons.com) 2.1.4 (MIT) als Blade-Icons-Set in `resources/svg/boxicons`
+  (`<x-bx-envelope />`, gefüllt `<x-bxs-envelope />`)
 
 ### Kundenportal lokal
 
@@ -203,7 +214,8 @@ Die folgenden Abschnitte beschreiben die Einrichtung von Hand bzw. mit SSH.
 
 - Plesk Obsidian mit SSH-Zugang für das Abonnement (Plesk → Websites & Domains → Hosting & DNS →
   Hosting → „Zugriff auf den Server über SSH“: `/bin/bash`)
-- PHP 8.3 oder neuer (PHP-FPM) mit `pdo_mysql`, `mbstring`, `intl`, `openssl`, `fileinfo`, `zip`
+- PHP 8.3 oder neuer (PHP-FPM) mit `pdo_mysql`, `mbstring`, `intl`, `openssl`, `fileinfo`, `zip`, `gd`
+  (`gd` erzeugt die App-Icons aus dem hochgeladenen Bild)
 - MariaDB 10.6+ (oder MySQL 8)
 - Composer (in Plesk enthalten) und Node.js 20+ (Plesk-Erweiterung „Node.js“) für den Asset-Build;
   ohne Node.js `public/build` einchecken und `SKIP_ASSETS=1` setzen
@@ -337,7 +349,8 @@ ruft die Postfächer alle 20 Sekunden ab und markiert täglich um 06:00 fällige
 
 ### 8. Einrichtung in der Anwendung
 
-1. **Admin → Systemeinstellungen**: Firmenname, Logo, Akzentfarbe, Wiedereröffnungsfrist
+1. **Admin → Systemeinstellungen**: Firmenname, Wiedereröffnungsfrist; **Admin → Erscheinungsbild**:
+   Logo, App-Icon, Favicon, Akzentfarbe; **Admin → Mail-Design**: Aussehen und Fußzeile der Mails
 2. **Admin → Gruppen** und **Benutzer**: Teams und Mitarbeiter anlegen (Startpasswort vergeben)
 3. **Admin → Postfächer**: IMAP/SMTP eintragen, „Verbindung testen“, Standardgruppe wählen, aktivieren
 4. **Vorlagen**: Texte der Systemvorlagen prüfen, Textbausteine anlegen
@@ -403,3 +416,6 @@ Plesk → Git → **Jetzt bereitstellen**.
 | Seite zeigt „Fast geschafft“ | Composer-Abhängigkeiten fehlen: PHP Composer → Abhängigkeiten installieren |
 | Assistent: „läuft bereits in einem anderen Browser“ | Im ursprünglichen Browser weitermachen oder `storage/app/install.lock` löschen |
 | Push kommt nicht an | Nur über HTTPS; Push auf dem Gerät unter Einstellungen → Benachrichtigungen aktivieren und „Test senden“ |
+| Erscheinungsbild: „PHP-Erweiterung GD fehlt“ | In Plesk unter PHP-Einstellungen `gd` aktivieren; Logos funktionieren auch ohne |
+| Testmail im Mail-Design schlägt fehl | Standard-Postfach unter Admin → Postfächer prüfen („Verbindung testen“) |
+| Neues Logo/Icon erscheint nicht auf dem Home-Bildschirm | Die App einmal vom Home-Bildschirm entfernen und neu hinzufügen; iOS speichert das Icon beim Hinzufügen |
