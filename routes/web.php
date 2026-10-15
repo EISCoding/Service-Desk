@@ -7,6 +7,7 @@ use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\MailPreviewController;
 use App\Http\Controllers\Intern\TicketPageController;
 use App\Http\Controllers\Intern\UpdateThemeController;
+use App\Http\Controllers\ManifestController;
 use App\Http\Controllers\Portal\AttachmentController as PortalAttachmentController;
 use App\Http\Controllers\Portal\InvitationController;
 use App\Http\Controllers\Portal\LoginController;
@@ -38,6 +39,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/intern');
+
+Route::get('manifest.webmanifest', ManifestController::class)->name('manifest');
 
 /*
 | Staff area. Login, logout, password reset and the two-factor challenge
