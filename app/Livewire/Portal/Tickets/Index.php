@@ -3,6 +3,7 @@
 namespace App\Livewire\Portal\Tickets;
 
 use App\Enums\TicketStatus;
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Contact;
 use App\Models\Ticket;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -23,7 +24,7 @@ use Livewire\WithPagination;
 #[Title('Tickets')]
 class Index extends Component
 {
-    use WithPagination;
+    use PollsForChanges, WithPagination;
 
     /** open | closed | all */
     #[Url(except: 'open')]
@@ -127,6 +128,16 @@ class Index extends Component
             ->latest('last_activity_at')
             ->latest('id')
             ->paginate(20);
+    }
+
+    protected function changeToken(): string
+    {
+        return Ticket::fingerprintOf(Ticket::query()->visibleToContact($this->contact));
+    }
+
+    protected function changesDetected(): void
+    {
+        unset($this->tickets, $this->waiting, $this->summary);
     }
 
     public function render()

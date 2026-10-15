@@ -4,6 +4,7 @@ namespace App\Livewire\Portal\Tickets;
 
 use App\Enums\MessageType;
 use App\Livewire\Concerns\InteractsWithToasts;
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Appointment;
 use App\Models\Contact;
 use App\Models\Ticket;
@@ -27,7 +28,7 @@ use Livewire\WithFileUploads;
 #[Layout('layouts::portal')]
 class Show extends Component
 {
-    use InteractsWithToasts, WithFileUploads;
+    use InteractsWithToasts, PollsForChanges, WithFileUploads;
 
     #[Locked]
     public Ticket $ticket;
@@ -127,6 +128,29 @@ class Show extends Component
         unset($this->messages);
         $this->dispatch('composer-sent');
         $this->toast('Ihre Antwort wurde gesendet.');
+    }
+
+    protected function changeToken(): string
+    {
+        // Not set when mount() redirected to the ticket this one was merged into.
+        return isset($this->ticket) ? $this->ticket->fingerprint(withInternal: false) : '';
+    }
+
+    /**
+     * The team answered or changed the status while the page is open.
+     */
+    protected function changesDetected(): void
+    {
+        $this->ticket->refresh();
+
+        if (! $this->contact->can('viewInPortal', $this->ticket)) {
+            $this->redirectRoute('portal.home', navigate: true);
+
+            return;
+        }
+
+        unset($this->messages, $this->appointments);
+        $this->ticket->markAsReadBy($this->contact);
     }
 
     public function render()

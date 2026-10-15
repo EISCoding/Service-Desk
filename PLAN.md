@@ -143,7 +143,7 @@ Abhaken mit `[x]`, sobald eine Aufgabe fertig und getestet ist.
 
 ## Phase 8 – Live, Kanban, Installation und Benachrichtigungen
 
-- [ ] Live-Updates: Ticketverlauf (intern und Portal), Ticketliste, Übersicht und Glocke aktualisieren sich automatisch (Polling, nur sichtbarer Tab)
+- [x] Live-Updates: Ticketverlauf (intern und Portal), Ticketliste, Übersicht und Glocke aktualisieren sich automatisch (Polling, nur sichtbarer Tab)
 - [ ] Kanban-Ansicht: Board als zweite Ansicht der Tickets, Spalten nach Status, Drag & Drop ändert den Status, aktualisiert sich laufend
 - [ ] Ticketansicht: Kunden-Seitenleiste (Kontakt, Notizen, weitere Tickets), Schnellaktionen, Vollbild-Editor, kompaktere Liste mit Vorschau
 - [ ] Kundentyp Firma oder Privatperson (Privatperson ist selbst der Ansprechpartner)

@@ -1,7 +1,7 @@
 @php($canUpdate = auth()->user()->can('update', $ticket))
 @php($pill = 'h-8 appearance-none rounded-full bg-transparent pr-7 text-[13px] font-medium text-ink focus:outline-none disabled:opacity-70')
 
-<div class="flex min-h-full flex-col">
+<div wire:poll.10s="checkForChanges" class="flex min-h-full flex-col">
     <div class="flex-1 px-4 pt-4 pb-6 sm:px-6 lg:px-8 lg:pt-6">
         <a href="{{ route('intern.tickets.index') }}" wire:navigate class="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-accent lg:hidden">
             <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /> Tickets

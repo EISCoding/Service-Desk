@@ -1,6 +1,6 @@
 @php($summary = $this->summary)
 
-<div>
+<div wire:poll.30s="checkForChanges">
     <header class="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div class="min-w-0">
             <p class="text-[13px] font-medium text-ink-muted">{{ $this->contact->customer->company }}</p>

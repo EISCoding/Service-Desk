@@ -3,6 +3,20 @@ import 'trix';
 
 // Alpine.js ships with Livewire; register Alpine extensions in the `alpine:init` hook.
 
+// A record deleted meanwhile (e.g. a ticket open while a colleague deletes it) makes live
+// updates fail with 404: reload instead of showing the error page in a modal. The page
+// routes send missing tickets back to the list.
+document.addEventListener('livewire:init', () => {
+    window.Livewire.hook('request', ({ fail }) => {
+        fail(({ status, preventDefault }) => {
+            if (status === 404) {
+                preventDefault();
+                window.location.reload();
+            }
+        });
+    });
+});
+
 // Uploads in the editor are not used (attachments have their own field).
 document.addEventListener('trix-file-accept', (event) => event.preventDefault());
 

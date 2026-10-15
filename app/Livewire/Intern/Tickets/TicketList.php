@@ -4,6 +4,7 @@ namespace App\Livewire\Intern\Tickets;
 
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Group;
 use App\Models\Ticket;
 use App\Models\User;
@@ -22,6 +23,8 @@ use Livewire\Component;
  */
 class TicketList extends Component
 {
+    use PollsForChanges;
+
     public const VIEWS = [
         'mine' => 'Meine',
         'groups' => 'Meine Gruppen',
@@ -129,6 +132,16 @@ class TicketList extends Component
     public function refreshList(): void
     {
         unset($this->tickets, $this->counts);
+    }
+
+    protected function changeToken(): string
+    {
+        return Ticket::fingerprintOf(Ticket::query()->visibleTo(auth()->user()));
+    }
+
+    protected function changesDetected(): void
+    {
+        $this->refreshList();
     }
 
     /**

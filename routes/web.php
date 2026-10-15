@@ -46,7 +46,9 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
 
     // Areas built in later phases (placeholders until then).
     Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');
-    Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])->name('tickets.show');
+    Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])
+        ->missing(fn () => redirect()->route('intern.tickets.index')->with('toast', ['message' => 'Dieses Ticket gibt es nicht mehr.', 'type' => 'info']))
+        ->name('tickets.show');
 
     Route::livewire('termine', AppointmentIndex::class)->name('appointments.index');
 
@@ -122,7 +124,9 @@ Route::prefix('portal')->name('portal.')->group(function () {
         Route::livewire('profil', PortalProfile::class)->name('profile');
         Route::livewire('/', PortalTickets::class)->name('home');
         Route::livewire('tickets/neu', PortalCreateTicket::class)->name('tickets.create');
-        Route::livewire('tickets/{ticket}', PortalTicket::class)->name('tickets.show');
+        Route::livewire('tickets/{ticket}', PortalTicket::class)
+            ->missing(fn () => redirect()->route('portal.home'))
+            ->name('tickets.show');
         Route::get('anhaenge/{attachment}', [PortalAttachmentController::class, 'show'])->name('attachments.show');
     });
 });

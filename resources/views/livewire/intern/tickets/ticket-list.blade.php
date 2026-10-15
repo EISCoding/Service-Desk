@@ -1,4 +1,4 @@
-<div class="flex min-h-full flex-col">
+<div wire:poll.15s="checkForChanges" class="flex min-h-full flex-col">
     <div x-data="{ filters: {{ $this->activeFilterCount() > 0 ? 'true' : 'false' }} }" class="sticky top-0 z-10 space-y-3 border-b border-separator bg-canvas/90 px-4 pt-4 pb-3 backdrop-blur-xl">
         <div class="flex items-center justify-between gap-3">
             <h1 class="text-[22px] font-semibold tracking-tight">Tickets</h1>

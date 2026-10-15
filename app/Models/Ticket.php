@@ -311,6 +311,29 @@ class Ticket extends Model
     }
 
     /**
+     * Changes whenever the ticket or its conversation changes (live updates).
+     */
+    public function fingerprint(bool $withInternal = true): string
+    {
+        $messages = $this->messages()->toBase()
+            ->when(! $withInternal, fn ($query) => $query->where('type', '!=', MessageType::Internal->value))
+            ->selectRaw('count(*) as total, max(id) as last_id, max(updated_at) as changed')
+            ->first();
+
+        return md5(json_encode([DB::table('tickets')->where('id', $this->id)->first(), $messages]));
+    }
+
+    /**
+     * Changes whenever a ticket of the query changes (live updates of lists).
+     */
+    public static function fingerprintOf(Builder $query): string
+    {
+        return md5(json_encode($query->toBase()->selectRaw(
+            'count(*) as total, max(updated_at) as changed, max(last_activity_at) as activity, max(customer_replied_at) as customer, max(team_replied_at) as team'
+        )->first()));
+    }
+
+    /**
      * Record that something happened (sorting by latest activity).
      */
     public function touchActivity(): void

@@ -6,6 +6,7 @@ use App\Enums\SystemTemplate;
 use App\Enums\TicketPriority;
 use App\Enums\TicketStatus;
 use App\Livewire\Concerns\InteractsWithToasts;
+use App\Livewire\Concerns\PollsForChanges;
 use App\Models\Appointment;
 use App\Models\Contact;
 use App\Models\Customer;
@@ -35,7 +36,7 @@ use Livewire\Component;
  */
 class TicketView extends Component
 {
-    use InteractsWithToasts;
+    use InteractsWithToasts, PollsForChanges;
 
     #[Locked]
     public Ticket $ticket;
@@ -465,6 +466,32 @@ class TicketView extends Component
 
         $this->flashToast("{$reference} gelöscht.");
         $this->redirectRoute('intern.tickets.index', navigate: true);
+    }
+
+    protected function changeToken(): string
+    {
+        return $this->ticket->fingerprint();
+    }
+
+    /**
+     * Someone else changed the ticket or a new message arrived.
+     */
+    protected function changesDetected(): void
+    {
+        // A deleted ticket fails earlier (404 while loading the component); the page then reloads.
+        $this->ticket->refresh();
+
+        if (! auth()->user()->can('view', $this->ticket)) {
+            $this->flashToast("{$this->ticket->reference()} ist für dich nicht mehr sichtbar.", 'info');
+            $this->redirectRoute('intern.tickets.index', navigate: true);
+
+            return;
+        }
+
+        unset($this->messages, $this->contactOptions, $this->assigneeOptions);
+        $this->statusVersion++;
+        $this->ticket->markAsReadBy(auth()->user());
+        $this->dispatch('ticket-updated');
     }
 
     #[On('ticket-changed')]
