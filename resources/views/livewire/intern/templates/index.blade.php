@@ -69,7 +69,7 @@
             @if ($this->editing?->isSystem())
                 <x-ui.input label="Betreff" wire:model="subject" required :hint="\App\Enums\SystemTemplate::tryFrom((string) $this->editing->key)?->isTicketMail() === false ? null : 'Die Ticketnummer [#JJJJ-NNNNN] wird automatisch angehängt.'" />
             @endif
-            <x-ui.rich-editor label="Text" wire:model="body" />
+            <x-ui.rich-editor label="Text" wire:model="body" toolbar="full" placeholders />
             @include('livewire.intern.templates.placeholders')
             @if ($this->editing?->isSystem())
                 <x-ui.checkbox label="Aktiv" description="Nur aktive Systemvorlagen werden verschickt." wire:model="is_active" />

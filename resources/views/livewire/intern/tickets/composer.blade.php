@@ -10,7 +10,7 @@
     the full editor (click, or the shortcuts R / N).
 --}}
 <section aria-label="Antworten" data-composer
-    x-data="{ expanded: false, full: false, open(mode) { $wire.setMode(mode).then(() => { this.expanded = true; this.$nextTick(() => this.$root.querySelector('trix-editor')?.focus()) }) } }"
+    x-data="{ expanded: false, full: false, open(mode) { $wire.setMode(mode).then(() => { this.expanded = true; this.$nextTick(() => this.$root.querySelector('[data-rich-editor]')?.richEditor?.focus()) }) } }"
     x-on:composer-focus.window="open($event.detail.mode)"
     x-on:composer-sent.window="expanded = false; full = false"
     x-on:keydown.escape="full ? full = false : expanded = false"
@@ -50,7 +50,7 @@
                 <p class="text-[13px] font-semibold">{{ $isNote ? 'Interne Notiz' : 'Antworten' }}</p>
             @endif
             <div class="flex items-center gap-1">
-                <button type="button" x-on:click="full = ! full; $nextTick(() => $root.querySelector('trix-editor')?.focus())" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink" x-bind:aria-pressed="full">
+                <button type="button" x-on:click="full = ! full; $nextTick(() => $root.querySelector('[data-rich-editor]')?.richEditor?.focus())" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink" x-bind:aria-pressed="full">
                     <x-bx-fullscreen class="size-5" aria-hidden="true" x-show="! full" />
                     <x-bx-exit-fullscreen class="size-5" aria-hidden="true" x-show="full" x-cloak />
                     <span class="sr-only">Vollbild</span>
@@ -86,8 +86,8 @@
                 @endif
             @endunless
 
-            <div x-bind:class="full ? '[&_trix-editor]:min-h-[55vh]!' : '[&_trix-editor]:max-h-[40vh] [&_trix-editor]:overflow-y-auto'">
-                <x-ui.rich-editor wire:model="body" placeholder="Nachricht schreiben …" />
+            <div x-bind:class="full ? '[&_.rich-editor-content]:min-h-[55vh]!' : '[&_.rich-editor-content]:max-h-[40vh] [&_.rich-editor-content]:overflow-y-auto'">
+                <x-ui.rich-editor wire:model="body" toolbar="reply" placeholder="Nachricht schreiben …" />
             </div>
             @if ($isNote)
                 <p class="-mt-1 text-[12px] text-ink-muted">Interne Notizen sind für Kunden nie sichtbar.</p>
@@ -133,7 +133,7 @@
                             <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute bottom-full left-0 z-20 mb-1 max-h-64 w-64 overflow-y-auto rounded-xl bg-surface p-1 shadow-pop">
                                 @foreach ($this->snippets as $snippet)
                                     <button type="button" wire:key="snippet-{{ $snippet->id }}" class="block w-full truncate rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted"
-                                        x-on:click="open = false; $wire.snippet({{ $snippet->id }}).then(html => $root.closest('section').querySelector('trix-editor').editor.insertHTML(html))">{{ $snippet->name }}</button>
+                                        x-on:click="open = false; $wire.snippet({{ $snippet->id }}).then(html => $root.closest('section').querySelector('[data-rich-editor]').richEditor.insert(html))">{{ $snippet->name }}</button>
                                 @endforeach
                             </div>
                         </div>

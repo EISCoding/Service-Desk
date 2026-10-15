@@ -163,7 +163,7 @@ Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwu
 
 - [x] Boxicons als eigenes Icon-Set (Blade Icons), alle Heroicons ersetzt, Heroicons-Paket entfernt
 - [x] Branding im Admin: Logo hell und dunkel, Favicon und App-Icon hochladen; Icons für iPhone, Android, Push und Manifest werden automatisch erzeugt; Vorschau und Zurücksetzen
-- [ ] WYSIWYG-Editor (TipTap) für Antworten, Vorlagen, Textbausteine und Signaturen: Überschriften, Fett/Kursiv/Unterstrichen, Listen, Links, Ausrichtung, Textfarbe, Button-Link, Trennlinie, Platzhalter als Chips
+- [x] WYSIWYG-Editor (TipTap) für Antworten, Vorlagen, Textbausteine und Signaturen: Überschriften, Fett/Kursiv/Unterstrichen, Listen, Links, Ausrichtung, Textfarbe, Button-Link, Trennlinie, Platzhalter als Chips
 - [ ] Mail-Design im Admin: Logo, Farben, Schrift, Kopf- und Fußzeile (WYSIWYG), Antwort-Hinweis; Live-Vorschau mit Beispieldaten; Testmail senden
 - [ ] Design-System nach Entwurf E: Farben, Flächen, Radien, Schatten, Typografie; Komponenten (Buttons, Felder, Pills, Tabs, Menüs, Tabellen) in Hell und Dunkel
 - [ ] Intern-Layout: einklappbare Seitenleiste (nur Icons mit Tooltips, Zustand pro Benutzer gemerkt), Ansichten mit Zählern, Kopfzeile mit Suche und „Neues Ticket“, Handy mit Tab-Leiste

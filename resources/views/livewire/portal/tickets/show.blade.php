@@ -63,7 +63,7 @@
             @if ($contact->can('replyInPortal', $ticket))
                 {{-- Always at hand: a slim bar that expands into the editor --}}
                 <section aria-label="Antworten"
-                    x-data="{ expanded: false, open() { this.expanded = true; this.$nextTick(() => this.$root.querySelector('trix-editor')?.focus()) } }"
+                    x-data="{ expanded: false, open() { this.expanded = true; this.$nextTick(() => this.$root.querySelector('[data-rich-editor]')?.richEditor?.focus()) } }"
                     x-on:composer-sent.window="expanded = false"
                     x-on:keydown.escape="expanded = false"
                     class="sticky bottom-[calc(56px+env(safe-area-inset-bottom))] z-10 -mx-4 mt-6 border-t border-hairline bg-canvas/92 px-4 py-3 backdrop-blur-2xl backdrop-saturate-150 sm:mx-0 sm:rounded-2xl sm:border-0 sm:bg-surface/85 sm:p-3 sm:shadow-pop md:bottom-4"
@@ -90,7 +90,7 @@
                             </button>
                         </div>
                         <form wire:submit="reply" class="space-y-3">
-                            <div class="[&_trix-editor]:max-h-[40vh] [&_trix-editor]:overflow-y-auto">
+                            <div class="[&_.rich-editor-content]:max-h-[40vh] [&_.rich-editor-content]:overflow-y-auto">
                                 <x-ui.rich-editor wire:model="body" placeholder="Ihre Antwort …" />
                             </div>
                             <div class="flex flex-wrap items-end justify-between gap-3">

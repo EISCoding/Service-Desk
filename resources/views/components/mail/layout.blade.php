@@ -68,7 +68,7 @@
                                 <tr><td style="height:4px;line-height:4px;font-size:0;background-color:{{ $accent }};border-radius:16px 16px 0 0;">&nbsp;</td></tr>
                                 <tr>
                                     <td class="card-body content" style="padding:32px 36px;font-family:{{ $font }};font-size:15px;line-height:1.6;color:#1d1d1f;">
-                                        {{ $slot }}
+                                        {!! \App\Support\MailHtml::inline((string) $slot, $accent) !!}
                                     </td>
                                 </tr>
                                 @if ($reference)

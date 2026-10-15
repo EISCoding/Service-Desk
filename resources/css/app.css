@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
-@import 'trix/dist/trix.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -146,66 +145,54 @@
     .message-body :where(img) {
         @apply inline-block h-auto max-w-full rounded-md;
     }
+
+    .message-body :where(h2) {
+        @apply text-[17px] leading-snug;
+    }
+
+    .message-body :where(h3) {
+        @apply text-[15px] leading-snug;
+    }
+
+    .message-body :where(hr) {
+        @apply my-4 border-separator;
+    }
+
+    /* Links shown as a button (editor "Button"); mails get the same look inline */
+    .message-body :where(a[data-type='button']) {
+        @apply inline-block rounded-[10px] bg-accent-fill px-4 py-2 font-semibold text-on-accent no-underline hover:bg-accent-fill-hover;
+    }
 }
 
-/* Trix editor in the design system (unlayered, so it wins over trix.css) */
-trix-toolbar .trix-button-group--file-tools,
-trix-toolbar .trix-button-group--history-tools,
-trix-toolbar .trix-button--icon-heading-1,
-trix-toolbar .trix-button--icon-decrease-nesting-level,
-trix-toolbar .trix-button--icon-increase-nesting-level {
-    display: none;
+/* WYSIWYG editor (TipTap), see resources/js/editor.js */
+.rich-editor-content {
+    @apply min-h-32 px-3.5 py-2.5 focus:outline-none;
 }
 
-trix-toolbar .trix-button-row {
-    @apply mb-1.5 flex-wrap gap-0.5;
+.rich-editor-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    @apply pointer-events-none float-left h-0 text-ink-faint;
 }
 
-trix-toolbar .trix-button-group {
-    @apply m-0 border-0 bg-transparent;
+.rich-editor-content .ProseMirror-selectednode {
+    @apply rounded-md ring-2 ring-accent/60;
 }
 
-trix-toolbar .trix-button-group:not(:first-child) {
-    @apply ml-1 border-l border-hairline pl-1;
-}
-
-trix-toolbar .trix-button {
-    @apply size-8 rounded-lg border-0 bg-transparent opacity-60 transition hover:bg-ink/[0.06] hover:opacity-100;
-}
-
-trix-toolbar .trix-button:not(:first-child) {
-    @apply border-0;
-}
-
-trix-toolbar .trix-button.trix-active {
-    @apply bg-accent/12 opacity-100;
-}
-
-trix-toolbar .trix-button--icon::before {
-    @apply bg-size-[1.1rem];
-}
-
-.dark trix-toolbar .trix-button--icon::before {
-    filter: invert(1);
-}
-
-trix-toolbar .trix-dialog {
-    @apply rounded-xl border-0 bg-surface text-ink shadow-pop;
-}
-
-trix-toolbar .trix-input {
-    @apply rounded-lg border-separator bg-surface text-ink;
-}
-
-trix-editor {
-    @apply min-h-32 rounded-xl border-0 bg-surface px-3.5 py-2.5 text-sm leading-relaxed text-ink ring-1 ring-hairline ring-inset transition focus:ring-2 focus:ring-accent/60 focus:outline-none;
-}
-
-trix-editor:empty:not(:focus)::before {
-    @apply text-ink-faint;
+/* Placeholder chips ({ticket.nummer}) in the editor and the placeholder menu */
+.placeholder-chip,
+.rich-editor-content span[data-type='placeholder'] {
+    @apply inline-block rounded-md bg-accent/12 px-1.5 font-mono text-[12px] leading-5 font-medium text-accent;
 }
 
 /* Ticket numbers and other references: tabular sans instead of a typewriter font */
 .ref {
     @apply font-sans text-[12px] font-medium tracking-tight tabular-nums;
 }
+
+/* Editor text colors (App\Support\RichTextAttributes::COLORS), brighter on dark surfaces */
+.dark .message-body [style*='#d1242f'] { color: #ff7b72 !important; }
+.dark .message-body [style*='#c2410c'] { color: #ffa657 !important; }
+.dark .message-body [style*='#1a7f37'] { color: #56d364 !important; }
+.dark .message-body [style*='#0b62d6'] { color: #79c0ff !important; }
+.dark .message-body [style*='#8250df'] { color: #d2a8ff !important; }
+.dark .message-body [style*='#6e7781'] { color: #9ea7b3 !important; }

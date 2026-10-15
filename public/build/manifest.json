@@ -28,7 +28,7 @@
     "src": "node_modules/@fontsource-variable/inter/files/inter-vietnamese-wght-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BKPjEJ41.css",
+    "file": "assets/app-DEJYy0zo.css",
     "name": "app",
     "names": [
       "app.css"
@@ -46,9 +46,18 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-eufNuClP.js",
+    "file": "assets/app-Bsp5VKoL.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/tiptap.js"
+    ]
+  },
+  "resources/js/tiptap.js": {
+    "file": "assets/tiptap-i7eNuQhK.js",
+    "name": "tiptap",
+    "src": "resources/js/tiptap.js",
+    "isDynamicEntry": true
   }
 }
