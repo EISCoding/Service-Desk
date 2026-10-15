@@ -16,7 +16,7 @@
         </form>
         <x-slot:footer>
             <x-ui.button variant="secondary" :href="route('portal.home')" wire:navigate>Abbrechen</x-ui.button>
-            <x-ui.button type="submit" form="ticket-form" icon="paper-airplane" wire:loading.attr="disabled" wire:target="files,save">Ticket senden</x-ui.button>
+            <x-ui.button type="submit" form="ticket-form" icon="send" wire:loading.attr="disabled" wire:target="files,save">Ticket senden</x-ui.button>
         </x-slot:footer>
     </x-ui.card>
 </div>

@@ -35,6 +35,6 @@
             @endforeach
             {{ $slot }}
         </select>
-        <x-heroicon-m-chevron-up-down class="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
+        <x-bx-expand-vertical class="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-ink-faint" aria-hidden="true" />
     </div>
 </x-ui.field>

@@ -67,7 +67,7 @@
 
         <div class="grid gap-8 sm:grid-cols-2">
             <x-ui.card title="Leerzustand" :padding="false">
-                <x-ui.empty-state icon="ticket" title="Keine Tickets" description="Sobald ein Ticket eingeht, erscheint es hier.">
+                <x-ui.empty-state icon="purchase-tag" title="Keine Tickets" description="Sobald ein Ticket eingeht, erscheint es hier.">
                     <x-ui.button variant="secondary" size="sm">Ticket anlegen</x-ui.button>
                 </x-ui.empty-state>
             </x-ui.card>

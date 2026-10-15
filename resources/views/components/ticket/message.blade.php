@@ -42,17 +42,17 @@
             <time datetime="{{ $message->created_at->toIso8601String() }}" title="{{ $message->created_at->isoFormat('D. MMMM YYYY, HH:mm') }}">{{ $message->created_at->format('H:i') }}</time>
 
             @if ($internal)
-                <x-ui.badge color="yellow"><x-heroicon-m-lock-closed class="size-3" aria-hidden="true" /> Interne Notiz</x-ui.badge>
+                <x-ui.badge color="yellow"><x-bx-lock-alt class="size-3" aria-hidden="true" /> Interne Notiz</x-ui.badge>
             @else
                 @if (! $portal && $message->is_automatic)
-                    <x-ui.badge color="gray"><x-heroicon-m-cpu-chip class="size-3" aria-hidden="true" /> Automatisch</x-ui.badge>
+                    <x-ui.badge color="gray"><x-bx-chip class="size-3" aria-hidden="true" /> Automatisch</x-ui.badge>
                 @endif
                 @if ($template)
-                    <x-ui.badge color="gray"><x-heroicon-m-document-text class="size-3" aria-hidden="true" /> {{ $template->label() }}</x-ui.badge>
+                    <x-ui.badge color="gray"><x-bx-file class="size-3" aria-hidden="true" /> {{ $template->label() }}</x-ui.badge>
                 @endif
                 @if ($isMail)
                     <span class="inline-flex items-center gap-1" title="{{ $portal ? 'E-Mail' : $message->type->label() }}">
-                        <x-heroicon-m-envelope class="size-3.5" aria-hidden="true" />
+                        <x-bx-envelope class="size-3.5" aria-hidden="true" />
                         <span class="sr-only">{{ $portal ? 'E-Mail' : $message->type->label() }}</span>
                     </span>
                 @endif
@@ -82,7 +82,7 @@
         @if ($quotedText)
             <details class="group mt-3">
                 <summary class="inline-flex cursor-pointer list-none items-center gap-1 rounded-full bg-ink/[0.05] px-2.5 py-0.5 text-[12px] font-medium text-ink-muted hover:text-ink">
-                    <x-heroicon-m-ellipsis-horizontal class="size-4" aria-hidden="true" />
+                    <x-bx-dots-horizontal-rounded class="size-4" aria-hidden="true" />
                     <span class="group-open:hidden">Zitierten Verlauf anzeigen</span>
                     <span class="hidden group-open:inline">Zitierten Verlauf ausblenden</span>
                 </summary>
@@ -98,7 +98,7 @@
                             @if ($attachment->isImage())
                                 <img src="{{ $attachment->url(inline: true, portal: $portal) }}" alt="" class="size-8 shrink-0 rounded-md object-cover" loading="lazy">
                             @else
-                                <span class="grid size-8 shrink-0 place-items-center rounded-md bg-accent/10 text-accent"><x-heroicon-o-paper-clip class="size-4" aria-hidden="true" /></span>
+                                <span class="grid size-8 shrink-0 place-items-center rounded-md bg-accent/10 text-accent"><x-bx-paperclip class="size-4" aria-hidden="true" /></span>
                             @endif
                             <span class="min-w-0">
                                 <span class="block truncate font-medium">{{ $attachment->original_name }}</span>

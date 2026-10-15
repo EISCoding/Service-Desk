@@ -21,7 +21,7 @@
                     'bg-surface ring-2 ring-ink/15 ring-inset' => $number > $step,
                 ])>
                     @if ($done)
-                        <x-heroicon-m-check class="size-3.5" aria-hidden="true" />
+                        <x-bx-check class="size-3.5" aria-hidden="true" />
                     @elseif ($number === $step)
                         <span class="size-2 rounded-full bg-on-accent"></span>
                     @endif

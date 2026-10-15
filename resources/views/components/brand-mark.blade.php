@@ -16,6 +16,6 @@
     <img src="{{ $logo }}" alt="" {{ $attributes->class([$box, 'shrink-0 object-contain']) }}>
 @else
     <span {{ $attributes->class([$box, $radius, 'grid shrink-0 place-items-center bg-gradient-to-b from-accent-fill to-accent-fill-hover text-on-accent shadow-sm']) }}>
-        <x-heroicon-o-lifebuoy :class="$icon" aria-hidden="true" />
+        <x-bx-support :class="$icon" aria-hidden="true" />
     </span>
 @endif

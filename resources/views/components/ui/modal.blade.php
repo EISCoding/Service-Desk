@@ -65,7 +65,7 @@
                     </div>
                     <button type="button" x-on:click="show = false" class="-mr-2 rounded-full p-1.5 text-ink-faint hover:bg-surface-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-accent">
                         <span class="sr-only">Schließen</span>
-                        <x-heroicon-m-x-mark class="size-5" aria-hidden="true" />
+                        <x-bx-x class="size-5" aria-hidden="true" />
                     </button>
                 </div>
             @endif

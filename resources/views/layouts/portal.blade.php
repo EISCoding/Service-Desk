@@ -9,7 +9,7 @@
 @php
     $contact = auth('contact')->user();
     $nav = array_filter([
-        ['route' => 'portal.home', 'active' => 'portal.home|portal.tickets.show', 'label' => 'Tickets', 'icon' => 'inbox-stack'],
+        ['route' => 'portal.home', 'active' => 'portal.home|portal.tickets.show', 'label' => 'Tickets', 'icon' => 'collection'],
         ['route' => 'portal.tickets.create', 'active' => 'portal.tickets.create', 'label' => 'Neues Ticket', 'icon' => 'plus-circle'],
         ['route' => 'portal.profile', 'active' => 'portal.profile', 'label' => 'Profil', 'icon' => 'user-circle'],
     ], fn (array $item) => Route::has($item['route']));
@@ -45,7 +45,7 @@
                     <button type="button" x-on:click="open = ! open" x-bind:aria-expanded="open" class="flex items-center gap-2 rounded-full py-1 pr-2 pl-1 text-sm hover:bg-ink/[0.05]">
                         <x-ui.avatar :name="$contact->fullName()" size="sm" />
                         <span class="hidden max-w-40 truncate font-medium sm:block">{{ $contact->fullName() }}</span>
-                        <x-heroicon-m-chevron-down class="size-4 text-ink-faint" aria-hidden="true" />
+                        <x-bx-chevron-down class="size-4 text-ink-faint" aria-hidden="true" />
                     </button>
                     <div x-show="open" x-cloak x-on:click.outside="open = false" x-transition.opacity class="absolute right-0 z-30 mt-1 w-64 rounded-xl bg-surface p-1 shadow-pop">
                         <div class="px-3 py-2">
@@ -61,14 +61,14 @@
                         <div class="my-1 border-t border-separator"></div>
                         @if (Route::has('portal.profile'))
                             <a href="{{ route('portal.profile') }}" wire:navigate class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
-                                <x-heroicon-o-user-circle class="size-4 text-ink-muted" aria-hidden="true" />
+                                <x-bx-user-circle class="size-4 text-ink-muted" aria-hidden="true" />
                                 Profil
                             </a>
                         @endif
                         <form method="POST" action="{{ route('portal.logout') }}">
                             @csrf
                             <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-left text-sm hover:bg-surface-muted">
-                                <x-heroicon-o-arrow-right-start-on-rectangle class="size-4 text-ink-muted" aria-hidden="true" />
+                                <x-bx-log-out class="size-4 text-ink-muted" aria-hidden="true" />
                                 Abmelden
                             </button>
                         </form>
@@ -93,7 +93,7 @@
                                 'text-accent' => $active,
                                 'text-ink-faint hover:text-ink' => ! $active,
                             ])>
-                            <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" class="size-6" aria-hidden="true" />
+                            <x-dynamic-component :component="\App\Support\Icon::component($item['icon'], solid: $active)" class="size-6" aria-hidden="true" />
                             {{ $item['label'] }}
                         </a>
                     </li>

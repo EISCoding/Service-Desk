@@ -51,7 +51,7 @@
 
         <x-ui.card title="E-Mails" description="Gelten für alle Mails an Kunden. Die Texte der automatischen Mails bearbeitest du unter Vorlagen.">
             <x-slot:actions>
-                <x-ui.button variant="secondary" size="sm" icon="eye" :href="route('intern.admin.settings.mail-preview')" target="_blank">Vorschau</x-ui.button>
+                <x-ui.button variant="secondary" size="sm" icon="show" :href="route('intern.admin.settings.mail-preview')" target="_blank">Vorschau</x-ui.button>
             </x-slot:actions>
             <div class="space-y-4">
                 <x-ui.input label="Hinweis unter Ticket-Mails" wire:model="mailReplyHint" maxlength="300" />

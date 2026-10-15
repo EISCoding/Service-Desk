@@ -3,7 +3,7 @@
     'size' => 'md',         // sm | md | lg
     'href' => null,
     'type' => 'button',
-    'icon' => null,         // heroicon name, e.g. "plus"
+    'icon' => null,         // Boxicons name, e.g. "plus" (see App\Support\Icon)
 ])
 
 @php
@@ -33,7 +33,7 @@
 @if ($href)
     <a href="{{ $href }}" {{ $attributes->class($classes) }}>
         @if ($icon)
-            <x-dynamic-component :component="'heroicon-o-'.$icon" class="size-4 shrink-0" aria-hidden="true" />
+            <x-dynamic-component :component="\App\Support\Icon::component($icon)" class="size-4 shrink-0" aria-hidden="true" />
         @endif
         {{ $slot }}
     </a>
@@ -45,7 +45,7 @@
             <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
         </svg>
         @if ($icon)
-            <x-dynamic-component :component="'heroicon-o-'.$icon" class="size-4 shrink-0 group-data-loading:hidden in-data-loading:hidden" aria-hidden="true" />
+            <x-dynamic-component :component="\App\Support\Icon::component($icon)" class="size-4 shrink-0 group-data-loading:hidden in-data-loading:hidden" aria-hidden="true" />
         @endif
         {{ $slot }}
     </button>

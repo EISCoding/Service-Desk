@@ -36,7 +36,7 @@
                 <x-ui.input wire:model.live.debounce.300ms="search" type="search" placeholder="Betreff oder Nummer …" aria-label="Tickets durchsuchen" />
             </div>
             <x-ui.button variant="secondary" x-on:click="filters = ! filters" x-bind:aria-expanded="filters" aria-controls="ticket-filters">
-                <x-heroicon-m-adjustments-horizontal class="size-4" aria-hidden="true" />
+                <x-bx-slider-alt class="size-4" aria-hidden="true" />
                 <span class="sr-only sm:not-sr-only">Filter</span>
                 @if ($count = $this->activeFilterCount())
                     <span class="rounded-full bg-accent-fill px-1.5 text-[11px] text-on-accent">{{ $count }}</span>
@@ -64,7 +64,7 @@
     </div>
 
     @if ($items->isEmpty())
-        <x-ui.empty-state icon="inbox" title="Keine Tickets" :description="$search !== '' || $this->activeFilterCount() ? 'Kein Ticket passt zu Suche und Filtern.' : 'In dieser Ansicht ist gerade nichts offen.'" />
+        <x-ui.empty-state icon="collection" title="Keine Tickets" :description="$search !== '' || $this->activeFilterCount() ? 'Kein Ticket passt zu Suche und Filtern.' : 'In dieser Ansicht ist gerade nichts offen.'" />
     @else
         <ul class="divide-y divide-hairline transition-opacity" aria-label="Tickets" wire:loading.delay.class="opacity-50">
             @foreach ($items as $ticket)
@@ -111,7 +111,7 @@
                         @endif
                         @if ($ticket->follow_up_due)
                             <x-ui.badge color="orange" class="mt-1.5 py-0! text-[11px]!">
-                                <x-heroicon-m-bell-alert class="size-3" aria-hidden="true" /> Wiedervorlage fällig
+                                <x-bxs-bell-ring class="size-3" aria-hidden="true" /> Wiedervorlage fällig
                             </x-ui.badge>
                         @endif
                     </a>

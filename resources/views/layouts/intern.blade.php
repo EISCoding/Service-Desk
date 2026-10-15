@@ -38,7 +38,7 @@
                                     'text-ink/80 hover:bg-ink/[0.05] hover:text-ink' => ! $active,
                                 ])
                             >
-                                <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" @class(['size-5 shrink-0', 'text-accent' => ! $active]) aria-hidden="true" />
+                                <x-dynamic-component :component="\App\Support\Icon::component($item['icon'], solid: $active)" @class(['size-5 shrink-0', 'text-accent' => ! $active]) aria-hidden="true" />
                                 {{ $item['label'] }}
                             </a>
                         </li>
@@ -62,7 +62,7 @@
                                             'text-ink/80 hover:bg-ink/[0.05] hover:text-ink' => ! $active,
                                         ])
                                     >
-                                        <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" @class(['size-5 shrink-0', 'text-ink-muted' => ! $active]) aria-hidden="true" />
+                                        <x-dynamic-component :component="\App\Support\Icon::component($item['icon'], solid: $active)" @class(['size-5 shrink-0', 'text-ink-muted' => ! $active]) aria-hidden="true" />
                                         {{ $item['label'] }}
                                     </a>
                                 </li>
@@ -110,7 +110,7 @@
                                 'text-ink-faint hover:text-ink' => ! $active,
                             ])
                         >
-                            <x-dynamic-component :component="'heroicon-'.($active ? 's' : 'o').'-'.$item['icon']" class="size-6" aria-hidden="true" />
+                            <x-dynamic-component :component="\App\Support\Icon::component($item['icon'], solid: $active)" class="size-6" aria-hidden="true" />
                             {{ $item['label'] }}
                         </a>
                     </li>

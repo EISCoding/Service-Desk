@@ -20,7 +20,7 @@
                 <livewire:intern.tickets.ticket-view :ticket="$ticket" :key="'ticket-'.$ticket->id" />
             @else
                 <div class="grid h-full place-items-center">
-                    <x-ui.empty-state icon="inbox-stack" title="Kein Ticket ausgewählt" description="Wähle links ein Ticket aus." />
+                    <x-ui.empty-state icon="collection" title="Kein Ticket ausgewählt" description="Wähle links ein Ticket aus." />
                 </div>
             @endif
         </section>

@@ -59,21 +59,21 @@
                                 @endcan
                                 <div x-data="{ open: false }" class="relative" x-on:keydown.escape="open = false">
                                     <button type="button" x-on:click="open = ! open" x-ref="trigger" x-bind:aria-expanded="open" class="rounded-lg p-1.5 text-ink-muted hover:bg-surface-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-accent">
-                                        <x-heroicon-m-ellipsis-horizontal class="size-5" aria-hidden="true" />
+                                        <x-bx-dots-horizontal-rounded class="size-5" aria-hidden="true" />
                                         <span class="sr-only">Weitere Aktionen für {{ $contact->fullName() }}</span>
                                     </button>
                                     <div x-show="open" x-cloak x-anchor.bottom-end.offset.4.fixed="$refs.trigger" x-on:click.outside="open = false" x-transition.opacity class="z-40 w-56 rounded-xl bg-surface p-1 text-left shadow-pop">
                                         @if ($contact->portal_access && $contact->email && $contact->portalStatus() !== 'active')
                                             @can('managePortal', $contact)
                                                 <button type="button" x-on:click="open = false" wire:click="invite({{ $contact->id }})" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-surface-muted">
-                                                    <x-heroicon-o-paper-airplane class="size-4 text-ink-muted" aria-hidden="true" />
+                                                    <x-bx-send class="size-4 text-ink-muted" aria-hidden="true" />
                                                     {{ $contact->invited_at ? 'Erneut einladen' : 'Ins Portal einladen' }}
                                                 </button>
                                             @endcan
                                         @endif
                                         @can('delete', $contact)
                                             <button type="button" x-on:click="open = false" wire:click="delete({{ $contact->id }})" wire:confirm="Ansprechpartner {{ $contact->fullName() }} löschen?" class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-surface-muted dark:text-red-400">
-                                                <x-heroicon-o-trash class="size-4" aria-hidden="true" /> Löschen
+                                                <x-bx-trash class="size-4" aria-hidden="true" /> Löschen
                                             </button>
                                         @endcan
                                     </div>

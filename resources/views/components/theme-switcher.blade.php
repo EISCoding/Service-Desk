@@ -18,7 +18,7 @@
             x-bind:class="current === @js($theme->value) ? 'bg-surface text-ink shadow-xs' : 'text-ink-muted hover:text-ink'"
             class="flex items-center justify-center gap-1 rounded-lg px-2 py-1 text-[12px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-accent"
         >
-            <x-dynamic-component :component="'heroicon-m-'.$theme->icon()" class="size-3.5" aria-hidden="true" />
+            <x-dynamic-component :component="\App\Support\Icon::component($theme->icon())" class="size-3.5" aria-hidden="true" />
             {{ $theme->label() }}
         </button>
     @endforeach

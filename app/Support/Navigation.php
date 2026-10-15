@@ -20,11 +20,11 @@ final class Navigation
     {
         return self::visible($user, [
             ['label' => 'Übersicht', 'route' => 'intern.dashboard', 'icon' => 'home', 'active' => 'intern.dashboard', 'ability' => ['viewAny', Ticket::class]],
-            ['label' => 'Tickets', 'route' => 'intern.tickets.index', 'icon' => 'inbox-stack', 'active' => 'intern.tickets.*', 'ability' => ['viewAny', Ticket::class]],
-            ['label' => 'Kunden', 'route' => 'intern.customers.index', 'icon' => 'building-office-2', 'active' => 'intern.customers.*', 'ability' => Permission::CustomersManage->value],
-            ['label' => 'Termine', 'route' => 'intern.appointments.index', 'icon' => 'calendar-days', 'active' => 'intern.appointments.*', 'ability' => ['viewAny', Ticket::class]],
-            ['label' => 'Vorlagen', 'route' => 'intern.templates.index', 'icon' => 'document-duplicate', 'active' => 'intern.templates.*', 'ability' => ['viewAny', Ticket::class]],
-            ['label' => 'Admin', 'route' => 'intern.admin.index', 'icon' => 'cog-6-tooth', 'active' => 'intern.admin.*', 'ability' => 'access-admin'],
+            ['label' => 'Tickets', 'route' => 'intern.tickets.index', 'icon' => 'collection', 'active' => 'intern.tickets.*', 'ability' => ['viewAny', Ticket::class]],
+            ['label' => 'Kunden', 'route' => 'intern.customers.index', 'icon' => 'buildings', 'active' => 'intern.customers.*', 'ability' => Permission::CustomersManage->value],
+            ['label' => 'Termine', 'route' => 'intern.appointments.index', 'icon' => 'calendar', 'active' => 'intern.appointments.*', 'ability' => ['viewAny', Ticket::class]],
+            ['label' => 'Vorlagen', 'route' => 'intern.templates.index', 'icon' => 'copy-alt', 'active' => 'intern.templates.*', 'ability' => ['viewAny', Ticket::class]],
+            ['label' => 'Admin', 'route' => 'intern.admin.index', 'icon' => 'cog', 'active' => 'intern.admin.*', 'ability' => 'access-admin'],
         ]);
     }
 
@@ -34,11 +34,11 @@ final class Navigation
     public static function admin(User $user): array
     {
         return self::visible($user, [
-            ['label' => 'Benutzer', 'route' => 'intern.admin.users.index', 'icon' => 'users', 'active' => 'intern.admin.users.*', 'ability' => Permission::AdminUsers->value],
-            ['label' => 'Gruppen', 'route' => 'intern.admin.groups.index', 'icon' => 'user-group', 'active' => 'intern.admin.groups.*', 'ability' => Permission::AdminGroups->value],
-            ['label' => 'Postfächer', 'route' => 'intern.admin.mailboxes.index', 'icon' => 'inbox', 'active' => 'intern.admin.mailboxes.*', 'ability' => Permission::AdminMailboxes->value],
-            ['label' => 'Systemeinstellungen', 'route' => 'intern.admin.settings', 'icon' => 'adjustments-horizontal', 'active' => 'intern.admin.settings', 'ability' => Permission::AdminSettings->value],
-            ['label' => 'Protokolle', 'route' => 'intern.admin.logs', 'icon' => 'document-magnifying-glass', 'active' => 'intern.admin.logs*', 'ability' => Permission::AdminLogs->value],
+            ['label' => 'Benutzer', 'route' => 'intern.admin.users.index', 'icon' => 'group', 'active' => 'intern.admin.users.*', 'ability' => Permission::AdminUsers->value],
+            ['label' => 'Gruppen', 'route' => 'intern.admin.groups.index', 'icon' => 'network-chart', 'active' => 'intern.admin.groups.*', 'ability' => Permission::AdminGroups->value],
+            ['label' => 'Postfächer', 'route' => 'intern.admin.mailboxes.index', 'icon' => 'envelope', 'active' => 'intern.admin.mailboxes.*', 'ability' => Permission::AdminMailboxes->value],
+            ['label' => 'Systemeinstellungen', 'route' => 'intern.admin.settings', 'icon' => 'slider-alt', 'active' => 'intern.admin.settings', 'ability' => Permission::AdminSettings->value],
+            ['label' => 'Protokolle', 'route' => 'intern.admin.logs', 'icon' => 'file-find', 'active' => 'intern.admin.logs*', 'ability' => Permission::AdminLogs->value],
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 <div wire:poll.10s="checkForChanges">
     <a href="{{ route('portal.home') }}" wire:navigate class="mb-3 inline-flex items-center gap-1 text-[13px] font-medium text-ink-muted hover:text-ink">
-        <x-heroicon-m-chevron-left class="size-4" aria-hidden="true" /> Alle Tickets
+        <x-bx-chevron-left class="size-4" aria-hidden="true" /> Alle Tickets
     </a>
 
     <header class="mb-6">
@@ -21,7 +21,7 @@
             @foreach ($this->appointments as $appointment)
                 <div wire:key="appointment-{{ $appointment->id }}" class="rounded-card bg-teal-500/[0.07] p-4 ring-1 ring-teal-500/25">
                     <p class="flex items-center gap-1.5 text-[13px] font-semibold text-teal-700 dark:text-teal-300">
-                        <x-heroicon-o-calendar-days class="size-4" aria-hidden="true" /> Vor-Ort-Termin
+                        <x-bx-calendar class="size-4" aria-hidden="true" /> Vor-Ort-Termin
                     </p>
                     <p class="mt-2 text-sm font-semibold">{{ $appointment->starts_at->isoFormat('dddd, D. MMMM YYYY') }}</p>
                     <p class="text-sm tabular-nums">{{ $appointment->starts_at->format('H:i') }}–{{ $appointment->ends_at->format('H:i') }} Uhr</p>
@@ -70,7 +70,7 @@
                 >
                     @if ($ticket->isClosed())
                         <p class="mb-2 flex items-center gap-1.5 text-[12px] text-ink-muted">
-                            <x-heroicon-m-information-circle class="size-4 shrink-0" aria-hidden="true" />
+                            <x-bx-info-circle class="size-4 shrink-0" aria-hidden="true" />
                             Dieses Ticket ist geschlossen. Mit Ihrer Antwort wird es wieder geöffnet.
                         </p>
                     @endif
@@ -86,7 +86,7 @@
                         <div class="mb-2 flex items-center justify-between gap-3">
                             <p class="text-[13px] font-semibold">Antworten</p>
                             <button type="button" x-on:click="expanded = false" class="rounded-full p-1.5 text-ink-faint hover:bg-ink/[0.06] hover:text-ink">
-                                <x-heroicon-m-chevron-down class="size-5" aria-hidden="true" /><span class="sr-only">Einklappen</span>
+                                <x-bx-chevron-down class="size-5" aria-hidden="true" /><span class="sr-only">Einklappen</span>
                             </button>
                         </div>
                         <form wire:submit="reply" class="space-y-3">
@@ -95,7 +95,7 @@
                             </div>
                             <div class="flex flex-wrap items-end justify-between gap-3">
                                 @include('livewire.portal.partials.files')
-                                <x-ui.button type="submit" icon="paper-airplane" wire:loading.attr="disabled" wire:target="files,reply">Antwort senden</x-ui.button>
+                                <x-ui.button type="submit" icon="send" wire:loading.attr="disabled" wire:target="files,reply">Antwort senden</x-ui.button>
                             </div>
                         </form>
                     </div>

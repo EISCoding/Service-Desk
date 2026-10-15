@@ -57,7 +57,7 @@
                     @endif
                 </div>
             @empty
-                <x-ui.empty-state icon="document-duplicate" title="Noch keine Textbausteine" description="Textbausteine lassen sich beim Antworten mit einem Klick einfügen." />
+                <x-ui.empty-state icon="copy-alt" title="Noch keine Textbausteine" description="Textbausteine lassen sich beim Antworten mit einem Klick einfügen." />
             @endforelse
         </x-ui.card>
     </section>

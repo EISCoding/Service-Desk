@@ -40,7 +40,7 @@ class History extends Component
             <div>
                 <x-ui.card>
                     @if ($this->activities->isEmpty())
-                        <x-ui.empty-state icon="clock" title="Noch keine Aktivität" />
+                        <x-ui.empty-state icon="time-five" title="Noch keine Aktivität" />
                     @else
                         <x-activity-timeline :activities="$this->activities" />
                         @if ($this->activities->hasPages())

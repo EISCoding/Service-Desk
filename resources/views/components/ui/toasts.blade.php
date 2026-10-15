@@ -22,13 +22,13 @@
             class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl bg-surface/90 px-4 py-3 shadow-pop backdrop-blur-xl"
             role="status"
         >
-            <span x-show="toast.type === 'success'" class="text-green-600 dark:text-green-400"><x-heroicon-s-check-circle class="size-5" aria-hidden="true" /></span>
-            <span x-show="toast.type === 'error'" class="text-red-600 dark:text-red-400"><x-heroicon-s-x-circle class="size-5" aria-hidden="true" /></span>
-            <span x-show="toast.type === 'info'" class="text-accent"><x-heroicon-s-information-circle class="size-5" aria-hidden="true" /></span>
+            <span x-show="toast.type === 'success'" class="text-green-600 dark:text-green-400"><x-bxs-check-circle class="size-5" aria-hidden="true" /></span>
+            <span x-show="toast.type === 'error'" class="text-red-600 dark:text-red-400"><x-bxs-x-circle class="size-5" aria-hidden="true" /></span>
+            <span x-show="toast.type === 'info'" class="text-accent"><x-bxs-info-circle class="size-5" aria-hidden="true" /></span>
             <p class="flex-1 pt-px text-sm text-ink" x-text="toast.message"></p>
             <button type="button" x-on:click="remove(toast.id)" class="-mr-1 rounded-full p-0.5 text-ink-faint hover:text-ink">
                 <span class="sr-only">Schließen</span>
-                <x-heroicon-m-x-mark class="size-4" aria-hidden="true" />
+                <x-bx-x class="size-4" aria-hidden="true" />
             </button>
         </div>
     </template>
