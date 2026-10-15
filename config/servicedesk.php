@@ -3,6 +3,16 @@
 return [
 
     /*
+    | Browser installer (/install). Installed means: the installer finished (marker file in
+    | storage/app), SERVICEDESK_INSTALLED=true, or users exist from before the installer.
+    */
+    'installed' => (bool) env('SERVICEDESK_INSTALLED', false),
+    'install' => [
+        'marker' => null, // default storage/app/installed
+        'lock' => null,   // default storage/app/install.lock
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Customer numbers
     |--------------------------------------------------------------------------

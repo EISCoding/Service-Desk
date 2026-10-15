@@ -12,6 +12,7 @@ use App\Http\Controllers\Portal\AttachmentController as PortalAttachmentControll
 use App\Http\Controllers\Portal\InvitationController;
 use App\Http\Controllers\Portal\LoginController;
 use App\Http\Controllers\Portal\PasswordResetController;
+use App\Livewire\Install\Wizard;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Logs\Index as LogIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
@@ -41,6 +42,9 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/intern');
 
 Route::get('manifest.webmanifest', ManifestController::class)->name('manifest');
+
+// Browser installer of a fresh deployment (gone once installed, see RedirectToInstaller).
+Route::livewire('install', Wizard::class)->name('install');
 
 /*
 | Staff area. Login, logout, password reset and the two-factor challenge
