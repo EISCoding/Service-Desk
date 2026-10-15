@@ -8,7 +8,7 @@
     'name',
     'title' => null,
     'description' => null,
-    'maxWidth' => 'lg', // sm | md | lg | xl | 2xl
+    'maxWidth' => 'lg', // sm | md | lg | xl | 2xl | 3xl
 ])
 
 @php
@@ -18,6 +18,7 @@
         'md' => 'sm:max-w-md',
         'xl' => 'sm:max-w-xl',
         '2xl' => 'sm:max-w-2xl',
+        '3xl' => 'sm:max-w-3xl',
         default => 'sm:max-w-lg',
     };
 @endphp

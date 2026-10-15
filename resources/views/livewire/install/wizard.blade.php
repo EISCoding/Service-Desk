@@ -4,7 +4,7 @@
 <div>
     <div class="mb-8 text-center">
         <x-brand-mark size="lg" class="mx-auto shadow-md" />
-        <h1 class="mt-4 text-[26px] font-bold tracking-tight">ServiceDesk einrichten</h1>
+        <h1 class="mt-4 text-[24px] font-semibold tracking-tight">ServiceDesk einrichten</h1>
         <p class="mt-1 text-sm text-ink-muted">In wenigen Schritten startklar – alles im Browser.</p>
     </div>
 

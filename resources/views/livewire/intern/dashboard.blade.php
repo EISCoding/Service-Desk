@@ -3,7 +3,7 @@
 <div wire:poll.30s="checkForChanges" class="mx-auto max-w-6xl">
     <header class="mb-6">
         <p class="text-[13px] font-medium text-ink-muted">{{ now()->isoFormat('dddd, D. MMMM') }}</p>
-        <h1 class="mt-0.5 text-[28px] leading-tight font-bold tracking-tight">{{ $this->greeting() }}</h1>
+        <h1 class="mt-0.5 text-[24px] leading-tight font-semibold tracking-tight">{{ $this->greeting() }}</h1>
     </header>
 
     {{-- Key figures, each leads to the matching ticket list --}}
@@ -23,7 +23,7 @@
                         <x-bx-chevron-right class="size-4 text-ink-faint transition group-hover:translate-x-0.5" aria-hidden="true" />
                     </span>
                     <span>
-                        <span class="block text-[28px] leading-none font-bold tracking-tight tabular-nums">{{ $counts[$key] }}</span>
+                        <span class="block text-[26px] leading-none font-semibold tracking-tight tabular-nums">{{ $counts[$key] }}</span>
                         <span class="mt-1 block text-[13px] font-medium text-ink-muted">{{ $label }}</span>
                     </span>
                 </a>

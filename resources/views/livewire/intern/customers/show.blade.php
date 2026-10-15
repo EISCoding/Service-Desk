@@ -6,7 +6,7 @@
     <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0">
             <div class="flex flex-wrap items-center gap-2">
-                <h1 class="text-[26px] leading-tight font-semibold tracking-tight">{{ $customer->company }}</h1>
+                <h1 class="text-[22px] leading-tight font-semibold tracking-tight">{{ $customer->company }}</h1>
                 @if ($customer->isPrivate())
                     <x-ui.badge color="purple">Privatperson</x-ui.badge>
                 @endif
