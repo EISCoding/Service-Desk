@@ -26,7 +26,9 @@ class AppSettings
         'accent' => 'blue',
         'reopen_days' => null,
         'mail_reply_hint' => null, // line below ticket mails
-        'mail_footer' => null,     // e.g. address, phone, legal details
+        'mail_footer' => null,     // plain text footer of older versions
+        'mail_footer_html' => null, // footer from the mail design editor
+        'mail_design' => null,     // see MailBranding::DEFAULT_DESIGN
         'push_vapid' => null,      // web push key pair (private key encrypted)
     ];
 

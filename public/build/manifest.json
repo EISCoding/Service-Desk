@@ -28,7 +28,7 @@
     "src": "node_modules/@fontsource-variable/inter/files/inter-vietnamese-wght-normal.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DEJYy0zo.css",
+    "file": "assets/app-G30uSigv.css",
     "name": "app",
     "names": [
       "app.css"
@@ -46,7 +46,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-Bsp5VKoL.js",
+    "file": "assets/app-CVifZZyu.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

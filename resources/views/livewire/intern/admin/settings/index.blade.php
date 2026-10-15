@@ -6,19 +6,7 @@
             <div class="space-y-4">
                 <x-ui.input label="Firmenname" wire:model="companyName" required maxlength="100" hint="Erscheint in der Seitenleiste, im Portal, in Seitentiteln und E-Mails." />
 
-                <p class="text-[13px] text-ink-muted">Logo, App-Icon und Akzentfarbe stellst du unter <a href="{{ route('intern.admin.branding') }}" wire:navigate class="font-medium text-accent hover:underline">Erscheinungsbild</a> ein.</p>
-            </div>
-        </x-ui.card>
-
-        <x-ui.card title="E-Mails" description="Gelten für alle Mails an Kunden. Die Texte der automatischen Mails bearbeitest du unter Vorlagen.">
-            <x-slot:actions>
-                <x-ui.button variant="secondary" size="sm" icon="show" :href="route('intern.admin.settings.mail-preview')" target="_blank">Vorschau</x-ui.button>
-            </x-slot:actions>
-            <div class="space-y-4">
-                <x-ui.input label="Hinweis unter Ticket-Mails" wire:model="mailReplyHint" maxlength="300" />
-                <x-ui.textarea label="Fußzeile" wire:model="mailFooter" rows="4" maxlength="1000"
-                    placeholder="z. B. Firma GmbH · Musterstraße 1 · 12345 Musterstadt&#10;Telefon 01234 5678 · www.firma.de&#10;Geschäftsführer: … · Amtsgericht … HRB …"
-                    hint="Steht klein unter jeder Mail, z. B. Anschrift, Telefon und Pflichtangaben. Leer: nur der Firmenname." />
+                <p class="text-[13px] text-ink-muted">Logo, App-Icon und Akzentfarbe stellst du unter <a href="{{ route('intern.admin.branding') }}" wire:navigate class="font-medium text-accent hover:underline">Erscheinungsbild</a> ein, Aussehen und Fußzeile der Mails unter <a href="{{ route('intern.admin.mail-design') }}" wire:navigate class="font-medium text-accent hover:underline">Mail-Design</a>.</p>
             </div>
         </x-ui.card>
 

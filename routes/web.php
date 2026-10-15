@@ -17,6 +17,7 @@ use App\Livewire\Intern\Admin\Branding\Index as BrandingIndex;
 use App\Livewire\Intern\Admin\Groups\Index as GroupIndex;
 use App\Livewire\Intern\Admin\Logs\Index as LogIndex;
 use App\Livewire\Intern\Admin\Mailboxes\Index as MailboxIndex;
+use App\Livewire\Intern\Admin\MailDesign\Index as MailDesignIndex;
 use App\Livewire\Intern\Admin\Settings\Index as AdminSettings;
 use App\Livewire\Intern\Admin\Users\Index as UserIndex;
 use App\Livewire\Intern\Appointments\Index as AppointmentIndex;
@@ -109,6 +110,10 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
         Route::livewire('erscheinungsbild', BrandingIndex::class)
             ->middleware('can:'.Permission::AdminSettings->value)
             ->name('branding');
+
+        Route::livewire('mail-design', MailDesignIndex::class)
+            ->middleware('can:'.Permission::AdminSettings->value)
+            ->name('mail-design');
 
         Route::livewire('einstellungen', AdminSettings::class)
             ->middleware('can:'.Permission::AdminSettings->value)

@@ -1,6 +1,6 @@
 {{-- Laravel notification mails (MailMessage) in the branded layout --}}
-@php($accent = app(\App\Support\MailBranding::class)->accent())
-<x-mail.layout :message="$message ?? null" :preheader="$introLines[0] ?? null">
+@php($accent = ($brand ?? app(\App\Support\MailBranding::class))->accent())
+<x-mail.layout :message="$message ?? null" :brand="$brand ?? null" :preheader="$introLines[0] ?? null">
     @if (! empty($greeting))
         <p style="margin:0 0 1em;font-weight:600;">{{ $greeting }}</p>
     @endif

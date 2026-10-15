@@ -2,6 +2,7 @@
     WYSIWYG editor (TipTap, resources/js/editor.js) bound via wire:model; the HTML is sanitized on save.
     toolbar: basic (portal, descriptions) | reply (replies, signatures) | full (templates, mail design)
     placeholders: offer {placeholders} as chips (templates)
+    wire:model.live sends changes shortly after typing stops
 --}}
 @props([
     'label' => null,
@@ -21,6 +22,7 @@
         'label' => $label ?: ($placeholder ?: 'Text'),
         'placeholder' => $placeholder,
         'placeholders' => $placeholders,
+        'live' => $attributes->wire('model')->hasModifier('live'),
         'invalid' => (bool) $error,
         'describedBy' => $error ? $id.'-error' : null,
     ];

@@ -10,6 +10,7 @@ const normalizeUrl = (url) => {
 export default (model, options = {}) => {
     // Kept outside of Alpine's reactive data: TipTap does not work through proxies.
     let editor = null;
+    let commitTimer = null;
     const chips = Boolean(options.placeholders);
     let withChips = (html) => html;
     const prepare = (html) => (chips ? withChips(html || '') : html || '');
@@ -53,6 +54,11 @@ export default (model, options = {}) => {
                 },
                 onUpdate: () => {
                     this.value = editor.isEmpty ? '' : editor.getHTML();
+                    // wire:model.live: send the text shortly after typing stops (e.g. for a live preview).
+                    if (options.live) {
+                        clearTimeout(commitTimer);
+                        commitTimer = setTimeout(() => this.$wire.$commit(), 400);
+                    }
                 },
                 onTransaction: () => this.sync(),
             });
