@@ -73,5 +73,4 @@
         </x-slot:footer>
     </x-ui.modal>
 
-    <livewire:intern.tickets.create-ticket />
 </div>

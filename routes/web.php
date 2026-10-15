@@ -6,6 +6,7 @@ use App\Http\Controllers\Intern\Admin\LogDownloadController;
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\MailPreviewController;
 use App\Http\Controllers\Intern\TicketPageController;
+use App\Http\Controllers\Intern\UpdateSidebarController;
 use App\Http\Controllers\Intern\UpdateThemeController;
 use App\Http\Controllers\ManifestController;
 use App\Http\Controllers\Portal\AttachmentController as PortalAttachmentController;
@@ -88,6 +89,7 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
     Route::livewire('einstellungen/signatur', Signature::class)->name('settings.signature');
 
     Route::put('darstellung', UpdateThemeController::class)->name('theme.update');
+    Route::put('seitenleiste', UpdateSidebarController::class)->name('sidebar.update');
 
     Route::get('anhaenge/{attachment}', [AttachmentController::class, 'show'])->name('attachments.show');
 
@@ -156,6 +158,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::middleware(['auth:contact', 'portal'])->group(function () {
         Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
         Route::put('darstellung', UpdateThemeController::class)->name('theme.update');
+        Route::put('seitenleiste', UpdateSidebarController::class)->name('sidebar.update');
         Route::livewire('profil', PortalProfile::class)->name('profile');
         Route::livewire('/', PortalTickets::class)->name('home');
         Route::livewire('tickets/neu', PortalCreateTicket::class)->name('tickets.create');

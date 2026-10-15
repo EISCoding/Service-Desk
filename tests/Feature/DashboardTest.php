@@ -33,7 +33,7 @@ it('greets the user and shows the key figures', function () {
         ->assertSee('Dringend')
         ->assertDontSee('Fremde Gruppe');
 
-    expect($component->instance()->counts)->toBe(['mine' => 1, 'unread' => 0, 'due' => 0, 'unassigned' => 1]);
+    expect($component->instance()->counts)->toBe(['mine' => 1, 'unread' => 0, 'due' => 0, 'unassigned' => 1, 'all' => 2]);
 });
 
 it('lists new customer replies and due follow-ups', function () {

@@ -88,6 +88,12 @@ document.addEventListener('keydown', (event) => {
 
     const key = event.key.toLowerCase();
 
+    if (key === '[') {
+        event.preventDefault();
+        window.dispatchEvent(new CustomEvent('toggle-sidebar'));
+        return;
+    }
+
     if (key === 'j' || key === 'k') {
         const rows = [...document.querySelectorAll('ul[aria-label="Tickets"] > li > a')];
         if (! rows.length) return;
@@ -119,6 +125,43 @@ document.addEventListener('keydown', (event) => {
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('richEditor', richEditor);
+
+    // Staff layout: sidebar collapsed to icons (stored per user) and the tooltip shown then.
+    window.Alpine.data('shell', (collapsed = false, updateUrl = null) => ({
+        collapsed,
+        tip: { show: false, text: '', top: 0, left: 0 },
+
+        toggle() {
+            this.collapsed = ! this.collapsed;
+            this.tip.show = false;
+
+            if (updateUrl) {
+                fetch(updateUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify({ collapsed: this.collapsed }),
+                });
+            }
+        },
+
+        showTip(event) {
+            const item = event.target.closest?.('[data-tip]');
+            if (! this.collapsed || ! item) {
+                this.tip.show = false;
+                return;
+            }
+            const rect = item.getBoundingClientRect();
+            this.tip = { show: true, text: item.dataset.tip, top: rect.top + rect.height / 2, left: rect.right + 10 };
+        },
+
+        hideTip() {
+            this.tip.show = false;
+        },
+    }));
 
     // Appearance switch (System/Hell/Dunkel), see resources/views/components/theme-switcher.blade.php
     window.Alpine.data('themeSwitcher', (updateUrl = null) => ({

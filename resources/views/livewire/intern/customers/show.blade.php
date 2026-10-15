@@ -192,5 +192,4 @@
     </div>
 
     <livewire:intern.customers.customer-form />
-    <livewire:intern.tickets.create-ticket />
 </div>
