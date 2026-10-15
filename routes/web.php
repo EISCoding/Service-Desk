@@ -23,6 +23,7 @@ use App\Livewire\Intern\Settings\Notifications as NotificationSettings;
 use App\Livewire\Intern\Settings\Security;
 use App\Livewire\Intern\Settings\Signature;
 use App\Livewire\Intern\Templates\Index as TemplateIndex;
+use App\Livewire\Intern\Tickets\Board;
 use App\Livewire\Portal\Profile as PortalProfile;
 use App\Livewire\Portal\Tickets\Create as PortalCreateTicket;
 use App\Livewire\Portal\Tickets\Index as PortalTickets;
@@ -46,7 +47,9 @@ Route::prefix('intern')->name('intern.')->middleware(['auth', 'active'])->group(
 
     // Areas built in later phases (placeholders until then).
     Route::get('tickets', [TicketPageController::class, 'index'])->name('tickets.index');
+    Route::livewire('tickets/board', Board::class)->name('tickets.board');
     Route::get('tickets/{ticket}', [TicketPageController::class, 'show'])
+        ->whereNumber('ticket')
         ->missing(fn () => redirect()->route('intern.tickets.index')->with('toast', ['message' => 'Dieses Ticket gibt es nicht mehr.', 'type' => 'info']))
         ->name('tickets.show');
 

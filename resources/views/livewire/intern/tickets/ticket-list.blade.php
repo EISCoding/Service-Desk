@@ -2,9 +2,12 @@
     <div x-data="{ filters: {{ $this->activeFilterCount() > 0 ? 'true' : 'false' }} }" class="sticky top-0 z-10 space-y-3 border-b border-separator bg-canvas/90 px-4 pt-4 pb-3 backdrop-blur-xl">
         <div class="flex items-center justify-between gap-3">
             <h1 class="text-[22px] font-semibold tracking-tight">Tickets</h1>
-            @can('create', \App\Models\Ticket::class)
-                <x-ui.button size="sm" icon="plus" x-on:click="$dispatch('create-ticket')">Neu</x-ui.button>
-            @endcan
+            <div class="flex items-center gap-2">
+                <x-ticket.layout-switch current="list" compact />
+                @can('create', \App\Models\Ticket::class)
+                    <x-ui.button size="sm" icon="plus" x-on:click="$dispatch('create-ticket')">Neu</x-ui.button>
+                @endcan
+            </div>
         </div>
 
         <div role="tablist" aria-label="Ansicht" class="flex flex-wrap gap-1.5">

@@ -209,7 +209,14 @@ class TicketList extends Component
 
     private function viewQuery(string $view): Builder
     {
-        $user = auth()->user();
+        return self::queryFor($view, auth()->user());
+    }
+
+    /**
+     * Tickets of a view (Meine / Meine Gruppen / Alle / Nicht zugeordnet), shared with the board.
+     */
+    public static function queryFor(string $view, User $user): Builder
+    {
         $query = Ticket::query()->visibleTo($user);
 
         return match ($view) {
