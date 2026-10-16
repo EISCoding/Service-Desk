@@ -54,7 +54,9 @@ Oder alles zusammen mit `composer dev`.
 | E-Mail   | `admin@servicedesk.test`  |
 | Passwort | `password`                |
 
-Anmeldung unter <http://localhost:8000/intern/login>.
+Anmeldung unter <http://localhost:8000/intern/login>. Die Domain selbst (<http://localhost:8000>) zeigt
+die öffentliche **Startseite** mit den Wegen zum Support (Kundenportal, E-Mail, Telefon) und der
+Mitarbeiter-Anmeldung.
 
 Nach dem Login:
 
@@ -350,7 +352,8 @@ ruft die Postfächer alle 20 Sekunden ab und markiert täglich um 06:00 fällige
 ### 8. Einrichtung in der Anwendung
 
 1. **Admin → Systemeinstellungen**: Firmenname, Wiedereröffnungsfrist; **Admin → Erscheinungsbild**:
-   Logo, App-Icon, Favicon, Akzentfarbe; **Admin → Mail-Design**: Aussehen und Fußzeile der Mails
+   Logo, App-Icon, Favicon, Akzentfarbe und die Texte der Startseite (Überschrift, Einleitung, Telefon,
+   Erreichbarkeit, Impressum, Datenschutz); **Admin → Mail-Design**: Aussehen und Fußzeile der Mails
 2. **Admin → Gruppen** und **Benutzer**: Teams und Mitarbeiter anlegen (Startpasswort vergeben)
 3. **Admin → Postfächer**: IMAP/SMTP eintragen, „Verbindung testen“, Standardgruppe wählen, aktivieren
 4. **Vorlagen**: Texte der Systemvorlagen prüfen, Textbausteine anlegen
@@ -391,7 +394,8 @@ Bei Updates zieht Plesk den neuen Stand per Git. Danach bei geänderter `compose
 
 ### Prüfen
 
-- `https://servicedesk.example.de/up` antwortet mit „Application up“.
+- `https://servicedesk.example.de/up` antwortet mit „Application up“; die Domain selbst zeigt die Startseite.
+  Als E-Mail-Adresse erscheint dort das Standard-Postfach, sobald es aktiv ist.
 - Nach einer Minute zeigt `php artisan schedule:list` die Aufgaben; eine Testmail an ein Postfach wird
   zum Ticket.
 - **Admin → Protokolle** zeigt Systemfehler (aus `storage/logs`), das Mail-Protokoll mit dem Abrufstatus

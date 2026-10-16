@@ -7,6 +7,7 @@ use App\Livewire\Concerns\InteractsWithToasts;
 use App\Support\AccentColor;
 use App\Support\AppSettings;
 use App\Support\Branding;
+use App\Support\Html;
 use App\Support\IconGenerator;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
@@ -18,7 +19,7 @@ use Livewire\WithFileUploads;
 
 /**
  * Appearance: logos for light and dark surfaces, app icon (home screen, push),
- * favicon and accent color.
+ * favicon, accent color and the texts of the public home page.
  */
 #[Layout('layouts::intern')]
 #[Title('Erscheinungsbild')]
@@ -38,11 +39,29 @@ class Index extends Component
 
     public string $accent = 'blue';
 
+    public string $homeHeading = '';
+
+    public string $homeIntro = '';
+
+    public string $homePhone = '';
+
+    public string $homeHours = '';
+
+    public string $homeImprintUrl = '';
+
+    public string $homePrivacyUrl = '';
+
     public function mount(AppSettings $settings, Branding $branding): void
     {
         $this->authorize(Permission::AdminSettings->value);
 
         $this->accent = $settings->get('accent');
+        $this->homeHeading = (string) $settings->get('home_heading');
+        $this->homeIntro = (string) $settings->get('home_intro');
+        $this->homePhone = (string) $settings->get('home_phone');
+        $this->homeHours = (string) $settings->get('home_hours');
+        $this->homeImprintUrl = (string) $settings->get('home_imprint_url');
+        $this->homePrivacyUrl = (string) $settings->get('home_privacy_url');
         $this->iconBackground = $branding->iconBackground();
     }
 
@@ -57,11 +76,20 @@ class Index extends Component
             'favicon' => ['nullable', 'file', 'mimes:png,ico,jpg,jpeg,webp', 'max:512'],
             'iconBackground' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'accent' => ['required', Rule::in(array_keys(AccentColor::PALETTE))],
+            'homeHeading' => ['nullable', 'string', 'max:120'],
+            'homeIntro' => ['nullable', 'string', 'max:5000'],
+            'homePhone' => ['nullable', 'string', 'max:40', 'regex:/^[\d\s+()\/-]+$/'],
+            'homeHours' => ['nullable', 'string', 'max:120'],
+            'homeImprintUrl' => ['nullable', 'url:http,https', 'max:300'],
+            'homePrivacyUrl' => ['nullable', 'url:http,https', 'max:300'],
         ], [
             'iconBackground.regex' => 'Bitte eine Farbe im Format #RRGGBB angeben.',
+            'homePhone.regex' => 'Bitte nur Ziffern, Leerzeichen und + ( ) / - verwenden.',
         ], [
             'logo' => 'Logo', 'logoDark' => 'Logo für dunkle Flächen', 'appIcon' => 'App-Icon',
             'favicon' => 'Favicon', 'iconBackground' => 'Hintergrundfarbe', 'accent' => 'Akzentfarbe',
+            'homeHeading' => 'Überschrift', 'homeIntro' => 'Einleitung', 'homePhone' => 'Telefon', 'homeHours' => 'Erreichbarkeit',
+            'homeImprintUrl' => 'Impressum', 'homePrivacyUrl' => 'Datenschutz',
         ]);
 
         $this->iconBackground = strtolower($this->iconBackground);
@@ -104,7 +132,17 @@ class Index extends Component
             $branding->storeLogo($this->logoDark, dark: true);
         }
 
-        $settings->set(['accent' => $this->accent]);
+        $intro = Html::sanitize($this->homeIntro);
+
+        $settings->set([
+            'accent' => $this->accent,
+            'home_heading' => trim($this->homeHeading) ?: null,
+            'home_intro' => Html::toText($intro) === '' ? null : $intro,
+            'home_phone' => trim($this->homePhone) ?: null,
+            'home_hours' => trim($this->homeHours) ?: null,
+            'home_imprint_url' => trim($this->homeImprintUrl) ?: null,
+            'home_privacy_url' => trim($this->homePrivacyUrl) ?: null,
+        ]);
         $this->reset('logo', 'logoDark', 'appIcon', 'favicon');
 
         // Full reload: logos, icons and the accent color apply everywhere.

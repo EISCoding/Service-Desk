@@ -4,8 +4,8 @@ it('boots and answers the health check', function () {
     $this->get('/up')->assertOk();
 });
 
-it('redirects the start page to the staff area', function () {
-    $this->get('/')->assertRedirect('/intern');
+it('shows the home page instead of redirecting to the staff area', function () {
+    $this->get('/')->assertOk()->assertSee('Wie können wir helfen?');
 });
 
 it('runs Livewire with the class based component setup', function () {

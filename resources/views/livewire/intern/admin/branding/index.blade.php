@@ -10,7 +10,7 @@
 @endphp
 
 <div class="max-w-3xl">
-    <x-ui.page-header title="Erscheinungsbild" description="Logo, App-Icon, Favicon und Akzentfarbe für den Mitarbeiterbereich, das Kundenportal und E-Mails." />
+    <x-ui.page-header title="Erscheinungsbild" description="Logo, App-Icon, Favicon, Akzentfarbe und die Startseite für den Mitarbeiterbereich, das Kundenportal und E-Mails." />
 
     <form wire:submit="save" class="space-y-6">
         {{-- Logos --}}
@@ -158,6 +158,23 @@
                 @endforeach
             </div>
             @error('accent') <p class="mt-2 text-[13px] text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
+        </x-ui.card>
+
+        {{-- Public home page ("/") --}}
+        <x-ui.card title="Startseite" description="Die Seite direkt unter deiner Domain mit den Wegen zum Support. Leere Felder zeigen Standardtexte; als E-Mail erscheint das Standard-Postfach.">
+            <x-slot:actions>
+                <x-ui.button variant="secondary" size="sm" icon="link-external" :href="route('home')" target="_blank">Ansehen</x-ui.button>
+            </x-slot:actions>
+            <div class="space-y-4">
+                <x-ui.input label="Überschrift" wire:model="homeHeading" maxlength="120" :placeholder="\App\Support\HomePage::DEFAULT_HEADING" />
+                <x-ui.rich-editor label="Einleitung" wire:model="homeIntro" toolbar="reply" :placeholder="\App\Support\Html::toText(\App\Support\HomePage::defaultIntro())" />
+                <div class="grid gap-4 sm:grid-cols-2">
+                    <x-ui.input label="Telefon" type="tel" wire:model="homePhone" maxlength="40" placeholder="z. B. 07331 123 45-6" hint="Leer: kein Telefon auf der Startseite." />
+                    <x-ui.input label="Erreichbarkeit" wire:model="homeHours" maxlength="120" placeholder="z. B. Mo–Fr 8–17 Uhr" />
+                    <x-ui.input label="Impressum (Link)" type="url" wire:model="homeImprintUrl" maxlength="300" placeholder="https://…" />
+                    <x-ui.input label="Datenschutz (Link)" type="url" wire:model="homePrivacyUrl" maxlength="300" placeholder="https://…" />
+                </div>
+            </div>
         </x-ui.card>
 
         <div class="flex justify-end">
