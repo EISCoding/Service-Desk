@@ -183,6 +183,6 @@ Vorgaben aus der Abstimmung: Einstiegsseite direkt unter der Domain (statt Weite
 
 - [x] Hauptseite unter `/`: Logo, Firmenname, Überschrift und Text, Wege zum Kundenportal, per E-Mail (Standard-Postfach) und Telefon, Mitarbeiter-Anmeldung; Angemeldete sehen „Weiter zu …“
 - [x] Texte im Admin (Erscheinungsbild → Startseite): Überschrift, Einleitung (Editor), Telefon, Erreichbarkeit, Links zu Impressum und Datenschutz; ohne Eingaben Standardtexte
-- [ ] Tests, Sichtprüfung Hell/Dunkel/Handy, Barrierefreiheit, README
+- [x] Tests, Sichtprüfung Hell/Dunkel/Handy, Barrierefreiheit, README
 
 **Fertig wenn:** `ticket.daadre.de` zeigt die Hauptseite, Texte lassen sich im Admin pflegen, Tests und Audit grün.
