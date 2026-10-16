@@ -173,3 +173,16 @@ Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwu
 - [x] Sichtprüfung Hell/Dunkel, Desktop/Handy, Barrierefreiheit, README
 
 **Fertig wenn:** Alle Seiten im neuen Design, keine Heroicons mehr, Seitenleiste einklappbar, Branding und Mail-Design im Admin pflegbar, Vorlagen im WYSIWYG-Editor, Tests und Audit grün.
+
+
+---
+
+## Phase 10 – Hauptseite
+
+Vorgaben aus der Abstimmung: Einstiegsseite direkt unter der Domain (statt Weiterleitung auf `/intern`), Texte im Admin änderbar.
+
+- [ ] Hauptseite unter `/`: Logo, Firmenname, Überschrift und Text, Wege zum Kundenportal, per E-Mail (Standard-Postfach) und Telefon, Mitarbeiter-Anmeldung; Angemeldete sehen „Weiter zu …“
+- [ ] Texte im Admin (Erscheinungsbild → Startseite): Überschrift, Einleitung (Editor), Telefon, Erreichbarkeit, Links zu Impressum und Datenschutz; ohne Eingaben Standardtexte
+- [ ] Tests, Sichtprüfung Hell/Dunkel/Handy, Barrierefreiheit, README
+
+**Fertig wenn:** `ticket.daadre.de` zeigt die Hauptseite, Texte lassen sich im Admin pflegen, Tests und Audit grün.
