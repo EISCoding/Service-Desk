@@ -30,6 +30,12 @@ class AppSettings
         'mail_footer_html' => null, // footer from the mail design editor
         'mail_design' => null,     // see MailBranding::DEFAULT_DESIGN
         'push_vapid' => null,      // web push key pair (private key encrypted)
+        'home_heading' => null,    // public home page, see HomePage
+        'home_intro' => null,
+        'home_phone' => null,
+        'home_hours' => null,
+        'home_imprint_url' => null,
+        'home_privacy_url' => null,
     ];
 
     /** @var array<string, mixed>|null */

@@ -2,6 +2,7 @@
 
 use App\Enums\Permission;
 use App\Http\Controllers\BrandingAssetController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Intern\Admin\LogDownloadController;
 use App\Http\Controllers\Intern\AttachmentController;
 use App\Http\Controllers\Intern\MailPreviewController;
@@ -43,7 +44,7 @@ use App\Models\User;
 use App\Support\Branding;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/intern');
+Route::get('/', HomeController::class)->name('home');
 
 // Web app manifest: "Zum Home-Bildschirm" turns the site into an app (iPhone, Android).
 Route::get('manifest.json', ManifestController::class)->name('manifest');
