@@ -224,3 +224,41 @@ it('sends push notifications with the branded icon and badge', function () {
     expect($branding->iconUrl('icon-192.png'))->toContain('/branding/icon-192.png')
         ->and($branding->iconUrl('badge-96.png'))->toContain('/branding/badge-96.png');
 });
+
+it('stores the texts of the home page', function () {
+    $this->actingAs($this->admin);
+
+    Livewire::test(Index::class)
+        ->set('homeHeading', 'IT-Support der Musterfirma')
+        ->set('homeIntro', '<p>Wir helfen <strong>schnell</strong>.</p><script>alert(1)</script>')
+        ->set('homePhone', '+49 7331 12345-6')
+        ->set('homeHours', 'Mo–Fr 8–17 Uhr')
+        ->set('homeImprintUrl', 'https://musterfirma.de/impressum')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    freshBranding();
+    $settings = app(AppSettings::class);
+    expect($settings->get('home_heading'))->toBe('IT-Support der Musterfirma')
+        ->and($settings->get('home_intro'))->toBe('<p>Wir helfen <strong>schnell</strong>.</p>')
+        ->and($settings->get('home_privacy_url'))->toBeNull();
+
+    $this->get('/')->assertSee('IT-Support der Musterfirma')->assertSee('+49 7331 12345-6')->assertSee('Mo–Fr 8–17 Uhr');
+
+    // Emptied fields fall back to the default texts.
+    Livewire::test(Index::class)->set('homeHeading', '')->set('homeIntro', '<p></p>')->call('save');
+    freshBranding();
+    $this->get('/')->assertSee('Wie können wir helfen?')->assertSee('Hier erreichen Sie den Support');
+});
+
+it('validates the home page fields', function () {
+    $this->actingAs($this->admin);
+
+    Livewire::test(Index::class)
+        ->set('homePhone', 'ruf mich an')
+        ->set('homeImprintUrl', 'javascript:alert(1)')
+        ->set('homePrivacyUrl', 'keine-adresse')
+        ->set('homeHeading', str_repeat('x', 121))
+        ->call('save')
+        ->assertHasErrors(['homePhone', 'homeImprintUrl', 'homePrivacyUrl', 'homeHeading']);
+});

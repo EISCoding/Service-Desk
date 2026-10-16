@@ -182,7 +182,7 @@ Vorgaben aus der Abstimmung: Look „wie ein moderner Service Desk“ nach Entwu
 Vorgaben aus der Abstimmung: Einstiegsseite direkt unter der Domain (statt Weiterleitung auf `/intern`), Texte im Admin änderbar.
 
 - [x] Hauptseite unter `/`: Logo, Firmenname, Überschrift und Text, Wege zum Kundenportal, per E-Mail (Standard-Postfach) und Telefon, Mitarbeiter-Anmeldung; Angemeldete sehen „Weiter zu …“
-- [ ] Texte im Admin (Erscheinungsbild → Startseite): Überschrift, Einleitung (Editor), Telefon, Erreichbarkeit, Links zu Impressum und Datenschutz; ohne Eingaben Standardtexte
+- [x] Texte im Admin (Erscheinungsbild → Startseite): Überschrift, Einleitung (Editor), Telefon, Erreichbarkeit, Links zu Impressum und Datenschutz; ohne Eingaben Standardtexte
 - [ ] Tests, Sichtprüfung Hell/Dunkel/Handy, Barrierefreiheit, README
 
 **Fertig wenn:** `ticket.daadre.de` zeigt die Hauptseite, Texte lassen sich im Admin pflegen, Tests und Audit grün.
